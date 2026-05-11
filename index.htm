@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Satisfação Time de Design - Avaliação</title>
   
+  <!-- Fonte: Satoshi -->
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap" rel="stylesheet">
   
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
+  <!-- Configuração do Tailwind -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -36,6 +39,7 @@
     }
   </script>
 
+  <!-- CSS Customizado -->
   <style>
     body { font-family: 'Satoshi', sans-serif; }
 
@@ -75,15 +79,17 @@
 </head>
 <body class="bg-paper dark:bg-[#121212] text-ink dark:text-[#E0E0E0] transition-colors duration-500 relative overflow-x-hidden selection:bg-accent/20">
 
+  <!-- TEXTURA DE PAPEL FIXA -->
   <div class="fixed inset-0 z-[-1] paper-texture bg-grid pointer-events-none"></div>
 
+  <!-- HEADER EDITORIAL -->
   <nav class="sticky top-0 z-50 bg-paper/90 dark:bg-[#121212]/90 backdrop-blur-sm border-b border-paper-dark dark:border-white/10 transition-colors duration-500">
     <div class="max-w-[900px] mx-auto px-6 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
         <img src="https://raw.githubusercontent.com/ProdutosAUVP/reviewdesign/main/olho-branco%20(2).svg" alt="Olho AUVP" class="h-5 md:h-6 w-auto invert dark:invert-0 opacity-90 transition-all duration-500" />
         <div class="flex flex-col">
           <span class="text-xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-0.5">
-            Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
+            <span class="hidden md:inline">Satisfação Time de</span><span class="md:hidden">Satisfação</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
           </span>
         </div>
       </div>
@@ -93,7 +99,7 @@
           Formulário
         </button>
         <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" class="btn-nav text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
-          Painel
+          Métricas
         </button>
         <div class="w-[1px] h-3 bg-paper-dark dark:bg-white/10"></div>
         <button onclick="toggleTheme()" class="text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300" aria-label="Alternar Tema">
@@ -104,9 +110,13 @@
     </div>
   </nav>
 
+  <!-- ========================================== -->
+  <!-- VISÃO 0: INTRO / IDENTIFICAÇÃO             -->
+  <!-- ========================================== -->
   <main id="view-intro" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] block">
     <div class="w-full max-w-[600px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-10 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       
+      <!-- CABEÇALHO INTRO (Fixo) -->
       <div>
         <div class="relative">
           <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2">
@@ -117,10 +127,12 @@
           </p>
         </div>
 
+        <!-- GIF ANIMADO DE INTRODUÇÃO -->
         <div class="w-full mt-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 relative shadow-sm">
           <img src="https://media.giphy.com/media/KpACNEh8jXK2Q/giphy.gif" alt="Macaco trabalhando" class="w-full h-40 md:h-56 object-cover grayscale-[20%] transition-transform duration-700 hover:scale-105" loading="lazy" />
         </div>
 
+        <!-- Toggle Tipo de Revisão -->
         <div class="flex p-1 bg-paper-dark/50 dark:bg-white/5 rounded-[4px] mt-6 mb-6">
           <button id="toggle-demanda" onclick="setReviewType('demanda')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-accent shadow-sm rounded-[2px] text-white transition-all">
             Demanda Específica
@@ -130,9 +142,11 @@
           </button>
         </div>
 
+        <!-- Divisor Fixo -->
         <div class="border-b border-paper-dark dark:border-white/10 mb-6"></div>
       </div>
 
+      <!-- FORMULÁRIO INTRO (Variável/Expansível) -->
       <div class="flex flex-col gap-6">
         
         <div>
@@ -158,6 +172,7 @@
           </p>
         </div>
 
+        <!-- Erro -->
         <p id="intro-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest">Preencha todos os campos obrigatórios.</p>
 
         <div class="mt-2">
@@ -170,10 +185,15 @@
     </div>
   </main>
 
+  <!-- ========================================== -->
+  <!-- VISÃO 1: FORMULÁRIO WIZARD                 -->
+  <!-- ========================================== -->
   <main id="view-form" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
     
+    <!-- WIZARD CONTAINER (CARTÃO COMPACTO) -->
     <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       
+      <!-- Cabeçalho Integrado (Título e Progresso) -->
       <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-paper-dark dark:border-white/10 pb-4 mb-6 gap-6">
         <div class="relative">
           <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2 md:mt-0">
@@ -184,6 +204,7 @@
           </p>
         </div>
 
+        <!-- Progresso Compacto -->
         <div id="progress-container" class="w-full md:w-1/3 flex flex-col justify-end block">
           <div class="flex justify-between items-end mb-2">
             <span class="text-[9px] uppercase font-bold tracking-widest text-ink-light dark:text-white/50">Progresso</span>
@@ -195,14 +216,17 @@
         </div>
       </div>
 
+      <!-- Conteúdo da Pergunta -->
       <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
         
+        <!-- Lado Esquerdo: GIF Analógico Reduzido -->
         <div class="md:w-1/3 flex flex-col shrink-0">
-          <div class="w-full aspect-square bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 p-1.5 shadow-sm relative group overflow-hidden">
+          <div class="w-full aspect-square md:aspect-auto md:h-full bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 p-1.5 shadow-sm relative group overflow-hidden">
             <img id="question-gif" src="https://media.giphy.com/media/3o7TKDk86g4k5E6ZPO/giphy.gif" alt="Animação da pergunta" class="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105" loading="lazy"/>
           </div>
         </div>
 
+        <!-- Lado Direito: Pergunta & Avaliação -->
         <div class="md:w-2/3 flex flex-col justify-start">
           <span id="question-badge" class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-3">
             PASSO_01
@@ -215,6 +239,7 @@
             A entrega foi realizada dentro do cronograma acordado ou antes do prazo estipulado?
           </p>
 
+          <!-- Respostas (Escala) -->
           <div id="rating-container" class="mt-auto block">
             <div class="flex justify-between text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 border-b border-paper-dark dark:border-white/10 pb-1.5 relative">
               <span id="label-min"></span>
@@ -222,15 +247,23 @@
               <span id="label-max"></span>
             </div>
             <div class="flex justify-between items-center px-1 py-4" id="rating-buttons">
-              </div>
+              <!-- Botões gerados via JS -->
+            </div>
           </div>
 
+          <!-- Comentário por Etapa -->
+          <div id="step-comment-container" class="mt-2 block transition-all duration-300">
+            <textarea id="step-comment" rows="2" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Deixe um comentário sobre esta nota (opcional)..."></textarea>
+          </div>
+
+          <!-- Respostas (Texto Opcional - Passos Finais) -->
           <div id="text-container" class="mt-auto hidden">
             <textarea id="feedback-text" rows="3" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira as suas considerações (opcional)..."></textarea>
           </div>
         </div>
       </div>
 
+      <!-- Rodapé de Navegação (Interno ao Cartão) -->
       <div class="w-full flex justify-between items-center mt-6 pt-4 border-t border-paper-dark dark:border-white/10">
         <button id="btn-prev" onclick="handlePrev()" class="text-[10px] uppercase tracking-widest font-bold text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-colors disabled:opacity-0 flex items-center gap-1.5">
           ← Anterior
@@ -251,6 +284,9 @@
     </div>
   </main>
 
+  <!-- ========================================== -->
+  <!-- VISÃO: SUCESSO (Oculta por padrão)         -->
+  <!-- ========================================== -->
   <div id="view-success" class="max-w-[600px] mx-auto mt-10 md:mt-16 px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center">
     
     <div class="w-full max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 shadow-sm">
@@ -271,6 +307,9 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- VISÃO: AUTENTICAÇÃO DO PAINEL              -->
+  <!-- ========================================== -->
   <main id="view-auth" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
     <div class="w-full max-w-[400px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       <div class="mb-6 border-b border-paper-dark dark:border-white/10 pb-4">
@@ -285,6 +324,9 @@
     </div>
   </main>
 
+  <!-- ========================================== -->
+  <!-- VISÃO 2: DASHBOARD ANALÍTICA               -->
+  <!-- ========================================== -->
   <div id="view-dashboard" class="max-w-[900px] mx-auto px-4 py-8 md:py-12 animate-[fadeIn_0.5s_ease-in-out] hidden">
     
     <div class="mb-10 border-b border-paper-dark dark:border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -302,6 +344,7 @@
       </div>
     </div>
 
+    <!-- Filtros do Painel -->
     <div class="flex flex-col sm:flex-row gap-6 mb-10 p-5 border border-paper-dark dark:border-white/10 bg-white dark:bg-[#1A1A1A]">
       <div class="flex-1">
         <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Filtrar por Designer</label>
@@ -322,8 +365,10 @@
       </div>
     </div>
 
+    <!-- KPI & Detalhes -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
       
+      <!-- Topo: 3 Cards de Resumo -->
       <div class="md:col-span-4 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex items-center justify-between">
         <div>
           <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Total de Avaliações</p>
@@ -356,19 +401,24 @@
         </div>
       </div>
 
+      <!-- Meio Esquerda: Gráfico Radar Vetorial -->
       <div class="md:col-span-5 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex flex-col items-center justify-center relative min-h-[250px]">
         <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 absolute top-6 left-6">Balanço do Perfil</h3>
         <svg viewBox="0 0 120 120" class="w-full max-w-[220px] h-auto overflow-visible mt-4">
+          <!-- Background Grid Rings (Center 60,60 | Max Radius 40) -->
           <polygon points="60,20 100,60 60,100 20,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
           <polygon points="60,30 90,60 60,90 30,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
           <polygon points="60,40 80,60 60,80 40,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
           <polygon points="60,50 70,60 60,70 50,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
           
+          <!-- Cross Axes -->
           <line x1="60" y1="20" x2="60" y2="100" stroke="currentColor" class="text-paper-dark dark:text-white/10" stroke-width="0.5"/>
           <line x1="20" y1="60" x2="100" y2="60" stroke="currentColor" class="text-paper-dark dark:text-white/10" stroke-width="0.5"/>
           
+          <!-- Data Polygon (Atualizado via JS) -->
           <polygon id="radar-polygon" points="60,60 60,60 60,60 60,60" fill="currentColor" class="text-accent/20 dark:text-accent/30 transition-all duration-1000 ease-out" stroke="currentColor" stroke-width="1.5" />
           
+          <!-- Labels das Extremidades -->
           <text x="60" y="14" text-anchor="middle" font-size="4.5" class="fill-ink dark:fill-white/80 font-bold uppercase tracking-wider">Prazo</text>
           <text x="103" y="61.5" text-anchor="start" font-size="4.5" class="fill-ink dark:fill-white/80 font-bold uppercase tracking-wider">Qualidade</text>
           <text x="60" y="108" text-anchor="middle" font-size="4.5" class="fill-ink dark:fill-white/80 font-bold uppercase tracking-wider">Estratégia</text>
@@ -376,20 +426,48 @@
         </svg>
       </div>
 
+      <!-- Meio Direita: Barras Detalhadas -->
       <div class="md:col-span-7 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
         <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Desempenho por Categoria</h3>
         <div id="chart-container" class="flex flex-col gap-6">
-          </div>
+          <!-- Barras injetadas via JS -->
+        </div>
       </div>
 
+      <!-- Histórico Cronológico -->
       <div class="md:col-span-12 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Anotações & Comentários</h3>
-        <div id="feedback-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 custom-scrollbar max-h-[300px] overflow-y-auto pr-2">
-          </div>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Histórico de Avaliações</h3>
+        <div id="history-list" class="flex flex-col gap-3 custom-scrollbar max-h-[400px] overflow-y-auto pr-2">
+          <!-- Histórico injetado via JS -->
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- MODAL DE VISÃO DETALHADA                   -->
+  <!-- ========================================== -->
+  <div id="evaluation-modal" class="fixed inset-0 z-[100] bg-ink/60 dark:bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 md:p-6 opacity-0 transition-opacity duration-300">
+    <div class="bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 w-full max-w-[700px] max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl flex flex-col relative transform scale-95 transition-transform duration-300 rounded-[4px]">
+      
+      <!-- Header Modal -->
+      <div class="sticky top-0 bg-paper dark:bg-[#121212] border-b border-paper-dark dark:border-white/10 p-5 flex justify-between items-center z-10">
+        <h3 class="text-sm font-bold uppercase tracking-widest text-ink dark:text-white truncate pr-4" id="modal-title">Detalhes da Avaliação</h3>
+        <button onclick="closeModal()" class="text-ink-light hover:text-accent dark:text-white/50 dark:hover:text-white p-2 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      
+      <!-- Content Modal -->
+      <div id="modal-content" class="p-6 flex flex-col gap-6">
+          <!-- Injetado via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: LÓGICA E ESTADO DA APLICAÇÃO   -->
+  <!-- ========================================== -->
   <script>
     // Sistema de cor automática baseado no SO
     function applySystemTheme() {
@@ -436,7 +514,7 @@
     let currentStep = 0;
     let reviewType = 'demanda'; // 'demanda' ou 'geral'
     let isGeneralReview = false;
-    let formData = { userName: '', designer: '', requestTitle: '', q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: '' };
+    let formData = { userName: '', designer: '', requestTitle: '', q1: 0, q1_comment: '', q2: 0, q2_comment: '', q3: 0, q3_comment: '', q4: 0, q4_comment: '', q5: 0, q5_comment: '', q6: '' };
     
     // Submissions vazias inicialmente (agora alimentadas 100% pelo Google Sheets)
     let submissions = [];
@@ -539,7 +617,8 @@
         
         if (data && !data.error) {
           // Inverte a ordem para que os envios mais recentes apareçam no topo
-          submissions = data.reverse();
+          // e garante que todos tenham um ID para o modal funcionar
+          submissions = data.map((item, index) => ({...item, id: Date.now() + index})).reverse();
         }
       } catch (err) {
         console.error("Erro ao puxar dados da planilha:", err);
@@ -661,19 +740,26 @@
 
       if (qTitle) qTitle.innerText = q.title;
       if (qDesc) qDesc.innerHTML = q.description;
-      if (qGif) qGif.src = q.gifUrl;
+      if (qGif && qGif.getAttribute('src') !== q.gifUrl) {
+          qGif.setAttribute('src', q.gifUrl);
+      }
 
       const ratingContainer = document.getElementById('rating-container');
       const textContainer = document.getElementById('text-container');
       const feedbackText = document.getElementById('feedback-text');
+      const stepCommentContainer = document.getElementById('step-comment-container');
+      const stepComment = document.getElementById('step-comment');
 
       if (q.isText) {
         if (ratingContainer) ratingContainer.classList.add('hidden');
+        if (stepCommentContainer) stepCommentContainer.classList.add('hidden');
         if (textContainer) textContainer.classList.remove('hidden');
         if (feedbackText) feedbackText.value = formData[q.key] || '';
       } else {
         if (textContainer) textContainer.classList.add('hidden');
         if (ratingContainer) ratingContainer.classList.remove('hidden');
+        if (stepCommentContainer) stepCommentContainer.classList.remove('hidden');
+        if (stepComment) stepComment.value = formData[`${q.key}_comment`] || '';
         
         const labelMin = document.getElementById('label-min');
         const labelMid = document.getElementById('label-mid');
@@ -814,11 +900,16 @@
       dataToGoogle.append('userName', formData.userName);
       dataToGoogle.append('designer', formData.designer);
       dataToGoogle.append('requestTitle', formData.requestTitle);
-      dataToGoogle.append('q1', formData.q1);
-      dataToGoogle.append('q2', formData.q2);
-      dataToGoogle.append('q3', formData.q3);
-      dataToGoogle.append('q4', formData.q4);
-      dataToGoogle.append('q5', formData.q5);
+      dataToGoogle.append('q1', formData.q1 > 0 ? formData.q1 : '');
+      dataToGoogle.append('q1_comment', formData.q1_comment);
+      dataToGoogle.append('q2', formData.q2 > 0 ? formData.q2 : '');
+      dataToGoogle.append('q2_comment', formData.q2_comment);
+      dataToGoogle.append('q3', formData.q3 > 0 ? formData.q3 : '');
+      dataToGoogle.append('q3_comment', formData.q3_comment);
+      dataToGoogle.append('q4', formData.q4 > 0 ? formData.q4 : '');
+      dataToGoogle.append('q4_comment', formData.q4_comment);
+      dataToGoogle.append('q5', formData.q5 > 0 ? formData.q5 : '');
+      dataToGoogle.append('q5_comment', formData.q5_comment);
       dataToGoogle.append('q6', formData.q6);
 
       // Dispara o envio para a Planilha 
@@ -844,7 +935,7 @@
       currentStep = 0;
       isGeneralReview = false;
       reviewType = 'demanda';
-      formData = { userName: '', designer: '', requestTitle: '', q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: '' };
+      formData = { userName: '', designer: '', requestTitle: '', q1: 0, q1_comment: '', q2: 0, q2_comment: '', q3: 0, q3_comment: '', q4: 0, q4_comment: '', q5: 0, q5_comment: '', q6: '' };
       
       // Limpa os inputs da Intro
       const userNameInput = document.getElementById('user-name');
@@ -869,23 +960,25 @@
     }
 
     function renderDashboard() {
+      const kpiMediaTop = document.getElementById('kpi-media');
       const kpiMediaTxt = document.getElementById('kpi-media-txt');
       const kpiMediaCircle = document.getElementById('kpi-media-circle');
       const kpiTotal = document.getElementById('kpi-total');
       const kpiDestaqueContainer = document.getElementById('kpi-destaque-container');
       const chartContainer = document.getElementById('chart-container');
-      const feedbackList = document.getElementById('feedback-list');
+      const historyList = document.getElementById('history-list');
       const radarPolygon = document.getElementById('radar-polygon');
 
       // --- ESTADO DE CARREGAMENTO ---
       if (isLoadingData) {
+        if (kpiMediaTop) kpiMediaTop.innerText = '...';
         if (kpiMediaTxt) kpiMediaTxt.innerText = '...';
         if (kpiTotal) kpiTotal.innerText = '...';
         if (kpiDestaqueContainer) kpiDestaqueContainer.innerHTML = '<span class="text-sm animate-pulse text-ink-light dark:text-white/50">Buscando...</span>';
         if (kpiMediaCircle) kpiMediaCircle.setAttribute('stroke-dasharray', '0, 100');
         if (radarPolygon) radarPolygon.setAttribute('points', '60,60 60,60 60,60 60,60');
         if (chartContainer) chartContainer.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-8 animate-pulse text-center">Sincronizando com o Google Sheets...</p>';
-        if (feedbackList) feedbackList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 col-span-2 py-4 animate-pulse">Buscando avaliações...</p>';
+        if (historyList) historyList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-4 animate-pulse text-center">Buscando histórico...</p>';
         return;
       }
 
@@ -919,29 +1012,46 @@
 
       // Estado Vazio (Sem resultados para o filtro)
       if (filteredSubmissions.length === 0) {
+        if (kpiMediaTop) kpiMediaTop.innerText = '0.00';
         if (kpiMediaTxt) kpiMediaTxt.innerText = '0.0';
         if (kpiTotal) kpiTotal.innerText = '0';
         if (kpiMediaCircle) kpiMediaCircle.setAttribute('stroke-dasharray', '0, 100');
         if (radarPolygon) radarPolygon.setAttribute('points', '60,60 60,60 60,60 60,60');
         if (kpiDestaqueContainer) kpiDestaqueContainer.innerHTML = '<span class="text-sm font-medium text-ink-light dark:text-white/50">-</span>';
         if (chartContainer) chartContainer.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-4">Nenhum dado encontrado para os filtros selecionados.</p>';
-        if (feedbackList) feedbackList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 col-span-2">Nenhum comentário encontrado para os filtros selecionados.</p>';
+        if (historyList) historyList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-4">Nenhum histórico encontrado para os filtros selecionados.</p>';
         return;
       }
 
       const total = filteredSubmissions.length;
       let sums = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
+      let counts = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
       
       filteredSubmissions.forEach(s => {
-        sums.q1 += s.q1; sums.q2 += s.q2; sums.q3 += s.q3; sums.q4 += s.q4; sums.q5 += s.q5;
+        if (s.q1 > 0) { sums.q1 += s.q1; counts.q1++; }
+        if (s.q2 > 0) { sums.q2 += s.q2; counts.q2++; }
+        if (s.q3 > 0) { sums.q3 += s.q3; counts.q3++; }
+        if (s.q4 > 0) { sums.q4 += s.q4; counts.q4++; }
+        if (s.q5 > 0) { sums.q5 += s.q5; counts.q5++; }
       });
 
       const avgs = {
-        q1: sums.q1 / total, q2: sums.q2 / total, q3: sums.q3 / total, q4: sums.q4 / total, q5: sums.q5 / total
+        q1: counts.q1 > 0 ? sums.q1 / counts.q1 : 0,
+        q2: counts.q2 > 0 ? sums.q2 / counts.q2 : 0,
+        q3: counts.q3 > 0 ? sums.q3 / counts.q3 : 0,
+        q4: counts.q4 > 0 ? sums.q4 / counts.q4 : 0,
+        q5: counts.q5 > 0 ? sums.q5 / counts.q5 : 0
       };
 
       // Média Global agora ignora Q4 (Valor Agregado) pois é um extra
-      const globalAvg = (avgs.q1 + avgs.q2 + avgs.q3 + avgs.q5) / 4;
+      let globalAvgSum = 0;
+      let globalAvgCount = 0;
+      if (counts.q1 > 0) { globalAvgSum += avgs.q1; globalAvgCount++; }
+      if (counts.q2 > 0) { globalAvgSum += avgs.q2; globalAvgCount++; }
+      if (counts.q3 > 0) { globalAvgSum += avgs.q3; globalAvgCount++; }
+      if (counts.q5 > 0) { globalAvgSum += avgs.q5; globalAvgCount++; }
+      
+      const globalAvg = globalAvgCount > 0 ? globalAvgSum / globalAvgCount : 0;
 
       // Cálculo de Múltiplos Destaques
       const mapNames = { q1: 'Pontualidade', q2: 'Qualidade', q3: 'Estratégia', q5: 'Comunicação' };
@@ -956,6 +1066,7 @@
       }
 
       // Atualiza KPIs do Topo
+      if (kpiMediaTop) kpiMediaTop.innerText = globalAvg.toFixed(2);
       if (kpiMediaTxt) kpiMediaTxt.innerText = globalAvg.toFixed(1);
       if (kpiTotal) kpiTotal.innerText = String(total);
       
@@ -1022,26 +1133,139 @@
           chartContainer.innerHTML = chartsHtml;
       }
 
-      const textSubmissions = filteredSubmissions.filter(s => s.q6 && s.q6.trim() !== '');
-      
-      if (feedbackList) {
-          if (textSubmissions.length > 0) {
-            feedbackList.innerHTML = textSubmissions.map(s => `
-              <div class="p-4 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212]">
-                <div class="flex justify-between items-start mb-2 gap-4">
-                  <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block">
-                    ${new Date(s.date).toLocaleDateString('pt-BR')} • ${s.userName} <span class="text-accent dark:text-accent-light opacity-80">(${s.designer})</span>
-                  </span>
-                  <span class="text-[9px] tracking-widest text-accent font-bold px-1.5 py-0.5 border border-accent/20 bg-accent/10 truncate max-w-[150px]" title="${s.requestTitle}">
-                    ${s.requestTitle}
-                  </span>
-                </div>
-                <p class="text-xs leading-relaxed italic text-ink dark:text-white/80">"${s.q6}"</p>
+      // Preenche o Histórico Cronológico
+      if (historyList) {
+        historyList.innerHTML = filteredSubmissions.map(s => {
+          const validScores = [s.q1, s.q2, s.q3, s.q5].filter(v => v > 0);
+          const isGeral = validScores.length === 0;
+          const avg = validScores.length > 0 ? (validScores.reduce((a,b)=>a+b,0) / validScores.length).toFixed(1) : '-';
+          
+          return `
+          <div onclick="openModal(${s.id})" class="p-4 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] hover:border-accent dark:hover:border-accent cursor-pointer transition-colors flex flex-col gap-3 group">
+            <div class="flex flex-col md:flex-row justify-between md:items-start gap-4">
+              <div class="flex flex-col gap-1">
+                <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block">
+                  ${new Date(s.date).toLocaleDateString('pt-BR')} • ${s.userName}
+                </span>
+                <span class="text-sm font-bold text-ink dark:text-white truncate max-w-[300px] md:max-w-[450px]" title="${s.requestTitle}">
+                  ${s.requestTitle}
+                </span>
+                <span class="text-[10px] text-ink-light dark:text-white/50">Designer: <span class="text-accent dark:text-accent-light font-bold">${s.designer}</span></span>
               </div>
-            `).join('');
-          } else {
-            feedbackList.innerHTML = `<p class="text-xs text-ink-light dark:text-white/50 col-span-2">Nenhum comentário em texto registrado.</p>`;
-          }
+              <div class="flex items-center gap-4">
+                <div class="flex flex-col items-start md:items-end">
+                  <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40">${isGeral ? 'Tipo' : 'Média'}</span>
+                  ${isGeral 
+                    ? `<span class="text-xs font-bold text-ink-light dark:text-white/50 mt-1 uppercase tracking-widest bg-paper-dark/30 dark:bg-white/5 px-2 py-0.5 rounded-[2px]">Geral</span>` 
+                    : `<span class="text-lg font-medium ${avg >= 4 ? 'text-accent' : (avg >= 3 ? 'text-[#E5D0A0]' : 'text-[#E5ACA0]')}">${avg}</span>`
+                  }
+                </div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center bg-paper-dark/30 dark:bg-white/5 text-ink-light dark:text-white/50 group-hover:bg-accent group-hover:text-white transition-colors shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+              </div>
+            </div>
+            ${s.q6 ? `
+            <div class="border-t border-paper-dark dark:border-white/5 pt-2">
+              <p class="text-xs text-ink-light dark:text-white/60 italic truncate">"${s.q6}"</p>
+            </div>
+            ` : ''}
+          </div>
+        `}).join('');
+      }
+    }
+
+    // --- FUNÇÕES DO MODAL ---
+    function openModal(id) {
+      const submission = submissions.find(s => s.id === id);
+      if (!submission) return;
+
+      const modal = document.getElementById('evaluation-modal');
+      const modalContent = document.getElementById('modal-content');
+      const modalTitle = document.getElementById('modal-title');
+
+      modalTitle.innerText = `${submission.requestTitle}`;
+
+      const validScores = [submission.q1, submission.q2, submission.q3, submission.q5].filter(v => v > 0);
+      const isGeral = validScores.length === 0;
+      const avg = validScores.length > 0 ? (validScores.reduce((a,b)=>a+b,0) / validScores.length).toFixed(1) : '-';
+
+      const getNotaHtml = (label, nota, comment) => {
+        if (!nota || nota === 0) return '';
+        return `
+        <div class="flex flex-col gap-1 pb-4 border-b border-paper-dark dark:border-white/5 last:border-0">
+          <div class="flex justify-between items-end">
+            <span class="text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50">${label}</span>
+            <span class="text-base font-bold ${nota >= 4 ? 'text-accent' : (nota >= 3 ? 'text-[#E5D0A0]' : 'text-[#E5ACA0]')}">${nota}/5</span>
+          </div>
+          ${comment ? `<p class="text-xs text-ink dark:text-white/80 italic mt-1 bg-paper-dark/30 dark:bg-white/5 p-3 border-l-2 border-accent whitespace-pre-wrap break-words">"${comment}"</p>` : ''}
+        </div>
+        `;
+      };
+
+      modalContent.innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2 bg-paper-dark/30 dark:bg-white/5 p-4 rounded-[4px]">
+          <div>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Avaliador</span>
+            <span class="text-sm font-medium text-ink dark:text-white">${submission.userName}</span>
+          </div>
+          <div>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Designer</span>
+            <span class="text-sm font-medium text-ink dark:text-white">${submission.designer}</span>
+          </div>
+          <div>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Data</span>
+            <span class="text-sm font-medium text-ink dark:text-white">${new Date(submission.date).toLocaleDateString('pt-BR')}</span>
+          </div>
+          <div>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">${isGeral ? 'Tipo' : 'Média'}</span>
+            ${isGeral 
+              ? `<span class="text-xs font-bold text-ink-light dark:text-white/50 uppercase tracking-widest">Geral</span>` 
+              : `<span class="text-sm font-bold text-accent">${avg} <span class="font-normal text-[10px]">/5.0</span></span>`
+            }
+          </div>
+        </div>
+
+        ${!isGeral ? `
+        <div class="flex flex-col gap-2 mt-4">
+          ${getNotaHtml('1. Prazo e Gestão de Tempo', submission.q1, submission.q1_comment)}
+          ${getNotaHtml('2. Qualidade e Organização', submission.q2, submission.q2_comment)}
+          ${getNotaHtml('3. Alinhamento Estratégico', submission.q3, submission.q3_comment)}
+          ${getNotaHtml('4. Comunicação e Parceria', submission.q5, submission.q5_comment)}
+          ${getNotaHtml('5. Valor Agregado (Bônus)', submission.q4, submission.q4_comment)}
+        </div>
+        ` : ''}
+
+        ${submission.q6 ? `
+        <div class="${!isGeral ? 'mt-2 pt-4 border-t border-paper-dark dark:border-white/10' : 'mt-2'}">
+          <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 block mb-2">Feedback Aberto</span>
+          <p class="text-sm text-ink dark:text-white/90 leading-relaxed bg-paper dark:bg-[#1A1A1A] p-4 border border-paper-dark dark:border-white/10 italic whitespace-pre-wrap break-words">"${submission.q6}"</p>
+        </div>
+        ` : ''}
+      `;
+
+      modal.classList.remove('hidden');
+      // Timeout minúsculo para a transição do CSS aplicar suavemente
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.firstElementChild.classList.remove('scale-95');
+      }, 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('evaluation-modal');
+      modal.classList.add('opacity-0');
+      modal.firstElementChild.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // Fechar modal clicando fora dele
+    window.onclick = function(event) {
+      const modal = document.getElementById('evaluation-modal');
+      if (event.target == modal) {
+        closeModal();
       }
     }
 
@@ -1059,6 +1283,14 @@
             feedbackText.addEventListener('input', (e) => {
                 const q = formQuestions[currentStep];
                 if (q) formData[q.key] = e.target.value;
+            });
+        }
+
+        const stepComment = document.getElementById('step-comment');
+        if (stepComment) {
+            stepComment.addEventListener('input', (e) => {
+                const q = formQuestions[currentStep];
+                if (q && !q.isText) formData[`${q.key}_comment`] = e.target.value;
             });
         }
 
