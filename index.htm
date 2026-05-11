@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Satisfação Time de Design - Avaliação</title>
   
   <!-- Fonte: Satoshi -->
@@ -88,7 +88,7 @@
       <div class="flex items-center gap-2 md:gap-3 shrink min-w-0">
         <img src="https://raw.githubusercontent.com/ProdutosAUVP/reviewdesign/main/olho-branco%20(2).svg" alt="Olho AUVP" class="h-4 md:h-5 lg:h-6 w-auto invert dark:invert-0 opacity-90 transition-all duration-500 shrink-0" />
         <div class="flex flex-col min-w-0">
-          <span class="text-[clamp(12px,3.5vw,20px)] md:text-xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-0.5 whitespace-nowrap truncate">
+          <span class="text-[clamp(12px,3.5vw,20px)] md:text-xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-0.5 whitespace-nowrap truncate block">
             <span class="hidden md:inline">Satisfação Time de</span><span class="md:hidden">Satisfação</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
           </span>
         </div>
@@ -133,7 +133,7 @@
         </div>
 
         <!-- Toggle Tipo de Revisão -->
-        <div class="flex p-1 bg-paper-dark/50 dark:bg-white/5 rounded-[4px] mt-6 mb-6">
+        <div class="flex flex-col sm:flex-row p-1 bg-paper-dark/50 dark:bg-white/5 rounded-[4px] mt-6 mb-6">
           <button id="toggle-demanda" onclick="setReviewType('demanda')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-accent shadow-sm rounded-[2px] text-white transition-all">
             Demanda Específica
           </button>
@@ -147,14 +147,14 @@
       </div>
 
       <!-- FORMULÁRIO INTRO (Variável/Expansível) -->
-      <div class="flex flex-col gap-6">
+      <div class="flex flex-col gap-6 w-full">
         
-        <div>
+        <div class="w-full">
           <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Quem é você?</label>
           <input type="text" id="user-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira o seu nome...">
         </div>
 
-        <div>
+        <div class="w-full">
           <label id="designer-label" class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2 transition-colors">Quem realizou o design?</label>
           <select id="designer-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer">
             <option value="" disabled selected class="text-ink-light bg-white dark:bg-[#1A1A1A]">Selecione o designer...</option>
@@ -164,18 +164,18 @@
           </select>
         </div>
 
-        <div id="request-field-container" class="transition-all duration-300">
+        <div id="request-field-container" class="transition-all duration-300 w-full">
           <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Qual foi a solicitação?</label>
           <input type="text" id="request-title" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: [AUVP Capital] Criar o mockup do brinde Y">
-          <p class="text-[10px] text-accent dark:text-accent-light mt-2 italic">
+          <p class="text-[10px] text-accent dark:text-accent-light mt-2 italic break-words">
             * Siga o padrão do título da tarefa: [NOME DO PRODUTO] Do que se trata. Use o mesmo nome da tarefa criada no formulário de design.
           </p>
         </div>
 
         <!-- Erro -->
-        <p id="intro-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest">Preencha todos os campos obrigatórios.</p>
+        <p id="intro-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest w-full">Preencha todos os campos obrigatórios.</p>
 
-        <div class="mt-2">
+        <div class="mt-2 w-full">
           <button onclick="startForm()" class="w-full justify-center px-8 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity flex items-center gap-2">
             Iniciar Revisão →
           </button>
@@ -191,11 +191,11 @@
   <main id="view-form" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
     
     <!-- WIZARD CONTAINER (CARTÃO COMPACTO) -->
-    <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+    <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-5 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       
       <!-- Cabeçalho Integrado (Título e Progresso) -->
-      <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-paper-dark dark:border-white/10 pb-4 mb-6 gap-6">
-        <div class="relative">
+      <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-paper-dark dark:border-white/10 pb-4 mb-6 gap-4 md:gap-6">
+        <div class="relative w-full md:w-auto">
           <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2 md:mt-0">
             Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
           </h1>
@@ -217,7 +217,7 @@
       </div>
 
       <!-- Conteúdo da Pergunta -->
-      <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
+      <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch w-full">
         
         <!-- Lado Esquerdo: GIF Analógico Reduzido -->
         <div class="md:w-1/3 flex flex-col shrink-0">
@@ -227,7 +227,7 @@
         </div>
 
         <!-- Lado Direito: Pergunta & Avaliação -->
-        <div class="md:w-2/3 flex flex-col justify-start">
+        <div class="md:w-2/3 flex flex-col justify-start w-full min-w-0">
           <span id="question-badge" class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-3">
             PASSO_01
           </span>
@@ -235,48 +235,48 @@
           <h2 id="question-title" class="text-xl md:text-2xl font-medium mb-2 text-ink dark:text-white leading-tight">
             Prazo e Pontualidade
           </h2>
-          <p id="question-desc" class="text-sm mb-6 text-ink-light dark:text-white/70 leading-relaxed min-h-[40px]">
+          <p id="question-desc" class="text-sm mb-6 text-ink-light dark:text-white/70 leading-relaxed min-h-[40px] break-words">
             A entrega foi realizada dentro do cronograma acordado ou antes do prazo estipulado?
           </p>
 
           <!-- Respostas (Escala) -->
-          <div id="rating-container" class="mt-auto block">
-            <div class="flex justify-between text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 border-b border-paper-dark dark:border-white/10 pb-1.5 relative">
-              <span id="label-min"></span>
-              <span id="label-mid" class="absolute left-1/2 -translate-x-1/2 hidden whitespace-nowrap"></span>
-              <span id="label-max"></span>
+          <div id="rating-container" class="mt-auto block w-full">
+            <div class="flex justify-between text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 border-b border-paper-dark dark:border-white/10 pb-1.5 relative w-full">
+              <span id="label-min" class="truncate max-w-[40%]"></span>
+              <span id="label-mid" class="absolute left-1/2 -translate-x-1/2 hidden whitespace-nowrap text-[8px] md:text-[10px]"></span>
+              <span id="label-max" class="text-right truncate max-w-[40%]"></span>
             </div>
-            <div class="flex justify-between items-center px-1 py-4" id="rating-buttons">
+            <div class="flex justify-between items-center py-4 w-full gap-2 md:gap-3" id="rating-buttons">
               <!-- Botões gerados via JS -->
             </div>
           </div>
 
           <!-- Comentário por Etapa -->
-          <div id="step-comment-container" class="mt-2 block transition-all duration-300">
-            <textarea id="step-comment" rows="2" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Deixe um comentário sobre esta nota (opcional)..."></textarea>
+          <div id="step-comment-container" class="mt-2 block transition-all duration-300 w-full">
+            <textarea id="step-comment" rows="2" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Deixe um comentário sobre esta nota (opcional)..."></textarea>
           </div>
 
           <!-- Respostas (Texto Opcional - Passos Finais) -->
-          <div id="text-container" class="mt-auto hidden">
-            <textarea id="feedback-text" rows="3" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira as suas considerações (opcional)..."></textarea>
+          <div id="text-container" class="mt-auto hidden w-full">
+            <textarea id="feedback-text" rows="4" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Insira as suas considerações (opcional)..."></textarea>
           </div>
         </div>
       </div>
 
       <!-- Rodapé de Navegação (Interno ao Cartão) -->
-      <div class="w-full flex justify-between items-center mt-6 pt-4 border-t border-paper-dark dark:border-white/10">
-        <button id="btn-prev" onclick="handlePrev()" class="text-[10px] uppercase tracking-widest font-bold text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-colors disabled:opacity-0 flex items-center gap-1.5">
+      <div class="w-full flex flex-col-reverse md:flex-row justify-between items-center mt-6 pt-4 border-t border-paper-dark dark:border-white/10 gap-4 md:gap-0">
+        <button id="btn-prev" onclick="handlePrev()" class="w-full md:w-auto justify-center md:justify-start text-[10px] uppercase tracking-widest font-bold text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-colors disabled:opacity-0 flex items-center gap-1.5 py-3 md:py-0">
           ← Anterior
         </button>
 
-        <div class="flex items-center gap-3 md:gap-4 text-right">
-          <span id="step-disclaimer" class="hidden max-w-[220px] md:max-w-[380px] text-[9px] md:text-[10px] text-ink-light dark:text-white/40 leading-tight italic"></span>
+        <div class="flex flex-col md:flex-row items-center gap-3 md:gap-4 text-center md:text-right w-full md:w-auto">
+          <span id="step-disclaimer" class="hidden text-[9px] md:text-[10px] text-ink-light dark:text-white/40 leading-tight italic break-words w-full md:max-w-[380px]"></span>
           
-          <button id="btn-next" onclick="handleNext()" class="px-6 py-2.5 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
+          <button id="btn-next" onclick="handleNext()" class="w-full md:w-auto justify-center px-6 py-3 md:py-2.5 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
             Próxima →
           </button>
 
-          <button id="btn-submit" onclick="handleSubmit()" class="hidden px-6 py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed items-center gap-2">
+          <button id="btn-submit" onclick="handleSubmit()" class="w-full md:w-auto justify-center hidden px-6 py-3 md:py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed items-center gap-2">
             Finalizar Envio
           </button>
         </div>
@@ -287,20 +287,20 @@
   <!-- ========================================== -->
   <!-- VISÃO: SUCESSO (Oculta por padrão)         -->
   <!-- ========================================== -->
-  <div id="view-success" class="max-w-[600px] mx-auto mt-10 md:mt-16 px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center">
+  <div id="view-success" class="max-w-[600px] mx-auto mt-10 md:mt-16 px-4 md:px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center w-full">
     
-    <div class="w-full max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 shadow-sm">
+    <div class="w-full max-w-[250px] md:max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 shadow-sm">
       <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHQzZmx3cHo5N3FmZTlsM2JjdTQwYzVtcGx1MHM2Nzd3dW90aG9jYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/13w6Kxv69la5NK/giphy.gif" alt="Agradecimento" class="w-full h-auto object-cover grayscale-[20%]" loading="lazy" />
     </div>
 
-    <h2 class="text-3xl font-medium text-ink dark:text-white mb-3">Agradecemos o seu tempo.</h2>
-    <p class="text-sm text-ink-light dark:text-white/70 mb-8">As suas percepções foram registradas e serão essenciais para calibrar os nossos processos de design.</p>
+    <h2 class="text-2xl md:text-3xl font-medium text-ink dark:text-white mb-3 px-2">Agradecemos o seu tempo.</h2>
+    <p class="text-sm text-ink-light dark:text-white/70 mb-8 px-4">As suas percepções foram registradas e serão essenciais para calibrar os nossos processos de design.</p>
     
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <button onclick="resetForm()" class="w-full sm:w-auto px-6 py-3 border border-paper-dark dark:border-white/20 text-ink dark:text-white text-[10px] uppercase tracking-widest font-bold hover:border-ink dark:hover:border-white transition-colors">
-        Submeter nova avaliação
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full px-4">
+      <button onclick="resetForm()" class="w-full sm:w-auto justify-center px-6 py-3 border border-paper-dark dark:border-white/20 text-ink dark:text-white text-[10px] uppercase tracking-widest font-bold hover:border-ink dark:hover:border-white transition-colors">
+        Nova avaliação
       </button>
-      <a href="https://app.clickup.com/36903956/v/fm/13670m-92951" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-6 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity flex justify-center items-center gap-2">
+      <a href="https://app.clickup.com/36903956/v/fm/13670m-92951" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto justify-center px-6 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity flex items-center gap-2">
         Criar nova demanda
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </a>
@@ -311,7 +311,7 @@
   <!-- VISÃO: AUTENTICAÇÃO DO PAINEL              -->
   <!-- ========================================== -->
   <main id="view-auth" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
-    <div class="w-full max-w-[400px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+    <div class="w-full max-w-[400px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       <div class="mb-6 border-b border-paper-dark dark:border-white/10 pb-4">
         <h2 class="text-2xl font-medium text-ink dark:text-white mb-2">Acesso Restrito</h2>
         <p class="text-xs text-ink-light dark:text-white/60 font-satoshi">Insira a senha para visualizar as métricas.</p>
@@ -327,65 +327,65 @@
   <!-- ========================================== -->
   <!-- VISÃO 2: DASHBOARD ANALÍTICA               -->
   <!-- ========================================== -->
-  <div id="view-dashboard" class="max-w-[900px] mx-auto px-4 py-8 md:py-12 animate-[fadeIn_0.5s_ease-in-out] hidden">
+  <div id="view-dashboard" class="max-w-[900px] w-full mx-auto px-4 md:px-6 py-8 md:py-12 animate-[fadeIn_0.5s_ease-in-out] hidden">
     
-    <div class="mb-10 border-b border-paper-dark dark:border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
-      <div class="relative">
-        <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-ink dark:text-white uppercase leading-[0.9] font-satoshi">
+    <div class="mb-8 md:mb-10 border-b border-paper-dark dark:border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 w-full">
+      <div class="relative w-full md:w-auto">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter text-ink dark:text-white uppercase leading-[0.9] font-satoshi break-words">
           Painel de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Métricas.</span>
         </h1>
       </div>
-      <div class="text-left md:text-right">
-        <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Média Global da Qualidade</p>
+      <div class="text-left md:text-right shrink-0">
+        <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Média Global</p>
         <div class="flex items-baseline justify-start md:justify-end gap-1">
-          <h2 id="kpi-media" class="text-3xl text-accent leading-none font-medium">0.00</h2>
+          <h2 id="kpi-media" class="text-3xl md:text-4xl text-accent leading-none font-medium">0.00</h2>
           <span class="text-xs text-ink-light dark:text-white/40">/ 5.0</span>
         </div>
       </div>
     </div>
 
     <!-- Filtros do Painel -->
-    <div class="flex flex-col sm:flex-row gap-6 mb-10 p-5 border border-paper-dark dark:border-white/10 bg-white dark:bg-[#1A1A1A]">
-      <div class="flex-1">
+    <div class="flex flex-col sm:flex-row gap-4 md:gap-6 mb-8 md:mb-10 p-4 md:p-5 border border-paper-dark dark:border-white/10 bg-white dark:bg-[#1A1A1A] w-full">
+      <div class="flex-1 w-full min-w-0">
         <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Filtrar por Designer</label>
-        <select id="filter-designer" onchange="renderDashboard()" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer">
+        <select id="filter-designer" onchange="renderDashboard()" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer truncate">
           <option value="all" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Ambos (Time de Design)</option>
           <option value="Armando" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Armando</option>
           <option value="Eria" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Eria</option>
         </select>
       </div>
-      <div class="flex-1">
+      <div class="flex-1 w-full min-w-0">
         <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Filtrar por Período</label>
-        <div class="flex items-center gap-3">
-          <input type="date" id="filter-date-start" onchange="renderDashboard()" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]" title="Data Inicial">
-          <span class="text-[9px] text-ink-light dark:text-white/40 font-bold uppercase tracking-widest">ATÉ</span>
-          <input type="date" id="filter-date-end" onchange="renderDashboard()" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]" title="Data Final">
+        <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full">
+          <input type="date" id="filter-date-start" onchange="renderDashboard()" class="flex-1 min-w-[110px] border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]" title="Data Inicial">
+          <span class="text-[9px] text-ink-light dark:text-white/40 font-bold uppercase tracking-widest shrink-0">ATÉ</span>
+          <input type="date" id="filter-date-end" onchange="renderDashboard()" class="flex-1 min-w-[110px] border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]" title="Data Final">
         </div>
       </div>
     </div>
 
     <!-- KPI & Detalhes -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 lg:gap-8 w-full">
       
       <!-- Topo: 4 Cards de Resumo -->
-      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex items-start justify-between">
-        <div>
-          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Total de Avaliações</p>
-          <h2 id="kpi-total" class="text-3xl text-ink dark:text-white font-medium">0</h2>
+      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-5 md:p-6 flex items-start justify-between w-full">
+        <div class="min-w-0">
+          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1 truncate">Total Avaliações</p>
+          <h2 id="kpi-total" class="text-2xl md:text-3xl text-ink dark:text-white font-medium">0</h2>
         </div>
-        <div class="w-10 h-10 rounded-full bg-paper-dark/30 dark:bg-white/5 flex items-center justify-center text-ink-light dark:text-white/40 shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-paper-dark/30 dark:bg-white/5 flex items-center justify-center text-ink-light dark:text-white/40 shrink-0 ml-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
       </div>
       
-      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex items-start justify-between">
-        <div>
-          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Média Global</p>
-          <h2 class="text-3xl text-ink dark:text-white font-medium flex items-baseline gap-1">
-            <span id="kpi-media-txt">0.0</span><span class="text-sm text-ink-light dark:text-white/40">/5</span>
+      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-5 md:p-6 flex items-start justify-between w-full">
+        <div class="min-w-0">
+          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1 truncate">Média Global</p>
+          <h2 class="text-2xl md:text-3xl text-ink dark:text-white font-medium flex items-baseline gap-1">
+            <span id="kpi-media-txt">0.0</span><span class="text-xs md:text-sm text-ink-light dark:text-white/40">/5</span>
           </h2>
         </div>
-        <div class="relative w-12 h-12 shrink-0">
+        <div class="relative w-10 h-10 md:w-12 md:h-12 shrink-0 ml-2">
           <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
             <path class="text-paper-dark dark:text-white/10" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
             <path id="kpi-media-circle" class="text-accent transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -393,24 +393,24 @@
         </div>
       </div>
 
-      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex flex-col justify-start">
-        <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-3">Métrica(s) em Destaque</p>
-        <div id="kpi-destaque-container" class="flex flex-wrap gap-2">
+      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-5 md:p-6 flex flex-col justify-start w-full">
+        <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-3 truncate">Destaque(s)</p>
+        <div id="kpi-destaque-container" class="flex flex-wrap gap-1.5 md:gap-2">
           <span class="text-sm font-medium text-ink dark:text-white">-</span>
         </div>
       </div>
 
-      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex flex-col justify-start">
-        <p class="text-[9px] uppercase tracking-widest font-bold text-[#D96C53] dark:text-[#E5ACA0]/70 mb-3">Métrica(s) em Atenção</p>
-        <div id="kpi-atencao-container" class="flex flex-wrap gap-2">
+      <div class="md:col-span-6 lg:col-span-3 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-5 md:p-6 flex flex-col justify-start w-full">
+        <p class="text-[9px] uppercase tracking-widest font-bold text-[#D96C53] dark:text-[#E5ACA0]/70 mb-3 truncate">Atenção</p>
+        <div id="kpi-atencao-container" class="flex flex-wrap gap-1.5 md:gap-2">
           <span class="text-sm font-medium text-ink dark:text-white">-</span>
         </div>
       </div>
 
       <!-- Meio Esquerda: Gráfico Radar Vetorial -->
-      <div class="md:col-span-5 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex flex-col items-center justify-center relative min-h-[250px]">
-        <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 absolute top-6 left-6">Balanço do Perfil</h3>
-        <svg viewBox="0 0 120 120" class="w-full max-w-[220px] h-auto overflow-visible mt-4">
+      <div class="md:col-span-12 lg:col-span-5 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex flex-col items-center justify-center relative min-h-[220px] md:min-h-[250px] w-full">
+        <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 absolute top-4 left-4 md:top-6 md:left-6">Balanço do Perfil</h3>
+        <svg viewBox="0 0 120 120" class="w-full max-w-[200px] md:max-w-[220px] h-auto overflow-visible mt-6 md:mt-4">
           <!-- Background Grid Rings (Center 60,60 | Max Radius 40) -->
           <polygon points="60,20 100,60 60,100 20,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
           <polygon points="60,30 90,60 60,90 30,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
@@ -433,17 +433,17 @@
       </div>
 
       <!-- Meio Direita: Barras Detalhadas -->
-      <div class="md:col-span-7 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
-        <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Desempenho por Categoria</h3>
-        <div id="chart-container" class="flex flex-col gap-6">
+      <div class="md:col-span-12 lg:col-span-7 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-5 md:p-8 w-full">
+        <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 mb-5 md:mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Desempenho por Categoria</h3>
+        <div id="chart-container" class="flex flex-col gap-5 md:gap-6 w-full">
           <!-- Barras injetadas via JS -->
         </div>
       </div>
 
       <!-- Histórico Cronológico -->
-      <div class="md:col-span-12 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Histórico de Avaliações</h3>
-        <div id="history-list" class="flex flex-col gap-3 custom-scrollbar max-h-[400px] overflow-y-auto pr-2">
+      <div class="md:col-span-12 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-4 md:p-8 w-full">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-4 md:mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Histórico de Avaliações</h3>
+        <div id="history-list" class="flex flex-col gap-3 custom-scrollbar max-h-[400px] overflow-y-auto pr-1 md:pr-2 w-full">
           <!-- Histórico injetado via JS -->
         </div>
       </div>
@@ -453,19 +453,19 @@
   <!-- ========================================== -->
   <!-- MODAL DE VISÃO DETALHADA                   -->
   <!-- ========================================== -->
-  <div id="evaluation-modal" class="fixed inset-0 z-[100] bg-ink/60 dark:bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 md:p-6 opacity-0 transition-opacity duration-300">
-    <div class="bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 w-full max-w-[700px] max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl flex flex-col relative transform scale-95 transition-transform duration-300 rounded-[4px]">
+  <div id="evaluation-modal" class="fixed inset-0 z-[100] bg-ink/60 dark:bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 md:p-6 opacity-0 transition-opacity duration-300 w-full">
+    <div class="bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 w-full max-w-[700px] max-h-[95vh] md:max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl flex flex-col relative transform scale-95 transition-transform duration-300 rounded-[4px]">
       
       <!-- Header Modal -->
-      <div class="sticky top-0 bg-paper dark:bg-[#121212] border-b border-paper-dark dark:border-white/10 p-5 flex justify-between items-center z-10">
-        <h3 class="text-sm font-bold uppercase tracking-widest text-ink dark:text-white truncate pr-4" id="modal-title">Detalhes da Avaliação</h3>
-        <button onclick="closeModal()" class="text-ink-light hover:text-accent dark:text-white/50 dark:hover:text-white p-2 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      <div class="sticky top-0 bg-paper dark:bg-[#121212] border-b border-paper-dark dark:border-white/10 p-4 md:p-5 flex justify-between items-center z-10 w-full">
+        <h3 class="text-xs md:text-sm font-bold uppercase tracking-widest text-ink dark:text-white truncate pr-4 min-w-0" id="modal-title">Detalhes da Avaliação</h3>
+        <button onclick="closeModal()" class="text-ink-light hover:text-accent dark:text-white/50 dark:hover:text-white p-2 md:p-1 transition-colors shrink-0 bg-paper-dark/30 dark:bg-white/5 rounded-[4px] md:bg-transparent">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         </button>
       </div>
       
       <!-- Content Modal -->
-      <div id="modal-content" class="p-6 flex flex-col gap-6">
+      <div id="modal-content" class="p-4 md:p-6 flex flex-col gap-4 md:gap-6 w-full overflow-x-hidden">
           <!-- Injetado via JS -->
       </div>
     </div>
@@ -495,7 +495,7 @@
       { key: 'q2', shortTitle: "QUALIDADE", title: "Qualidade Técnica e Organização", description: "O material entregue estava organizado, seguindo o padrão da marca e pronto para uso sem gerar retrabalho?", minLabel: "Caótico", maxLabel: "Impecável", gifUrl: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHQzY3RwbXA3aWZ3czU0dTRhYTduOXFybnRleHBvbnVjYzZ4OXE2YiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VXEZKbtw9IVrhXHGas/giphy.gif" },
       { key: 'q3', shortTitle: "ESTRATÉGIA", title: "Alinhamento Estratégico com o Negócio", description: "Sente que a solução visual proposta resolveu o problema real do negócio ou do usuário?", minLabel: "Apenas estética", maxLabel: "Muito funcional", gifUrl: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGtmd2h4dG1sa2d4MWphb2Nldmh4Y2c0NmZxZW5udWM1NmlqdzlpdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Ke3CM1NVkULWo/giphy.gif" },
       { key: 'q5', shortTitle: "COMUNICAÇÃO", title: "Comunicação e Parceria", description: "Durante o processo, houve clareza na comunicação e facilidade para tirar dúvidas?", minLabel: "Isolado", maxLabel: "Parceria", gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXJ2ZjhlNnR5azRpam9hbnBvZmtzMHNzMngyZGt4Z201dmcycWVxZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2y6KS3wqgwBfO46Jyr/giphy.gif" },
-      { key: 'q4', shortTitle: "VALOR AGREGADO", title: "Valor Agregado e Proatividade", description: "O design entregue superou as expectativas iniciais? Houve proposição de caminhos melhores ou ideias além do briefing?", minLabel: "Abaixo das expectativas", midLabel: "O básico", maxLabel: "Superou", gifUrl: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2YyNWdyYXUwZDg0c2xwYXNtMzB0OWN5bnJ0aGtmcTVwcmpjMmcyOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/75ZaxapnyMp2w/giphy.gif", isExtra: true },
+      { key: 'q4', shortTitle: "VALOR AGREGADO", title: "Valor Agregado e Proatividade", description: "O design entregue superou as expectativas iniciais? Houve proposição de caminhos melhores ou ideias além do briefing?", minLabel: "Abaixo das exp.", midLabel: "O básico", maxLabel: "Superou", gifUrl: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2YyNWdyYXUwZDg0c2xwYXNtMzB0OWN5bnJ0aGtmcTVwcmpjMmcyOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/75ZaxapnyMp2w/giphy.gif", isExtra: true },
       { key: 'q6', shortTitle: "COMENTÁRIOS", title: "Feedback Aberto e Sugestões", description: "Tem alguma sugestão para otimizar o processo nesta entrega específica, identificou algum problema ou só quer demonstrar amor à objetivamente, a melhor dupla de designers desta empresa?", isText: true, gifUrl: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXpkb2ZiOHhyMjhnYm9vcGdnOHZxcmVpeWR5aWVob3Nwc2o0Ymh3NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FLKUJnRt6cGBG102B0/giphy.gif" }
     ];
 
@@ -667,8 +667,8 @@
       const btnForm = document.getElementById('btn-nav-form');
       const btnDash = document.getElementById('btn-nav-dashboard');
 
-      const activeClass = "btn-nav text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1";
-      const inactiveClass = "btn-nav text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1";
+      const activeClass = "btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1";
+      const inactiveClass = "btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1";
 
       // Exibe a tela alvo
       const targetView = document.getElementById(`view-${view}`);
@@ -786,7 +786,7 @@
         let buttonsHtml = '';
         for (let i = 1; i <= 5; i++) {
           const isSelected = formData[q.key] === i;
-          let baseClasses = "rating-circle w-10 h-10 md:w-12 md:h-12 rounded-full flex flex-col items-center justify-center border border-paper-dark dark:border-white/20 text-ink dark:text-white hover:border-accent dark:hover:border-accent cursor-pointer";
+          let baseClasses = "rating-circle w-full h-10 md:w-12 md:h-12 rounded-[4px] md:rounded-full flex flex-col items-center justify-center border border-paper-dark dark:border-white/20 text-ink dark:text-white hover:border-accent dark:hover:border-accent cursor-pointer";
           
           if (q.isExtra && isSelected) {
             baseClasses += " bg-amber-500 border-amber-500 text-white";
@@ -797,7 +797,7 @@
           buttonsHtml += `
             <button onclick="setAnswer(${i})" class="${baseClasses}">
               <span class="text-base md:text-lg leading-none mb-0.5">${emojis[i]}</span>
-              <span class="text-[9px] font-bold">${i}</span>
+              <span class="text-[9px] font-bold hidden md:block">${i}</span>
             </button>
           `;
         }
@@ -887,7 +887,7 @@
     function handleSubmit() {
       const btnSubmit = document.getElementById('btn-submit');
       if (btnSubmit) {
-          btnSubmit.innerHTML = 'A Enviar...';
+          btnSubmit.innerHTML = 'Enviando...';
           btnSubmit.disabled = true;
       }
 
@@ -985,8 +985,8 @@
         if (kpiAtencaoContainer) kpiAtencaoContainer.innerHTML = '<span class="text-sm animate-pulse text-ink-light dark:text-white/50">Buscando...</span>';
         if (kpiMediaCircle) kpiMediaCircle.setAttribute('stroke-dasharray', '0, 100');
         if (radarPolygon) radarPolygon.setAttribute('points', '60,60 60,60 60,60 60,60');
-        if (chartContainer) chartContainer.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-8 animate-pulse text-center">Sincronizando com o Google Sheets...</p>';
-        if (historyList) historyList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-4 animate-pulse text-center">Buscando histórico...</p>';
+        if (chartContainer) chartContainer.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-8 animate-pulse text-center w-full">Sincronizando com o Google Sheets...</p>';
+        if (historyList) historyList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-4 animate-pulse text-center w-full">Buscando histórico...</p>';
         return;
       }
 
@@ -1096,17 +1096,17 @@
 
       if (kpiDestaqueContainer) {
         if (topMetrics.length === 4) {
-          kpiDestaqueContainer.innerHTML = `<span class="inline-block px-2 py-1 bg-accent text-white text-[9px] uppercase tracking-widest font-bold rounded-[2px]">Equilíbrio Total</span>`;
+          kpiDestaqueContainer.innerHTML = `<span class="inline-block px-2 py-1 bg-accent text-white text-[9px] uppercase tracking-widest font-bold rounded-[2px] w-full text-center">Equilíbrio Total</span>`;
         } else {
-          kpiDestaqueContainer.innerHTML = topMetrics.map(m => `<span class="inline-block px-2 py-1 bg-accent/10 border border-accent/20 text-accent dark:text-[#72A68C] text-[9px] uppercase tracking-widest font-bold rounded-[2px]">${m}</span>`).join('');
+          kpiDestaqueContainer.innerHTML = topMetrics.map(m => `<span class="inline-block px-2 py-1 bg-accent/10 border border-accent/20 text-accent dark:text-[#72A68C] text-[9px] uppercase tracking-widest font-bold rounded-[2px] truncate max-w-full">${m}</span>`).join('');
         }
       }
 
       if (kpiAtencaoContainer) {
         if (bottomMetrics.length === 0) {
-          kpiAtencaoContainer.innerHTML = `<span class="inline-block px-2 py-1 bg-[#38805A]/10 border border-[#38805A]/20 text-[#38805A] dark:text-[#72A68C] text-[9px] uppercase tracking-widest font-bold rounded-[2px]">Tudo OK!</span>`;
+          kpiAtencaoContainer.innerHTML = `<span class="inline-block px-2 py-1 bg-[#38805A]/10 border border-[#38805A]/20 text-[#38805A] dark:text-[#72A68C] text-[9px] uppercase tracking-widest font-bold rounded-[2px] w-full text-center">Tudo OK!</span>`;
         } else {
-          kpiAtencaoContainer.innerHTML = bottomMetrics.map(m => `<span class="inline-block px-2 py-1 bg-[#E5ACA0]/10 border border-[#E5ACA0]/30 text-[#D96C53] dark:text-[#E5ACA0] text-[9px] uppercase tracking-widest font-bold rounded-[2px]">${m}</span>`).join('');
+          kpiAtencaoContainer.innerHTML = bottomMetrics.map(m => `<span class="inline-block px-2 py-1 bg-[#E5ACA0]/10 border border-[#E5ACA0]/30 text-[#D96C53] dark:text-[#E5ACA0] text-[9px] uppercase tracking-widest font-bold rounded-[2px] truncate max-w-full">${m}</span>`).join('');
         }
       }
 
@@ -1141,13 +1141,13 @@
             const color = item.isExtra ? 'bg-amber-500' : getBarColor(val);
             
             chartsHtml += `
-              <div class="${item.isExtra ? 'mt-3 pt-5 border-t border-paper-dark dark:border-white/10 relative' : ''}">
-                <div class="flex justify-between items-end mb-1.5">
-                  <span class="text-xs font-medium text-ink dark:text-white/90">
+              <div class="${item.isExtra ? 'mt-3 pt-5 border-t border-paper-dark dark:border-white/10 relative' : ''} w-full">
+                <div class="flex justify-between items-end mb-1.5 w-full gap-2">
+                  <span class="text-xs font-medium text-ink dark:text-white/90 truncate flex-1">
                     ${item.l}
-                    ${item.isExtra ? '<span class="text-[9px] uppercase tracking-widest text-amber-600 dark:text-amber-400 ml-1">(Bônus)</span>' : ''}
+                    ${item.isExtra ? '<span class="text-[9px] uppercase tracking-widest text-amber-600 dark:text-amber-400 ml-1 hidden sm:inline">(Bônus)</span>' : ''}
                   </span>
-                  <span class="font-bold text-ink dark:text-white text-sm">
+                  <span class="font-bold text-ink dark:text-white text-sm shrink-0">
                     ${val.toFixed(1)} <span class="font-normal text-[10px] text-ink-light dark:text-white/40">/ 5.0</span>
                   </span>
                 </div>
@@ -1168,33 +1168,33 @@
           const avg = validScores.length > 0 ? (validScores.reduce((a,b)=>a+b,0) / validScores.length).toFixed(1) : '-';
           
           return `
-          <div onclick="openModal(${s.id})" class="p-4 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] hover:border-accent dark:hover:border-accent cursor-pointer transition-colors flex flex-col gap-3 group">
-            <div class="flex flex-col md:flex-row justify-between md:items-start gap-4">
-              <div class="flex flex-col gap-1">
-                <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block">
+          <div onclick="openModal(${s.id})" class="p-4 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] hover:border-accent dark:hover:border-accent cursor-pointer transition-colors flex flex-col gap-3 group w-full overflow-hidden rounded-[2px]">
+            <div class="flex flex-col md:flex-row justify-between md:items-start gap-3 md:gap-4 w-full overflow-hidden">
+              <div class="flex flex-col gap-1 min-w-0 flex-1 w-full">
+                <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block truncate w-full">
                   ${new Date(s.date).toLocaleDateString('pt-BR')} • ${s.userName}
                 </span>
-                <span class="text-sm font-bold text-ink dark:text-white truncate max-w-[300px] md:max-w-[450px]" title="${s.requestTitle}">
+                <span class="text-[13px] md:text-sm font-bold text-ink dark:text-white truncate w-full block" title="${s.requestTitle}">
                   ${s.requestTitle}
                 </span>
-                <span class="text-[10px] text-ink-light dark:text-white/50">Designer: <span class="text-accent dark:text-accent-light font-bold">${s.designer}</span></span>
+                <span class="text-[10px] text-ink-light dark:text-white/50 truncate w-full block">Designer: <span class="text-accent dark:text-accent-light font-bold">${s.designer}</span></span>
               </div>
-              <div class="flex items-center gap-4">
+              <div class="flex items-center gap-4 shrink-0 mt-2 md:mt-0">
                 <div class="flex flex-col items-start md:items-end">
                   <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40">${isGeral ? 'Tipo' : 'Média'}</span>
                   ${isGeral 
-                    ? `<span class="text-xs font-bold text-ink-light dark:text-white/50 mt-1 uppercase tracking-widest bg-paper-dark/30 dark:bg-white/5 px-2 py-0.5 rounded-[2px]">Geral</span>` 
-                    : `<span class="text-lg font-medium ${avg >= 4 ? 'text-accent' : (avg >= 3 ? 'text-[#E5D0A0]' : 'text-[#E5ACA0]')}">${avg}</span>`
+                    ? `<span class="text-[10px] md:text-xs font-bold text-ink-light dark:text-white/50 mt-1 uppercase tracking-widest bg-paper-dark/30 dark:bg-white/5 px-2 py-0.5 rounded-[2px]">Geral</span>` 
+                    : `<span class="text-base md:text-lg font-medium ${avg >= 4 ? 'text-accent' : (avg >= 3 ? 'text-[#E5D0A0]' : 'text-[#E5ACA0]')}">${avg}</span>`
                   }
                 </div>
                 <div class="w-8 h-8 rounded-full flex items-center justify-center bg-paper-dark/30 dark:bg-white/5 text-ink-light dark:text-white/50 group-hover:bg-accent group-hover:text-white transition-colors shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </div>
               </div>
             </div>
             ${s.q6 ? `
-            <div class="border-t border-paper-dark dark:border-white/5 pt-2">
-              <p class="text-xs text-ink-light dark:text-white/60 italic truncate">"${s.q6}"</p>
+            <div class="border-t border-paper-dark dark:border-white/5 pt-2 w-full overflow-hidden">
+              <p class="text-[11px] md:text-xs text-ink-light dark:text-white/60 italic truncate w-full">"${s.q6}"</p>
             </div>
             ` : ''}
           </div>
@@ -1220,53 +1220,53 @@
       const getNotaHtml = (label, nota, comment) => {
         if (!nota || nota === 0) return '';
         return `
-        <div class="flex flex-col gap-1 pb-4 border-b border-paper-dark dark:border-white/5 last:border-0">
-          <div class="flex justify-between items-end">
-            <span class="text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50">${label}</span>
-            <span class="text-base font-bold ${nota >= 4 ? 'text-accent' : (nota >= 3 ? 'text-[#E5D0A0]' : 'text-[#E5ACA0]')}">${nota}/5</span>
+        <div class="flex flex-col gap-1 pb-4 border-b border-paper-dark dark:border-white/5 last:border-0 w-full overflow-hidden">
+          <div class="flex justify-between items-center sm:items-end gap-2 w-full">
+            <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 break-words whitespace-normal leading-tight w-full">${label}</span>
+            <span class="text-sm md:text-base font-bold shrink-0 ${nota >= 4 ? 'text-accent' : (nota >= 3 ? 'text-[#E5D0A0]' : 'text-[#E5ACA0]')}">${nota}/5</span>
           </div>
-          ${comment ? `<p class="text-xs text-ink dark:text-white/80 italic mt-1 bg-paper-dark/30 dark:bg-white/5 p-3 border-l-2 border-accent whitespace-pre-wrap break-words">"${comment}"</p>` : ''}
+          ${comment ? `<p class="text-[11px] md:text-xs text-ink dark:text-white/80 italic mt-2 bg-paper-dark/30 dark:bg-white/5 p-3 border-l-2 border-accent whitespace-pre-wrap break-words w-full">"${comment}"</p>` : ''}
         </div>
         `;
       };
 
       modalContent.innerHTML = `
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2 bg-paper-dark/30 dark:bg-white/5 p-4 rounded-[4px]">
-          <div>
-            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Avaliador</span>
-            <span class="text-sm font-medium text-ink dark:text-white">${submission.userName}</span>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-2 bg-paper-dark/30 dark:bg-white/5 p-4 rounded-[4px] w-full">
+          <div class="min-w-0">
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1 truncate">Avaliador</span>
+            <span class="text-xs md:text-sm font-medium text-ink dark:text-white truncate block">${submission.userName}</span>
           </div>
-          <div>
-            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Designer</span>
-            <span class="text-sm font-medium text-ink dark:text-white">${submission.designer}</span>
+          <div class="min-w-0">
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1 truncate">Designer</span>
+            <span class="text-xs md:text-sm font-medium text-ink dark:text-white truncate block">${submission.designer}</span>
           </div>
-          <div>
-            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Data</span>
-            <span class="text-sm font-medium text-ink dark:text-white">${new Date(submission.date).toLocaleDateString('pt-BR')}</span>
+          <div class="min-w-0">
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1 truncate">Data</span>
+            <span class="text-xs md:text-sm font-medium text-ink dark:text-white truncate block">${new Date(submission.date).toLocaleDateString('pt-BR')}</span>
           </div>
-          <div>
-            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">${isGeral ? 'Tipo' : 'Média'}</span>
+          <div class="min-w-0">
+            <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1 truncate">${isGeral ? 'Tipo' : 'Média'}</span>
             ${isGeral 
-              ? `<span class="text-xs font-bold text-ink-light dark:text-white/50 uppercase tracking-widest">Geral</span>` 
-              : `<span class="text-sm font-bold text-accent">${avg} <span class="font-normal text-[10px]">/5.0</span></span>`
+              ? `<span class="text-[10px] md:text-xs font-bold text-ink-light dark:text-white/50 uppercase tracking-widest block truncate">Geral</span>` 
+              : `<span class="text-xs md:text-sm font-bold text-accent block truncate">${avg} <span class="font-normal text-[10px]">/5.0</span></span>`
             }
           </div>
         </div>
 
         ${!isGeral ? `
-        <div class="flex flex-col gap-2 mt-4">
-          ${getNotaHtml('1. Prazo e Gestão de Tempo', submission.q1, submission.q1_comment)}
-          ${getNotaHtml('2. Qualidade e Organização', submission.q2, submission.q2_comment)}
-          ${getNotaHtml('3. Alinhamento Estratégico', submission.q3, submission.q3_comment)}
-          ${getNotaHtml('4. Comunicação e Parceria', submission.q5, submission.q5_comment)}
-          ${getNotaHtml('5. Valor Agregado (Bônus)', submission.q4, submission.q4_comment)}
+        <div class="flex flex-col gap-2 mt-2 md:mt-4 w-full overflow-hidden">
+          ${getNotaHtml('1. Prazo e Gestão', submission.q1, submission.q1_comment)}
+          ${getNotaHtml('2. Qualidade Técnica', submission.q2, submission.q2_comment)}
+          ${getNotaHtml('3. Estratégia', submission.q3, submission.q3_comment)}
+          ${getNotaHtml('4. Comunicação', submission.q5, submission.q5_comment)}
+          ${getNotaHtml('5. Valor Agregado', submission.q4, submission.q4_comment)}
         </div>
         ` : ''}
 
         ${submission.q6 ? `
-        <div class="${!isGeral ? 'mt-2 pt-4 border-t border-paper-dark dark:border-white/10' : 'mt-2'}">
+        <div class="${!isGeral ? 'mt-2 pt-4 border-t border-paper-dark dark:border-white/10' : 'mt-2'} w-full overflow-hidden">
           <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 block mb-2">Feedback Aberto</span>
-          <p class="text-sm text-ink dark:text-white/90 leading-relaxed bg-paper dark:bg-[#1A1A1A] p-4 border border-paper-dark dark:border-white/10 italic whitespace-pre-wrap break-words">"${submission.q6}"</p>
+          <p class="text-[11px] md:text-sm text-ink dark:text-white/90 leading-relaxed bg-paper dark:bg-[#1A1A1A] p-3 md:p-4 border border-paper-dark dark:border-white/10 italic whitespace-pre-wrap break-words w-full">"${submission.q6}"</p>
         </div>
         ` : ''}
       `;
