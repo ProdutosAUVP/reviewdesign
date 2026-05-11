@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satisfação Time de Design - Avaliação</title>
+  
+  <!-- Fonte: Satoshi -->
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Configuração do Tailwind -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            satoshi: ['Satoshi', 'sans-serif'],
+          },
+          colors: {
+            paper: {
+              DEFAULT: '#F9F8F6',
+              dark: '#EAE7E0',
+            },
+            ink: {
+              DEFAULT: '#1C1C1C',
+              light: '#595959',
+            },
+            accent: {
+              DEFAULT: '#2C5545',
+              light: '#E2E8E4',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- CSS Customizado -->
+  <style>
+    body { font-family: 'Satoshi', sans-serif; }
+
+    /* Background Grid Decorativo */
+    .bg-grid {
+      background-size: 40px 40px;
+      background-image: linear-gradient(to right, rgba(28, 28, 28, 0.04) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(28, 28, 28, 0.04) 1px, transparent 1px);
+    }
+    html.dark .bg-grid {
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    
+    /* Textura de ruído simulando papel/impressão */
+    .paper-texture {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+    
+    html.dark .paper-texture {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4d4d8; }
+    html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; }
+    
+    /* Botões de rádio analógicos customizados */
+    .rating-circle { transition: all 0.2s ease; }
+    .rating-circle.selected {
+      background-color: #2C5545;
+      color: white;
+      border-color: #2C5545;
+    }
+  </style>
+</head>
+<body class="bg-paper dark:bg-[#121212] text-ink dark:text-[#E0E0E0] transition-colors duration-500 relative overflow-x-hidden selection:bg-accent/20">
+
+  <!-- TEXTURA DE PAPEL FIXA -->
+  <div class="fixed inset-0 z-[-1] paper-texture bg-grid pointer-events-none"></div>
+
+  <!-- HEADER EDITORIAL -->
+  <nav class="sticky top-0 z-50 bg-paper/90 dark:bg-[#121212]/90 backdrop-blur-sm border-b border-paper-dark dark:border-white/10 transition-colors duration-500">
+    <div class="max-w-[900px] mx-auto px-6 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="flex flex-col">
+          <span class="text-xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-0.5">
+            Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#5A8770] italic font-light tracking-tight">Design.</span>
+          </span>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-4 md:gap-6">
+        <button id="btn-nav-form" onclick="returnToFormOrIntro()" class="btn-nav text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1">
+          Formulário
+        </button>
+        <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" class="btn-nav text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
+          Painel
+        </button>
+        <div class="w-[1px] h-3 bg-paper-dark dark:bg-white/10"></div>
+        <button onclick="toggleTheme()" class="text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300" aria-label="Alternar Tema">
+          <svg id="icon-sun" class="hidden dark:block" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <svg id="icon-moon" class="block dark:hidden" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- VISÃO 0: INTRO / IDENTIFICAÇÃO             -->
+  <!-- ========================================== -->
+  <main id="view-intro" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] block">
+    <div class="w-full max-w-[600px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-10 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+      
+      <!-- CABEÇALHO INTRO (Fixo) -->
+      <div>
+        <div class="relative">
+          <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2">
+            Identificação.
+          </h1>
+          <p class="text-xs text-ink-light dark:text-white/60 font-medium mt-3 font-satoshi">
+            Antes de iniciarmos, por favor, identifique-se e informe a demanda que será avaliada.
+          </p>
+        </div>
+
+        <!-- Toggle Tipo de Revisão -->
+        <div class="flex p-1 bg-paper-dark/50 dark:bg-white/5 rounded-[4px] mt-6 mb-6">
+          <button id="toggle-demanda" onclick="setReviewType('demanda')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-white dark:bg-[#2A2A2A] shadow-sm rounded-[2px] text-ink dark:text-white transition-all">
+            Demanda Específica
+          </button>
+          <button id="toggle-geral" onclick="setReviewType('geral')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:text-ink dark:hover:text-white transition-all">
+            Avaliação Geral
+          </button>
+        </div>
+
+        <!-- Divisor Fixo -->
+        <div class="border-b border-paper-dark dark:border-white/10 mb-6"></div>
+      </div>
+
+      <!-- FORMULÁRIO INTRO (Variável/Expansível) -->
+      <div class="flex flex-col gap-6">
+        
+        <div>
+          <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Quem é você?</label>
+          <input type="text" id="user-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira o seu nome...">
+        </div>
+
+        <div>
+          <label id="designer-label" class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2 transition-colors">Quem realizou o design?</label>
+          <select id="designer-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer">
+            <option value="" disabled selected class="text-ink-light bg-white dark:bg-[#1A1A1A]">Selecione o designer...</option>
+            <option value="Armando" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Armando</option>
+            <option value="Eria" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Eria</option>
+            <option value="Ambos (Time de Design)" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Ambos (Time de Design)</option>
+          </select>
+        </div>
+
+        <div id="request-field-container" class="transition-all duration-300">
+          <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Qual foi a solicitação?</label>
+          <input type="text" id="request-title" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: [AUVP Capital] Criar o mockup do brinde Y">
+          <p class="text-[10px] text-accent dark:text-accent-light mt-2 italic">
+            * Siga o padrão do título da tarefa: [NOME DO PRODUTO] Do que se trata. Use o mesmo nome da tarefa criada no formulário de design.
+          </p>
+        </div>
+
+        <!-- Erro -->
+        <p id="intro-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest">Preencha todos os campos obrigatórios.</p>
+
+        <div class="mt-2">
+          <button onclick="startForm()" class="w-full justify-center px-8 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity flex items-center gap-2">
+            Iniciar Revisão →
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- VISÃO 1: FORMULÁRIO WIZARD                 -->
+  <!-- ========================================== -->
+  <main id="view-form" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
+    
+    <!-- WIZARD CONTAINER (CARTÃO COMPACTO) -->
+    <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+      
+      <!-- Cabeçalho Integrado (Título e Progresso) -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-paper-dark dark:border-white/10 pb-4 mb-6 gap-6">
+        <div class="relative">
+          <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2 md:mt-0">
+            Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#5A8770] italic font-light tracking-tight">Design.</span>
+          </h1>
+          <p id="form-subtitle" class="text-xs text-ink-light dark:text-white/60 font-medium mt-2 font-satoshi max-w-sm">
+            Ajude o time de produto moldar o futuro das nossas entregas de design em menos de 1 minuto!
+          </p>
+        </div>
+
+        <!-- Progresso Compacto -->
+        <div id="progress-container" class="w-full md:w-1/3 flex flex-col justify-end block">
+          <div class="flex justify-between items-end mb-2">
+            <span class="text-[9px] uppercase font-bold tracking-widest text-ink-light dark:text-white/50">Progresso</span>
+            <span id="step-counter" class="text-xs font-bold text-ink dark:text-white">01/06</span>
+          </div>
+          <div class="w-full h-[2px] bg-paper-dark dark:bg-white/10 relative overflow-hidden">
+            <div id="progress-bar" class="absolute top-0 left-0 h-[2px] bg-accent transition-all duration-500 ease-out" style="width: 16.66%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo da Pergunta -->
+      <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
+        
+        <!-- Lado Esquerdo: GIF Analógico Reduzido -->
+        <div class="md:w-1/3 flex flex-col shrink-0">
+          <div class="w-full aspect-square bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 p-1.5 shadow-sm relative group overflow-hidden">
+            <img id="question-gif" src="https://media.giphy.com/media/3o7TKDk86g4k5E6ZPO/giphy.gif" alt="Animação da pergunta" class="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105" loading="lazy"/>
+          </div>
+        </div>
+
+        <!-- Lado Direito: Pergunta & Avaliação -->
+        <div class="md:w-2/3 flex flex-col justify-start">
+          <span id="question-badge" class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-3">
+            PASSO_01
+          </span>
+          
+          <h2 id="question-title" class="text-xl md:text-2xl font-medium mb-2 text-ink dark:text-white leading-tight">
+            Prazo e Pontualidade
+          </h2>
+          <p id="question-desc" class="text-sm mb-6 text-ink-light dark:text-white/70 leading-relaxed min-h-[40px]">
+            A entrega foi realizada dentro do cronograma acordado ou antes do prazo estipulado?
+          </p>
+
+          <!-- Respostas (Escala) -->
+          <div id="rating-container" class="mt-auto block">
+            <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 border-b border-paper-dark dark:border-white/10 pb-1.5">
+              <span id="label-min">1 - Muito atraso</span>
+              <span id="label-max">5 - No prazo</span>
+            </div>
+            <div class="flex justify-between items-center px-1 py-4" id="rating-buttons">
+              <!-- Botões gerados via JS -->
+            </div>
+          </div>
+
+          <!-- Respostas (Texto Opcional) -->
+          <div id="text-container" class="mt-auto hidden">
+            <textarea id="feedback-text" rows="3" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira as suas considerações (opcional)..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rodapé de Navegação (Interno ao Cartão) -->
+      <div class="w-full flex justify-between items-center mt-6 pt-4 border-t border-paper-dark dark:border-white/10">
+        <button id="btn-prev" onclick="handlePrev()" class="text-[10px] uppercase tracking-widest font-bold text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-colors disabled:opacity-0 flex items-center gap-1.5">
+          ← Anterior
+        </button>
+
+        <button id="btn-next" onclick="handleNext()" class="px-6 py-2.5 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
+          Próxima →
+        </button>
+
+        <button id="btn-submit" onclick="handleSubmit()" class="hidden px-6 py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed items-center gap-2">
+          Finalizar Envio
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- VISÃO: SUCESSO (Oculta por padrão)         -->
+  <!-- ========================================== -->
+  <div id="view-success" class="max-w-[600px] mx-auto mt-20 px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center">
+    <div class="w-12 h-12 mx-auto border-2 border-accent text-accent rounded-full flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+    </div>
+    <h2 class="text-3xl font-medium text-ink dark:text-white mb-3">Agradecemos o seu tempo.</h2>
+    <p class="text-sm text-ink-light dark:text-white/70 mb-8">As suas percepções foram registradas e serão essenciais para calibrar os nossos processos de design.</p>
+    
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <button onclick="resetForm()" class="w-full sm:w-auto px-6 py-3 border border-paper-dark dark:border-white/20 text-ink dark:text-white text-[10px] uppercase tracking-widest font-bold hover:border-ink dark:hover:border-white transition-colors">
+        Submeter nova avaliação
+      </button>
+      <a href="https://app.clickup.com/36903956/v/fm/13670m-92951" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-6 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity flex justify-center items-center gap-2">
+        Criar nova demanda
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- VISÃO: AUTENTICAÇÃO DO PAINEL              -->
+  <!-- ========================================== -->
+  <main id="view-auth" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
+    <div class="w-full max-w-[400px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+      <div class="mb-6 border-b border-paper-dark dark:border-white/10 pb-4">
+        <h2 class="text-2xl font-medium text-ink dark:text-white mb-2">Acesso Restrito</h2>
+        <p class="text-xs text-ink-light dark:text-white/60 font-satoshi">Insira a senha para visualizar as métricas.</p>
+      </div>
+      
+      <input type="password" id="admin-password" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="••••••••">
+      <p id="auth-error" class="text-[9px] text-[#E5ACA0] mt-2 hidden font-bold uppercase tracking-widest">Senha incorreta.</p>
+      
+      <button onclick="checkPassword()" class="w-full mt-6 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity">Acessar Painel</button>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- VISÃO 2: DASHBOARD ANALÍTICA               -->
+  <!-- ========================================== -->
+  <div id="view-dashboard" class="max-w-[900px] mx-auto px-4 py-8 md:py-12 animate-[fadeIn_0.5s_ease-in-out] hidden">
+    
+    <div class="mb-10 border-b border-paper-dark dark:border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div class="relative">
+        <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-ink dark:text-white uppercase leading-[0.9] font-satoshi">
+          Painel de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#5A8770] italic font-light tracking-tight">Métricas.</span>
+        </h1>
+      </div>
+      <div class="text-left md:text-right">
+        <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Média Global da Qualidade</p>
+        <div class="flex items-baseline justify-start md:justify-end gap-1">
+          <h2 id="kpi-media" class="text-3xl text-accent leading-none font-medium">0.00</h2>
+          <span class="text-xs text-ink-light dark:text-white/40">/ 5.0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros do Painel -->
+    <div class="flex flex-col sm:flex-row gap-6 mb-10 p-5 border border-paper-dark dark:border-white/10 bg-white dark:bg-[#1A1A1A]">
+      <div class="flex-1">
+        <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Filtrar por Designer</label>
+        <select id="filter-designer" onchange="renderDashboard()" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer">
+          <option value="all" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Todos os Designers</option>
+          <option value="Armando" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Armando</option>
+          <option value="Eria" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Eria</option>
+          <option value="Ambos (Time de Design)" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Ambos (Time de Design)</option>
+        </select>
+      </div>
+      <div class="flex-1">
+        <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Filtrar por Período</label>
+        <div class="flex items-center gap-3">
+          <input type="date" id="filter-date-start" onchange="renderDashboard()" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]" title="Data Inicial">
+          <span class="text-[9px] text-ink-light dark:text-white/40 font-bold uppercase tracking-widest">ATÉ</span>
+          <input type="date" id="filter-date-end" onchange="renderDashboard()" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]" title="Data Final">
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI & Detalhes -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+      
+      <!-- Coluna Esquerda: Resumo -->
+      <div class="md:col-span-4 flex flex-col gap-6">
+        <div class="bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6">
+          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Total de Avaliações</p>
+          <h2 id="kpi-total" class="text-2xl text-ink dark:text-white font-medium">0</h2>
+        </div>
+        
+        <div class="bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6">
+          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Métrica Destaque</p>
+          <h2 id="kpi-destaque" class="text-lg text-ink dark:text-white leading-tight font-medium">-</h2>
+        </div>
+      </div>
+
+      <!-- Coluna Direita: Barras -->
+      <div class="md:col-span-8 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Desempenho por Categoria</h3>
+        <div id="chart-container" class="flex flex-col gap-6">
+          <!-- Barras injetadas via JS -->
+        </div>
+      </div>
+
+      <!-- Feedbacks Abertos -->
+      <div class="md:col-span-12 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Anotações & Comentários</h3>
+        <div id="feedback-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 custom-scrollbar max-h-[300px] overflow-y-auto pr-2">
+          <!-- Feedbacks injetados via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: LÓGICA E ESTADO DA APLICAÇÃO   -->
+  <!-- ========================================== -->
+  <script>
+    // Sistema de cor automática baseado no SO
+    function applySystemTheme() {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+
+    // Inicializa o tema ao carregar
+    applySystemTheme();
+
+    // Ouve mudanças de tema do sistema operacional
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
+
+    const formQuestions = [
+      { key: 'q1', shortTitle: "PRAZO", title: "Prazo e Gestão de Tempo", description: "A entrega foi realizada dentro do cronograma acordado ou antes do prazo estipulado? <span class=\"group relative inline-flex items-center justify-center cursor-help ml-1 align-middle\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"text-ink-light dark:text-white/50 hover:text-accent transition-colors\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/></svg><span class=\"invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-ink text-paper dark:bg-[#2A2A2A] dark:border dark:border-white/10 dark:text-white text-[10px] leading-relaxed rounded shadow-lg z-50 pointer-events-none text-center\">Se houveram mudanças de cronograma, elas devem ter sido acordadas com você antes ou no recebimento da demanda, e reorganizadas conforme as prioridades.</span></span>", minLabel: "Muito atraso", maxLabel: "No prazo", gifUrl: "https://media.giphy.com/media/ORPubLtAJdJjAuvEx0/giphy.gif" },
+      { key: 'q2', shortTitle: "QUALIDADE", title: "Qualidade Técnica e Organização", description: "O material entregue estava organizado, seguindo o padrão da marca e pronto para uso sem gerar retrabalho?", minLabel: "Caótico", maxLabel: "Impecável", gifUrl: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHQzY3RwbXA3aWZ3czU0dTRhYTduOXFybnRleHBvbnVjYzZ4OXE2YiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VXEZKbtw9IVrhXHGas/giphy.gif" },
+      { key: 'q3', shortTitle: "ESTRATÉGIA", title: "Alinhamento Estratégico com o Negócio", description: "Sente que a solução visual proposta resolveu o problema real do negócio ou do usuário?", minLabel: "Apenas estética", maxLabel: "Muito funcional", gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWpnNTFtazdwam9kMTZ6eXE4anFrOXRydnZrbWczejdoYzhzNGo3NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/fl0B5TLMTYLPvNervP/giphy.gif" },
+      { key: 'q5', shortTitle: "COMUNICAÇÃO", title: "Comunicação e Parceria", description: "Durante o processo, houve clareza na comunicação e facilidade para tirar dúvidas?", minLabel: "Isolado", maxLabel: "Parceria", gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXJ2ZjhlNnR5azRpam9hbnBvZmtzMHNzMngyZGt4Z201dmcycWVxZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2y6KS3wqgwBfO46Jyr/giphy.gif" },
+      { key: 'q4', shortTitle: "VALOR AGREGADO", title: "Valor Agregado e Proatividade", description: "O design entregue superou as expectativas iniciais? Houve proposição de caminhos melhores ou ideias além do briefing?", minLabel: "O básico", maxLabel: "Superou", gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYm90NWczZHF0NmpueWFwNDY4eTd6Y3N5Zzg2cnprcHFlbGFkMzBodSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1L5YuA6wpKkNO/giphy.gif", isExtra: true },
+      { key: 'q6', shortTitle: "COMENTÁRIOS", title: "Feedback Aberto e Sugestões", description: "Tem alguma sugestão para otimizar o processo nesta entrega específica ou identificou algum gargalo?", isText: true, gifUrl: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZHUxdHZieHhlNTRmNDB6ZWs5YzR3eGJpZmxqOHQ1cWpwYnQzanh2MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pUeXcg80cO8I8/giphy.gif" }
+    ];
+
+    const emojis = { 1: '😡', 2: '😕', 3: '😐', 4: '🙂', 5: '🤩' };
+
+    // --- CONFIGURAÇÃO GOOGLE SHEETS ---
+    // Cole aqui a URL gerada no Google Apps Script (Siga o passo a passo)
+    const GOOGLE_SHEET_URL = 'SUA_URL_DO_WEB_APP_AQUI';
+
+    // --- PRELOAD DOS GIFS ---
+    // Faz o download de todos os GIFs em background assim que o site carrega,
+    // garantindo troca instantânea (sem engasgos) entre as perguntas.
+    const preloadedGifs = [];
+    formQuestions.forEach(q => {
+      if (q.gifUrl) {
+        const img = new Image();
+        img.src = q.gifUrl;
+        preloadedGifs.push(img);
+      }
+    });
+
+    let currentStep = 0;
+    let reviewType = 'demanda'; // 'demanda' ou 'geral'
+    let isGeneralReview = false;
+    let formData = { userName: '', designer: '', requestTitle: '', q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: '' };
+    
+    // Submissions mock para a dashboard inicial (será somado aos novos envios locais)
+    let submissions = [
+      { id: 1, date: '2026-05-01', userName: 'João Silva', designer: 'Armando', requestTitle: '[AUVP Capital] Criar o mockup do brinde Y', q1: 5, q2: 4, q3: 5, q4: 4, q5: 5, q6: 'Ótima entrega, o arquivo estava super organizado.' },
+      { id: 2, date: '2026-05-02', userName: 'Maria Souza', designer: 'Eria', requestTitle: '[RH] Logo para comunicado', q1: 4, q2: 5, q3: 4, q4: 3, q5: 4, q6: 'No geral muito bom, mas senti falta de alguns estados de hover.' }
+    ];
+
+    let isAuthenticated = false;
+
+    // --- NOVA LÓGICA DE INICIALIZAÇÃO ---
+    function setReviewType(type) {
+      reviewType = type;
+      const btnDemanda = document.getElementById('toggle-demanda');
+      const btnGeral = document.getElementById('toggle-geral');
+      const reqContainer = document.getElementById('request-field-container');
+      const designerLabel = document.getElementById('designer-label');
+
+      const activeClass = "flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-white dark:bg-[#2A2A2A] shadow-sm rounded-[2px] text-ink dark:text-white transition-all";
+      const inactiveClass = "flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:text-ink dark:hover:text-white transition-all";
+
+      if (type === 'demanda') {
+        if (btnDemanda) btnDemanda.className = activeClass;
+        if (btnGeral) btnGeral.className = inactiveClass;
+        if (reqContainer) reqContainer.classList.remove('hidden');
+        if (designerLabel) designerLabel.innerText = "Quem realizou o design?";
+      } else {
+        if (btnGeral) btnGeral.className = activeClass;
+        if (btnDemanda) btnDemanda.className = inactiveClass;
+        if (reqContainer) reqContainer.classList.add('hidden');
+        if (designerLabel) designerLabel.innerText = "Quem deseja avaliar?";
+      }
+    }
+
+    function startForm() {
+      const nameInput = document.getElementById('user-name');
+      const designerInput = document.getElementById('designer-name');
+      const reqInput = document.getElementById('request-title');
+      const errorMsg = document.getElementById('intro-error');
+
+      const nameVal = nameInput ? nameInput.value.trim() : '';
+      const designerVal = designerInput ? designerInput.value : '';
+      const reqVal = reqInput ? reqInput.value.trim() : '';
+
+      isGeneralReview = (reviewType === 'geral');
+
+      if (!nameVal || !designerVal || (!isGeneralReview && !reqVal)) {
+        if (errorMsg) {
+            errorMsg.innerText = "Por favor, preencha todos os campos obrigatórios.";
+            errorMsg.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (errorMsg) errorMsg.classList.add('hidden');
+      
+      formData.userName = nameVal;
+      formData.designer = designerVal;
+      formData.requestTitle = isGeneralReview ? 'Avaliação Geral / Feedback Aberto' : reqVal;
+
+      if (isGeneralReview) {
+        currentStep = 5; // Vai direto para o passo 6 (Comentários Abertos, index 5)
+      } else {
+        currentStep = 0; // Inicia do passo 1
+      }
+
+      switchView('form');
+      renderStep();
+    }
+
+    function attemptDashboardAccess() {
+      if (isAuthenticated) {
+        switchView('dashboard');
+      } else {
+        switchView('auth');
+      }
+    }
+
+    function checkPassword() {
+      const passInput = document.getElementById('admin-password');
+      const errorMsg = document.getElementById('auth-error');
+      
+      if (passInput && passInput.value === 'cordaniel') {
+        isAuthenticated = true;
+        if (errorMsg) errorMsg.classList.add('hidden');
+        passInput.value = '';
+        switchView('dashboard');
+      } else {
+        if (errorMsg) errorMsg.classList.remove('hidden');
+      }
+    }
+
+    function returnToFormOrIntro() {
+      const viewSuccess = document.getElementById('view-success');
+      
+      // Se a avaliação já foi enviada (tela de sucesso visível), recomeça o fluxo
+      if (viewSuccess && !viewSuccess.classList.contains('hidden')) {
+        resetForm();
+        return;
+      }
+
+      // Se já iniciou o preenchimento (tem nome cadastrado), volta para a pergunta onde parou
+      if (formData && formData.userName !== '') {
+        switchView('form');
+      } else {
+        switchView('intro');
+      }
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    function switchView(view) {
+      const views = ['view-intro', 'view-form', 'view-success', 'view-dashboard', 'view-auth'];
+      
+      // Esconde todas as telas de forma segura
+      views.forEach(v => {
+        const el = document.getElementById(v);
+        if (el) el.classList.add('hidden');
+      });
+      
+      const btnForm = document.getElementById('btn-nav-form');
+      const btnDash = document.getElementById('btn-nav-dashboard');
+
+      const activeClass = "btn-nav text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1";
+      const inactiveClass = "btn-nav text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1";
+
+      // Exibe a tela alvo
+      const targetView = document.getElementById(`view-${view}`);
+      if (targetView) targetView.classList.remove('hidden');
+
+      // Manipula botões da navegação
+      if (view === 'form' || view === 'intro' || view === 'success') {
+        if (btnForm) btnForm.className = activeClass;
+        if (btnDash) btnDash.className = inactiveClass;
+      } else if (view === 'dashboard' || view === 'auth') {
+        if (btnDash) btnDash.className = activeClass;
+        if (btnForm) btnForm.className = inactiveClass;
+        if (view === 'dashboard') renderDashboard();
+      }
+    }
+
+    function renderStep() {
+      const q = formQuestions[currentStep];
+      if (!q) return;
+      
+      const stepNum = String(currentStep + 1).padStart(2, '0');
+      const totalSteps = String(formQuestions.length).padStart(2, '0');
+
+      const progressContainer = document.getElementById('progress-container');
+      const badge = document.getElementById('question-badge');
+      const stepCounter = document.getElementById('step-counter');
+      const progressBar = document.getElementById('progress-bar');
+
+      if (isGeneralReview) {
+        if (progressContainer) {
+            progressContainer.classList.add('hidden');
+            progressContainer.classList.remove('block');
+        }
+        if (badge) {
+            badge.innerText = `AVALIAÇÃO GERAL`;
+            badge.className = "inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-3";
+        }
+      } else {
+        if (progressContainer) {
+            progressContainer.classList.remove('hidden');
+            progressContainer.classList.add('block');
+        }
+        if (stepCounter) stepCounter.innerText = `${stepNum}/${totalSteps}`;
+        if (progressBar) progressBar.style.width = `${((currentStep + 1) / formQuestions.length) * 100}%`;
+        
+        if (badge) {
+            if (q.isExtra) {
+              badge.innerText = `PASSO_${stepNum} • ${q.shortTitle} (BÔNUS)`;
+              badge.className = "inline-block py-0.5 px-2 border border-amber-500/30 text-[9px] font-bold tracking-widest bg-amber-500/10 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 uppercase w-max mb-3";
+            } else {
+              badge.innerText = `PASSO_${stepNum} • ${q.shortTitle}`;
+              badge.className = "inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-3";
+            }
+        }
+      }
+
+      const qTitle = document.getElementById('question-title');
+      const qDesc = document.getElementById('question-desc');
+      const qGif = document.getElementById('question-gif');
+
+      if (qTitle) qTitle.innerText = q.title;
+      if (qDesc) qDesc.innerHTML = q.description;
+      if (qGif) qGif.src = q.gifUrl;
+
+      const ratingContainer = document.getElementById('rating-container');
+      const textContainer = document.getElementById('text-container');
+      const feedbackText = document.getElementById('feedback-text');
+
+      if (q.isText) {
+        if (ratingContainer) ratingContainer.classList.add('hidden');
+        if (textContainer) textContainer.classList.remove('hidden');
+        if (feedbackText) feedbackText.value = formData[q.key] || '';
+      } else {
+        if (textContainer) textContainer.classList.add('hidden');
+        if (ratingContainer) ratingContainer.classList.remove('hidden');
+        
+        const labelMin = document.getElementById('label-min');
+        const labelMax = document.getElementById('label-max');
+        if (labelMin) labelMin.innerText = `1 - ${q.minLabel}`;
+        if (labelMax) labelMax.innerText = `5 - ${q.maxLabel}`;
+        
+        let buttonsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+          const isSelected = formData[q.key] === i;
+          let baseClasses = "rating-circle w-10 h-10 md:w-12 md:h-12 rounded-full flex flex-col items-center justify-center border border-paper-dark dark:border-white/20 text-ink dark:text-white hover:border-accent dark:hover:border-accent cursor-pointer";
+          
+          if (q.isExtra && isSelected) {
+            baseClasses += " bg-amber-500 border-amber-500 text-white";
+          } else if (isSelected) {
+            baseClasses += " selected";
+          }
+
+          buttonsHtml += `
+            <button onclick="setAnswer(${i})" class="${baseClasses}">
+              <span class="text-base md:text-lg leading-none mb-0.5">${emojis[i]}</span>
+              <span class="text-[9px] font-bold">${i}</span>
+            </button>
+          `;
+        }
+        
+        const ratingButtons = document.getElementById('rating-buttons');
+        if (ratingButtons) ratingButtons.innerHTML = buttonsHtml;
+      }
+
+      updateNavButtons();
+    }
+
+    function setAnswer(val) {
+      const q = formQuestions[currentStep];
+      if (q) formData[q.key] = val;
+      renderStep();
+    }
+
+    function updateNavButtons() {
+      const q = formQuestions[currentStep];
+      if (!q) return;
+
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const btnSubmit = document.getElementById('btn-submit');
+
+      const isValid = q.isText ? true : formData[q.key] > 0;
+
+      if (isGeneralReview) {
+        if (btnPrev) {
+            btnPrev.classList.add('hidden');
+            btnPrev.classList.remove('flex');
+        }
+        if (btnNext) {
+            btnNext.classList.add('hidden');
+            btnNext.classList.remove('flex');
+        }
+        if (btnSubmit) {
+            btnSubmit.classList.remove('hidden');
+            btnSubmit.classList.add('flex');
+            btnSubmit.disabled = !isValid;
+        }
+      } else {
+        if (btnPrev) {
+            btnPrev.disabled = currentStep === 0;
+            btnPrev.classList.remove('hidden');
+            btnPrev.classList.add('flex');
+        }
+
+        if (currentStep < formQuestions.length - 1) {
+          if (btnNext) {
+              btnNext.classList.remove('hidden');
+              btnNext.classList.add('flex');
+              btnNext.disabled = !isValid;
+          }
+          if (btnSubmit) {
+              btnSubmit.classList.add('hidden');
+              btnSubmit.classList.remove('flex');
+          }
+        } else {
+          if (btnNext) {
+              btnNext.classList.add('hidden');
+              btnNext.classList.remove('flex');
+          }
+          if (btnSubmit) {
+              btnSubmit.classList.remove('hidden');
+              btnSubmit.classList.add('flex');
+              btnSubmit.disabled = !isValid;
+          }
+        }
+      }
+    }
+
+    function handleNext() {
+      if (currentStep < formQuestions.length - 1) {
+        currentStep++;
+        renderStep();
+      }
+    }
+
+    function handlePrev() {
+      if (currentStep > 0) {
+        currentStep--;
+        renderStep();
+      }
+    }
+
+    function handleSubmit() {
+      const btnSubmit = document.getElementById('btn-submit');
+      if (btnSubmit) {
+          btnSubmit.innerHTML = 'A Enviar...';
+          btnSubmit.disabled = true;
+      }
+
+      const dateNow = new Date().toISOString().split('T')[0];
+
+      // Atualiza os dados localmente para manter o Dashboard visual funcionando
+      submissions.unshift({
+        id: Date.now(),
+        date: dateNow,
+        ...formData
+      });
+
+      // Prepara os dados reais (FormData) para enviar ao Google Sheets
+      const dataToGoogle = new FormData();
+      dataToGoogle.append('date', dateNow);
+      dataToGoogle.append('userName', formData.userName);
+      dataToGoogle.append('designer', formData.designer);
+      dataToGoogle.append('requestTitle', formData.requestTitle);
+      dataToGoogle.append('q1', formData.q1);
+      dataToGoogle.append('q2', formData.q2);
+      dataToGoogle.append('q3', formData.q3);
+      dataToGoogle.append('q4', formData.q4);
+      dataToGoogle.append('q5', formData.q5);
+      dataToGoogle.append('q6', formData.q6);
+
+      // Dispara o envio para a Planilha (ignorando falhas de internet local para não travar a UI)
+      if (GOOGLE_SHEET_URL !== 'SUA_URL_DO_WEB_APP_AQUI') {
+        fetch(GOOGLE_SHEET_URL, { method: 'POST', body: dataToGoogle })
+          .then(res => console.log('Sucesso: Salvo no Google Sheets!'))
+          .catch(err => console.error('Erro ao salvar na planilha:', err));
+      }
+
+      // Finaliza o envio na interface gráfica após uma breve animação
+      setTimeout(() => {
+        switchView('success');
+        
+        if (btnSubmit) {
+            btnSubmit.innerHTML = `Finalizar Envio`;
+            btnSubmit.disabled = false;
+        }
+      }, 800);
+    }
+
+    function resetForm() {
+      currentStep = 0;
+      isGeneralReview = false;
+      reviewType = 'demanda';
+      formData = { userName: '', designer: '', requestTitle: '', q1: 0, q2: 0, q3: 0, q4: 0, q5: 0, q6: '' };
+      
+      // Limpa os inputs da Intro
+      const userNameInput = document.getElementById('user-name');
+      const designerInput = document.getElementById('designer-name');
+      const reqTitleInput = document.getElementById('request-title');
+      
+      if (userNameInput) userNameInput.value = '';
+      if (designerInput) designerInput.value = '';
+      if (reqTitleInput) reqTitleInput.value = '';
+      
+      // Reseta o toggle
+      setReviewType('demanda');
+
+      switchView('intro');
+    }
+
+    function getBarColor(val) {
+      if (val < 2.5) return 'bg-[#E5ACA0]'; 
+      if (val < 3.5) return 'bg-[#E5D0A0]'; 
+      if (val < 4.5) return 'bg-[#B4C5A8]'; 
+      return 'bg-[#2C5545]'; 
+    }
+
+    function renderDashboard() {
+      const designerFilter = document.getElementById('filter-designer')?.value || 'all';
+      const startDateVal = document.getElementById('filter-date-start')?.value;
+      const endDateVal = document.getElementById('filter-date-end')?.value;
+
+      let filteredSubmissions = submissions;
+
+      // Aplica Filtro de Designer
+      if (designerFilter !== 'all') {
+        filteredSubmissions = filteredSubmissions.filter(s => s.designer === designerFilter);
+      }
+
+      // Aplica Filtro de Tempo (Intervalo de Datas)
+      if (startDateVal || endDateVal) {
+        const startDate = startDateVal ? new Date(startDateVal + 'T00:00:00') : null;
+        const endDate = endDateVal ? new Date(endDateVal + 'T23:59:59') : null;
+
+        filteredSubmissions = filteredSubmissions.filter(s => {
+          // Adicionamos 'T12:00:00' para normalizar a data e evitar saltos de fuso horário
+          const subDate = new Date(s.date + 'T12:00:00'); 
+          let isValid = true;
+          
+          if (startDate && subDate < startDate) isValid = false;
+          if (endDate && subDate > endDate) isValid = false;
+          
+          return isValid;
+        });
+      }
+
+      const kpiMedia = document.getElementById('kpi-media');
+      const kpiTotal = document.getElementById('kpi-total');
+      const kpiDestaque = document.getElementById('kpi-destaque');
+      const chartContainer = document.getElementById('chart-container');
+      const feedbackList = document.getElementById('feedback-list');
+
+      // Estado Vazio (Sem resultados para o filtro)
+      if (filteredSubmissions.length === 0) {
+        if (kpiMedia) kpiMedia.innerText = '0.00';
+        if (kpiTotal) kpiTotal.innerText = '00';
+        if (kpiDestaque) kpiDestaque.innerText = '-';
+        if (chartContainer) chartContainer.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-4">Nenhum dado encontrado para os filtros selecionados.</p>';
+        if (feedbackList) feedbackList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 col-span-2">Nenhum comentário encontrado para os filtros selecionados.</p>';
+        return;
+      }
+
+      const total = filteredSubmissions.length;
+      let sums = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
+      
+      filteredSubmissions.forEach(s => {
+        sums.q1 += s.q1; sums.q2 += s.q2; sums.q3 += s.q3; sums.q4 += s.q4; sums.q5 += s.q5;
+      });
+
+      const avgs = {
+        q1: sums.q1 / total, q2: sums.q2 / total, q3: sums.q3 / total, q4: sums.q4 / total, q5: sums.q5 / total
+      };
+
+      // Média Global agora ignora Q4 (Valor Agregado) pois é um extra
+      const globalAvg = (avgs.q1 + avgs.q2 + avgs.q3 + avgs.q5) / 4;
+
+      const mapNames = { q1: 'Pontualidade', q2: 'Qualidade', q3: 'Alinhamento', q5: 'Comunicação' };
+      let maxKey = 'q1', maxVal = avgs.q1;
+      for (const [key, val] of Object.entries(avgs)) {
+        if (key !== 'q4' && key !== 'q6' && val > maxVal) { maxVal = val; maxKey = key; }
+      }
+
+      if (kpiMedia) kpiMedia.innerText = globalAvg.toFixed(2);
+      if (kpiTotal) kpiTotal.innerText = String(total).padStart(2, '0');
+      if (kpiDestaque) kpiDestaque.innerText = mapNames[maxKey] || '-';
+
+      // Reorganizado para deixar o extra no final com títulos descritivos
+      const labels = [
+        { k: 'q1', l: 'Prazo e Gestão de Tempo' },
+        { k: 'q2', l: 'Qualidade Técnica e Organização' },
+        { k: 'q3', l: 'Alinhamento Estratégico com o Negócio' },
+        { k: 'q5', l: 'Comunicação e Parceria' },
+        { k: 'q4', l: 'Valor Agregado e Proatividade', isExtra: true }
+      ];
+
+      if (chartContainer) {
+          let chartsHtml = '';
+          labels.forEach(item => {
+            const val = avgs[item.k];
+            const pct = (val / 5) * 100;
+            const color = item.isExtra ? 'bg-amber-500' : getBarColor(val);
+            
+            chartsHtml += `
+              <div class="${item.isExtra ? 'mt-3 pt-5 border-t border-paper-dark dark:border-white/10 relative' : ''}">
+                <div class="flex justify-between items-end mb-1.5">
+                  <span class="text-xs font-medium text-ink dark:text-white/90">
+                    ${item.l}
+                    ${item.isExtra ? '<span class="text-[9px] uppercase tracking-widest text-amber-600 dark:text-amber-400 ml-1">(Bônus)</span>' : ''}
+                  </span>
+                  <span class="font-bold text-ink dark:text-white text-sm">
+                    ${val.toFixed(1)} <span class="font-normal text-[10px] text-ink-light dark:text-white/40">/ 5.0</span>
+                  </span>
+                </div>
+                <div class="w-full h-[2px] overflow-hidden bg-paper-dark dark:bg-white/10">
+                  <div class="h-full ${color} transition-all duration-1000 ease-out" style="width: ${pct}%"></div>
+                </div>
+              </div>
+            `;
+          });
+          chartContainer.innerHTML = chartsHtml;
+      }
+
+      const textSubmissions = filteredSubmissions.filter(s => s.q6 && s.q6.trim() !== '');
+      
+      if (feedbackList) {
+          if (textSubmissions.length > 0) {
+            feedbackList.innerHTML = textSubmissions.map(s => `
+              <div class="p-4 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212]">
+                <div class="flex justify-between items-start mb-2 gap-4">
+                  <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block">
+                    ${new Date(s.date).toLocaleDateString('pt-BR')} • ${s.userName} <span class="text-accent dark:text-accent-light opacity-80">(${s.designer})</span>
+                  </span>
+                  <span class="text-[9px] tracking-widest text-accent font-bold px-1.5 py-0.5 border border-accent/20 bg-accent/10 truncate max-w-[150px]" title="${s.requestTitle}">
+                    ${s.requestTitle}
+                  </span>
+                </div>
+                <p class="text-xs leading-relaxed italic text-ink dark:text-white/80">"${s.q6}"</p>
+              </div>
+            `).join('');
+          } else {
+            feedbackList.innerHTML = `<p class="text-xs text-ink-light dark:text-white/50 col-span-2">Nenhum comentário em texto registrado.</p>`;
+          }
+      }
+    }
+
+    // -- ASSINANDO EVENTOS DE FORMA SEGURA --
+    window.addEventListener('DOMContentLoaded', () => {
+        const adminPassword = document.getElementById('admin-password');
+        if (adminPassword) {
+            adminPassword.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') checkPassword();
+            });
+        }
+
+        const feedbackText = document.getElementById('feedback-text');
+        if (feedbackText) {
+            feedbackText.addEventListener('input', (e) => {
+                const q = formQuestions[currentStep];
+                if (q) formData[q.key] = e.target.value;
+            });
+        }
+
+        // Inicializa na tela de Intro
+        switchView('intro');
+    });
+
+  </script>
+</body>
+</html>
