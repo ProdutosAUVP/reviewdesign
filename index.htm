@@ -465,7 +465,7 @@
       </div>
       
       <!-- Content Modal -->
-      <div id="modal-content" class="p-4 md:p-6 flex flex-col gap-4 md:gap-6 w-full overflow-x-hidden">
+      <div id="modal-content" class="p-4 md:p-6 flex flex-col gap-4 md:gap-6 w-full">
           <!-- Injetado via JS -->
       </div>
     </div>
@@ -622,9 +622,11 @@
         const data = await response.json();
         
         if (data && !data.error) {
-          // Inverte a ordem para que os envios mais recentes apareçam no topo
-          // e garante que todos tenham um ID para o modal funcionar
-          submissions = data.map((item, index) => ({...item, id: Date.now() + index})).reverse();
+          // Filtra linhas vazias (bug do google sheets) e mapeia
+          submissions = data
+            .filter(item => item && item.date && item.userName && item.userName.trim() !== '')
+            .map((item, index) => ({...item, id: Date.now() + index}))
+            .reverse();
         }
       } catch (err) {
         console.error("Erro ao puxar dados da planilha:", err);
@@ -1168,16 +1170,16 @@
           const avg = validScores.length > 0 ? (validScores.reduce((a,b)=>a+b,0) / validScores.length).toFixed(1) : '-';
           
           return `
-          <div onclick="openModal(${s.id})" class="p-4 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] hover:border-accent dark:hover:border-accent cursor-pointer transition-colors flex flex-col gap-3 group w-full overflow-hidden rounded-[2px]">
-            <div class="flex flex-col md:flex-row justify-between md:items-start gap-3 md:gap-4 w-full overflow-hidden">
+          <div onclick="openModal(${s.id})" class="p-4 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] hover:border-accent dark:hover:border-accent cursor-pointer transition-colors flex flex-col gap-3 group w-full rounded-[4px]">
+            <div class="flex flex-col md:flex-row justify-between md:items-start gap-3 md:gap-4 w-full">
               <div class="flex flex-col gap-1 min-w-0 flex-1 w-full">
                 <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block truncate w-full">
-                  ${new Date(s.date).toLocaleDateString('pt-BR')} • ${s.userName}
+                  ${s.date ? new Date(s.date).toLocaleDateString('pt-BR') : 'Data Indisponível'} • ${s.userName || 'Anônimo'}
                 </span>
-                <span class="text-[13px] md:text-sm font-bold text-ink dark:text-white truncate w-full block" title="${s.requestTitle}">
-                  ${s.requestTitle}
+                <span class="text-[13px] md:text-sm font-bold text-ink dark:text-white break-words w-full block line-clamp-2" title="${s.requestTitle || ''}">
+                  ${s.requestTitle || 'Avaliação sem título'}
                 </span>
-                <span class="text-[10px] text-ink-light dark:text-white/50 truncate w-full block">Designer: <span class="text-accent dark:text-accent-light font-bold">${s.designer}</span></span>
+                <span class="text-[10px] text-ink-light dark:text-white/50 break-words w-full block">Designer: <span class="text-accent dark:text-accent-light font-bold">${s.designer || '-'}</span></span>
               </div>
               <div class="flex items-center gap-4 shrink-0 mt-2 md:mt-0">
                 <div class="flex flex-col items-start md:items-end">
@@ -1193,8 +1195,8 @@
               </div>
             </div>
             ${s.q6 ? `
-            <div class="border-t border-paper-dark dark:border-white/5 pt-2 w-full overflow-hidden">
-              <p class="text-[11px] md:text-xs text-ink-light dark:text-white/60 italic truncate w-full">"${s.q6}"</p>
+            <div class="border-t border-paper-dark dark:border-white/5 pt-2 w-full">
+              <p class="text-[11px] md:text-xs text-ink-light dark:text-white/60 italic line-clamp-2 break-words w-full">"${s.q6}"</p>
             </div>
             ` : ''}
           </div>
@@ -1211,7 +1213,7 @@
       const modalContent = document.getElementById('modal-content');
       const modalTitle = document.getElementById('modal-title');
 
-      modalTitle.innerText = `${submission.requestTitle}`;
+      modalTitle.innerText = `${submission.requestTitle || 'Avaliação Geral'}`;
 
       const validScores = [submission.q1, submission.q2, submission.q3, submission.q5].filter(v => v > 0);
       const isGeral = validScores.length === 0;
@@ -1220,12 +1222,16 @@
       const getNotaHtml = (label, nota, comment) => {
         if (!nota || nota === 0) return '';
         return `
-        <div class="flex flex-col gap-1 pb-4 border-b border-paper-dark dark:border-white/5 last:border-0 w-full overflow-hidden">
+        <div class="flex flex-col gap-1 pb-4 border-b border-paper-dark dark:border-white/5 last:border-0 w-full">
           <div class="flex justify-between items-center sm:items-end gap-2 w-full">
             <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 break-words whitespace-normal leading-tight w-full">${label}</span>
             <span class="text-sm md:text-base font-bold shrink-0 ${nota >= 4 ? 'text-accent' : (nota >= 3 ? 'text-[#E5D0A0]' : 'text-[#E5ACA0]')}">${nota}/5</span>
           </div>
-          ${comment ? `<p class="text-[11px] md:text-xs text-ink dark:text-white/80 italic mt-2 bg-paper-dark/30 dark:bg-white/5 p-3 border-l-2 border-accent whitespace-pre-wrap break-words w-full">"${comment}"</p>` : ''}
+          ${comment ? `
+          <div class="mt-2 bg-paper-dark/30 dark:bg-white/5 p-3 border-l-2 border-accent w-full rounded-r-[2px]">
+            <p class="text-[11px] md:text-xs text-ink dark:text-white/80 italic whitespace-pre-wrap break-words">"${comment}"</p>
+          </div>
+          ` : ''}
         </div>
         `;
       };
@@ -1254,7 +1260,7 @@
         </div>
 
         ${!isGeral ? `
-        <div class="flex flex-col gap-2 mt-2 md:mt-4 w-full overflow-hidden">
+        <div class="flex flex-col gap-2 mt-2 md:mt-4 w-full">
           ${getNotaHtml('1. Prazo e Gestão', submission.q1, submission.q1_comment)}
           ${getNotaHtml('2. Qualidade Técnica', submission.q2, submission.q2_comment)}
           ${getNotaHtml('3. Estratégia', submission.q3, submission.q3_comment)}
@@ -1264,9 +1270,11 @@
         ` : ''}
 
         ${submission.q6 ? `
-        <div class="${!isGeral ? 'mt-2 pt-4 border-t border-paper-dark dark:border-white/10' : 'mt-2'} w-full overflow-hidden">
+        <div class="${!isGeral ? 'mt-2 pt-4 border-t border-paper-dark dark:border-white/10' : 'mt-2'} w-full">
           <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 block mb-2">Feedback Aberto</span>
-          <p class="text-[11px] md:text-sm text-ink dark:text-white/90 leading-relaxed bg-paper dark:bg-[#1A1A1A] p-3 md:p-4 border border-paper-dark dark:border-white/10 italic whitespace-pre-wrap break-words w-full">"${submission.q6}"</p>
+          <div class="bg-paper dark:bg-[#1A1A1A] p-3 md:p-4 border border-paper-dark dark:border-white/10 w-full rounded-[2px]">
+            <p class="text-[11px] md:text-sm text-ink dark:text-white/90 leading-relaxed italic whitespace-pre-wrap break-words w-full">"${submission.q6}"</p>
+          </div>
         </div>
         ` : ''}
       `;
