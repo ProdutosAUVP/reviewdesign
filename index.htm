@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Satisfação Time de Design - Avaliação</title>
   
-  <!-- Fonte: Satoshi -->
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Configuração do Tailwind -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -30,7 +27,7 @@
               light: '#595959',
             },
             accent: {
-              DEFAULT: '#2C5545',
+              DEFAULT: '#38805A',
               light: '#E2E8E4',
             }
           }
@@ -39,7 +36,6 @@
     }
   </script>
 
-  <!-- CSS Customizado -->
   <style>
     body { font-family: 'Satoshi', sans-serif; }
 
@@ -71,25 +67,23 @@
     /* Botões de rádio analógicos customizados */
     .rating-circle { transition: all 0.2s ease; }
     .rating-circle.selected {
-      background-color: #2C5545;
+      background-color: #38805A;
       color: white;
-      border-color: #2C5545;
+      border-color: #38805A;
     }
   </style>
 </head>
 <body class="bg-paper dark:bg-[#121212] text-ink dark:text-[#E0E0E0] transition-colors duration-500 relative overflow-x-hidden selection:bg-accent/20">
 
-  <!-- TEXTURA DE PAPEL FIXA -->
   <div class="fixed inset-0 z-[-1] paper-texture bg-grid pointer-events-none"></div>
 
-  <!-- HEADER EDITORIAL -->
   <nav class="sticky top-0 z-50 bg-paper/90 dark:bg-[#121212]/90 backdrop-blur-sm border-b border-paper-dark dark:border-white/10 transition-colors duration-500">
     <div class="max-w-[900px] mx-auto px-6 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
         <img src="https://raw.githubusercontent.com/ProdutosAUVP/reviewdesign/main/olho-branco%20(2).svg" alt="Olho AUVP" class="h-5 md:h-6 w-auto invert dark:invert-0 opacity-90 transition-all duration-500" />
         <div class="flex flex-col">
           <span class="text-xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-0.5">
-            Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#5A8770] italic font-light tracking-tight">Design.</span>
+            Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
           </span>
         </div>
       </div>
@@ -110,13 +104,9 @@
     </div>
   </nav>
 
-  <!-- ========================================== -->
-  <!-- VISÃO 0: INTRO / IDENTIFICAÇÃO             -->
-  <!-- ========================================== -->
   <main id="view-intro" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] block">
     <div class="w-full max-w-[600px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-10 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       
-      <!-- CABEÇALHO INTRO (Fixo) -->
       <div>
         <div class="relative">
           <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2">
@@ -127,9 +117,12 @@
           </p>
         </div>
 
-        <!-- Toggle Tipo de Revisão -->
+        <div class="w-full mt-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 relative shadow-sm">
+          <img src="https://media.giphy.com/media/KpACNEh8jXK2Q/giphy.gif" alt="Macaco trabalhando" class="w-full h-40 md:h-56 object-cover grayscale-[20%] transition-transform duration-700 hover:scale-105" loading="lazy" />
+        </div>
+
         <div class="flex p-1 bg-paper-dark/50 dark:bg-white/5 rounded-[4px] mt-6 mb-6">
-          <button id="toggle-demanda" onclick="setReviewType('demanda')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-white dark:bg-[#2A2A2A] shadow-sm rounded-[2px] text-ink dark:text-white transition-all">
+          <button id="toggle-demanda" onclick="setReviewType('demanda')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-accent shadow-sm rounded-[2px] text-white transition-all">
             Demanda Específica
           </button>
           <button id="toggle-geral" onclick="setReviewType('geral')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:text-ink dark:hover:text-white transition-all">
@@ -137,11 +130,9 @@
           </button>
         </div>
 
-        <!-- Divisor Fixo -->
         <div class="border-b border-paper-dark dark:border-white/10 mb-6"></div>
       </div>
 
-      <!-- FORMULÁRIO INTRO (Variável/Expansível) -->
       <div class="flex flex-col gap-6">
         
         <div>
@@ -167,7 +158,6 @@
           </p>
         </div>
 
-        <!-- Erro -->
         <p id="intro-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest">Preencha todos os campos obrigatórios.</p>
 
         <div class="mt-2">
@@ -180,26 +170,20 @@
     </div>
   </main>
 
-  <!-- ========================================== -->
-  <!-- VISÃO 1: FORMULÁRIO WIZARD                 -->
-  <!-- ========================================== -->
   <main id="view-form" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
     
-    <!-- WIZARD CONTAINER (CARTÃO COMPACTO) -->
     <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       
-      <!-- Cabeçalho Integrado (Título e Progresso) -->
       <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-paper-dark dark:border-white/10 pb-4 mb-6 gap-6">
         <div class="relative">
           <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2 md:mt-0">
-            Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#5A8770] italic font-light tracking-tight">Design.</span>
+            Satisfação Time de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
           </h1>
           <p id="form-subtitle" class="text-xs text-ink-light dark:text-white/60 font-medium mt-2 font-satoshi max-w-sm">
             Ajude o time de produto moldar o futuro das nossas entregas de design em menos de 1 minuto!
           </p>
         </div>
 
-        <!-- Progresso Compacto -->
         <div id="progress-container" class="w-full md:w-1/3 flex flex-col justify-end block">
           <div class="flex justify-between items-end mb-2">
             <span class="text-[9px] uppercase font-bold tracking-widest text-ink-light dark:text-white/50">Progresso</span>
@@ -211,17 +195,14 @@
         </div>
       </div>
 
-      <!-- Conteúdo da Pergunta -->
       <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-stretch">
         
-        <!-- Lado Esquerdo: GIF Analógico Reduzido -->
         <div class="md:w-1/3 flex flex-col shrink-0">
           <div class="w-full aspect-square bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 p-1.5 shadow-sm relative group overflow-hidden">
             <img id="question-gif" src="https://media.giphy.com/media/3o7TKDk86g4k5E6ZPO/giphy.gif" alt="Animação da pergunta" class="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105" loading="lazy"/>
           </div>
         </div>
 
-        <!-- Lado Direito: Pergunta & Avaliação -->
         <div class="md:w-2/3 flex flex-col justify-start">
           <span id="question-badge" class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-3">
             PASSO_01
@@ -234,48 +215,48 @@
             A entrega foi realizada dentro do cronograma acordado ou antes do prazo estipulado?
           </p>
 
-          <!-- Respostas (Escala) -->
           <div id="rating-container" class="mt-auto block">
-            <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 border-b border-paper-dark dark:border-white/10 pb-1.5">
-              <span id="label-min">1 - Muito atraso</span>
-              <span id="label-max">5 - No prazo</span>
+            <div class="flex justify-between text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 border-b border-paper-dark dark:border-white/10 pb-1.5 relative">
+              <span id="label-min"></span>
+              <span id="label-mid" class="absolute left-1/2 -translate-x-1/2 hidden whitespace-nowrap"></span>
+              <span id="label-max"></span>
             </div>
             <div class="flex justify-between items-center px-1 py-4" id="rating-buttons">
-              <!-- Botões gerados via JS -->
-            </div>
+              </div>
           </div>
 
-          <!-- Respostas (Texto Opcional) -->
           <div id="text-container" class="mt-auto hidden">
             <textarea id="feedback-text" rows="3" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira as suas considerações (opcional)..."></textarea>
           </div>
         </div>
       </div>
 
-      <!-- Rodapé de Navegação (Interno ao Cartão) -->
       <div class="w-full flex justify-between items-center mt-6 pt-4 border-t border-paper-dark dark:border-white/10">
         <button id="btn-prev" onclick="handlePrev()" class="text-[10px] uppercase tracking-widest font-bold text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-colors disabled:opacity-0 flex items-center gap-1.5">
           ← Anterior
         </button>
 
-        <button id="btn-next" onclick="handleNext()" class="px-6 py-2.5 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
-          Próxima →
-        </button>
+        <div class="flex items-center gap-3 md:gap-4 text-right">
+          <span id="step-disclaimer" class="hidden max-w-[220px] md:max-w-[380px] text-[9px] md:text-[10px] text-ink-light dark:text-white/40 leading-tight italic"></span>
+          
+          <button id="btn-next" onclick="handleNext()" class="px-6 py-2.5 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
+            Próxima →
+          </button>
 
-        <button id="btn-submit" onclick="handleSubmit()" class="hidden px-6 py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed items-center gap-2">
-          Finalizar Envio
-        </button>
+          <button id="btn-submit" onclick="handleSubmit()" class="hidden px-6 py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed items-center gap-2">
+            Finalizar Envio
+          </button>
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- ========================================== -->
-  <!-- VISÃO: SUCESSO (Oculta por padrão)         -->
-  <!-- ========================================== -->
-  <div id="view-success" class="max-w-[600px] mx-auto mt-20 px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center">
-    <div class="w-12 h-12 mx-auto border-2 border-accent text-accent rounded-full flex items-center justify-center mb-6">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+  <div id="view-success" class="max-w-[600px] mx-auto mt-10 md:mt-16 px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center">
+    
+    <div class="w-full max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 shadow-sm">
+      <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHQzZmx3cHo5N3FmZTlsM2JjdTQwYzVtcGx1MHM2Nzd3dW90aG9jYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/13w6Kxv69la5NK/giphy.gif" alt="Agradecimento" class="w-full h-auto object-cover grayscale-[20%]" loading="lazy" />
     </div>
+
     <h2 class="text-3xl font-medium text-ink dark:text-white mb-3">Agradecemos o seu tempo.</h2>
     <p class="text-sm text-ink-light dark:text-white/70 mb-8">As suas percepções foram registradas e serão essenciais para calibrar os nossos processos de design.</p>
     
@@ -290,9 +271,6 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- VISÃO: AUTENTICAÇÃO DO PAINEL              -->
-  <!-- ========================================== -->
   <main id="view-auth" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
     <div class="w-full max-w-[400px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       <div class="mb-6 border-b border-paper-dark dark:border-white/10 pb-4">
@@ -307,15 +285,12 @@
     </div>
   </main>
 
-  <!-- ========================================== -->
-  <!-- VISÃO 2: DASHBOARD ANALÍTICA               -->
-  <!-- ========================================== -->
   <div id="view-dashboard" class="max-w-[900px] mx-auto px-4 py-8 md:py-12 animate-[fadeIn_0.5s_ease-in-out] hidden">
     
     <div class="mb-10 border-b border-paper-dark dark:border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div class="relative">
         <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-ink dark:text-white uppercase leading-[0.9] font-satoshi">
-          Painel de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#5A8770] italic font-light tracking-tight">Métricas.</span>
+          Painel de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Métricas.</span>
         </h1>
       </div>
       <div class="text-left md:text-right">
@@ -327,7 +302,6 @@
       </div>
     </div>
 
-    <!-- Filtros do Painel -->
     <div class="flex flex-col sm:flex-row gap-6 mb-10 p-5 border border-paper-dark dark:border-white/10 bg-white dark:bg-[#1A1A1A]">
       <div class="flex-1">
         <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Filtrar por Designer</label>
@@ -348,43 +322,74 @@
       </div>
     </div>
 
-    <!-- KPI & Detalhes -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
       
-      <!-- Coluna Esquerda: Resumo -->
-      <div class="md:col-span-4 flex flex-col gap-6">
-        <div class="bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6">
-          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Total de Avaliações</p>
-          <h2 id="kpi-total" class="text-2xl text-ink dark:text-white font-medium">0</h2>
+      <div class="md:col-span-4 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex items-center justify-between">
+        <div>
+          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Total de Avaliações</p>
+          <h2 id="kpi-total" class="text-3xl text-ink dark:text-white font-medium">0</h2>
         </div>
-        
-        <div class="bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6">
-          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Métrica Destaque</p>
-          <h2 id="kpi-destaque" class="text-lg text-ink dark:text-white leading-tight font-medium">-</h2>
+        <div class="w-10 h-10 rounded-full bg-paper-dark/30 dark:bg-white/5 flex items-center justify-center text-ink-light dark:text-white/40">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+      </div>
+      
+      <div class="md:col-span-4 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex items-center justify-between">
+        <div>
+          <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Média Global</p>
+          <h2 class="text-3xl text-ink dark:text-white font-medium flex items-baseline gap-1">
+            <span id="kpi-media-txt">0.0</span><span class="text-sm text-ink-light dark:text-white/40">/5</span>
+          </h2>
+        </div>
+        <div class="relative w-12 h-12">
+          <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+            <path class="text-paper-dark dark:text-white/10" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <path id="kpi-media-circle" class="text-accent transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          </svg>
         </div>
       </div>
 
-      <!-- Coluna Direita: Barras -->
-      <div class="md:col-span-8 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
-        <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Desempenho por Categoria</h3>
+      <div class="md:col-span-4 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex flex-col justify-center">
+        <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-3">Métrica(s) em Destaque</p>
+        <div id="kpi-destaque-container" class="flex flex-wrap gap-2">
+          <span class="text-sm font-medium text-ink dark:text-white">-</span>
+        </div>
+      </div>
+
+      <div class="md:col-span-5 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 flex flex-col items-center justify-center relative min-h-[250px]">
+        <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 absolute top-6 left-6">Balanço do Perfil</h3>
+        <svg viewBox="0 0 120 120" class="w-full max-w-[220px] h-auto overflow-visible mt-4">
+          <polygon points="60,20 100,60 60,100 20,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
+          <polygon points="60,30 90,60 60,90 30,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
+          <polygon points="60,40 80,60 60,80 40,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
+          <polygon points="60,50 70,60 60,70 50,60" fill="none" stroke="currentColor" class="text-paper-dark dark:text-white/5" stroke-width="0.5"/>
+          
+          <line x1="60" y1="20" x2="60" y2="100" stroke="currentColor" class="text-paper-dark dark:text-white/10" stroke-width="0.5"/>
+          <line x1="20" y1="60" x2="100" y2="60" stroke="currentColor" class="text-paper-dark dark:text-white/10" stroke-width="0.5"/>
+          
+          <polygon id="radar-polygon" points="60,60 60,60 60,60 60,60" fill="currentColor" class="text-accent/20 dark:text-accent/30 transition-all duration-1000 ease-out" stroke="currentColor" stroke-width="1.5" />
+          
+          <text x="60" y="14" text-anchor="middle" font-size="4.5" class="fill-ink dark:fill-white/80 font-bold uppercase tracking-wider">Prazo</text>
+          <text x="103" y="61.5" text-anchor="start" font-size="4.5" class="fill-ink dark:fill-white/80 font-bold uppercase tracking-wider">Qualidade</text>
+          <text x="60" y="108" text-anchor="middle" font-size="4.5" class="fill-ink dark:fill-white/80 font-bold uppercase tracking-wider">Estratégia</text>
+          <text x="17" y="61.5" text-anchor="end" font-size="4.5" class="fill-ink dark:fill-white/80 font-bold uppercase tracking-wider">Comunicação</text>
+        </svg>
+      </div>
+
+      <div class="md:col-span-7 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
+        <h3 class="text-[9px] font-bold uppercase tracking-widest text-ink-light dark:text-white/50 mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Desempenho por Categoria</h3>
         <div id="chart-container" class="flex flex-col gap-6">
-          <!-- Barras injetadas via JS -->
-        </div>
+          </div>
       </div>
 
-      <!-- Feedbacks Abertos -->
       <div class="md:col-span-12 bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-6 md:p-8">
         <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white mb-6 border-b border-paper-dark dark:border-white/10 pb-3">Anotações & Comentários</h3>
         <div id="feedback-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 custom-scrollbar max-h-[300px] overflow-y-auto pr-2">
-          <!-- Feedbacks injetados via JS -->
-        </div>
+          </div>
       </div>
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- JAVASCRIPT: LÓGICA E ESTADO DA APLICAÇÃO   -->
-  <!-- ========================================== -->
   <script>
     // Sistema de cor automática baseado no SO
     function applySystemTheme() {
@@ -402,12 +407,12 @@
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
 
     const formQuestions = [
-      { key: 'q1', shortTitle: "PRAZO", title: "Prazo e Gestão de Tempo", description: "A entrega foi realizada dentro do cronograma acordado ou antes do prazo estipulado? <span class=\"group relative inline-flex items-center justify-center cursor-help ml-1 align-middle\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"text-ink-light dark:text-white/50 hover:text-accent transition-colors\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/></svg><span class=\"invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-ink text-paper dark:bg-[#2A2A2A] dark:border dark:border-white/10 dark:text-white text-[10px] leading-relaxed rounded shadow-lg z-50 pointer-events-none text-center\">Se houveram mudanças de cronograma, elas devem ter sido acordadas com você antes ou no recebimento da demanda, e reorganizadas conforme as prioridades.</span></span>", minLabel: "Muito atraso", maxLabel: "No prazo", gifUrl: "https://media.giphy.com/media/ORPubLtAJdJjAuvEx0/giphy.gif" },
+      { key: 'q1', shortTitle: "PRAZO", title: "Prazo e Gestão de Tempo", description: "A entrega foi realizada dentro do cronograma acordado ou antes do prazo estipulado?", disclaimer: "* Se houveram mudanças de cronograma, elas devem ter sido acordadas com você antes ou no recebimento da demanda, e reorganizadas conforme as prioridades.", minLabel: "Muito atraso", maxLabel: "No prazo", gifUrl: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjQ3cDNqZHhyZTBnMHlzdXUwZGwwZW41YTUzbWQybG5zc3o5d3QybiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GrUhLU9q3nyRG/giphy.gif" },
       { key: 'q2', shortTitle: "QUALIDADE", title: "Qualidade Técnica e Organização", description: "O material entregue estava organizado, seguindo o padrão da marca e pronto para uso sem gerar retrabalho?", minLabel: "Caótico", maxLabel: "Impecável", gifUrl: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHQzY3RwbXA3aWZ3czU0dTRhYTduOXFybnRleHBvbnVjYzZ4OXE2YiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VXEZKbtw9IVrhXHGas/giphy.gif" },
-      { key: 'q3', shortTitle: "ESTRATÉGIA", title: "Alinhamento Estratégico com o Negócio", description: "Sente que a solução visual proposta resolveu o problema real do negócio ou do usuário?", minLabel: "Apenas estética", maxLabel: "Muito funcional", gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWpnNTFtazdwam9kMTZ6eXE4anFrOXRydnZrbWczejdoYzhzNGo3NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/fl0B5TLMTYLPvNervP/giphy.gif" },
+      { key: 'q3', shortTitle: "ESTRATÉGIA", title: "Alinhamento Estratégico com o Negócio", description: "Sente que a solução visual proposta resolveu o problema real do negócio ou do usuário?", minLabel: "Apenas estética", maxLabel: "Muito funcional", gifUrl: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGtmd2h4dG1sa2d4MWphb2Nldmh4Y2c0NmZxZW5udWM1NmlqdzlpdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Ke3CM1NVkULWo/giphy.gif" },
       { key: 'q5', shortTitle: "COMUNICAÇÃO", title: "Comunicação e Parceria", description: "Durante o processo, houve clareza na comunicação e facilidade para tirar dúvidas?", minLabel: "Isolado", maxLabel: "Parceria", gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXJ2ZjhlNnR5azRpam9hbnBvZmtzMHNzMngyZGt4Z201dmcycWVxZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2y6KS3wqgwBfO46Jyr/giphy.gif" },
-      { key: 'q4', shortTitle: "VALOR AGREGADO", title: "Valor Agregado e Proatividade", description: "O design entregue superou as expectativas iniciais? Houve proposição de caminhos melhores ou ideias além do briefing?", minLabel: "O básico", maxLabel: "Superou", gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYm90NWczZHF0NmpueWFwNDY4eTd6Y3N5Zzg2cnprcHFlbGFkMzBodSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1L5YuA6wpKkNO/giphy.gif", isExtra: true },
-      { key: 'q6', shortTitle: "COMENTÁRIOS", title: "Feedback Aberto e Sugestões", description: "Tem alguma sugestão para otimizar o processo nesta entrega específica ou identificou algum gargalo?", isText: true, gifUrl: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZHUxdHZieHhlNTRmNDB6ZWs5YzR3eGJpZmxqOHQ1cWpwYnQzanh2MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pUeXcg80cO8I8/giphy.gif" }
+      { key: 'q4', shortTitle: "VALOR AGREGADO", title: "Valor Agregado e Proatividade", description: "O design entregue superou as expectativas iniciais? Houve proposição de caminhos melhores ou ideias além do briefing?", minLabel: "Abaixo das expectativas", midLabel: "O básico", maxLabel: "Superou", gifUrl: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2YyNWdyYXUwZDg0c2xwYXNtMzB0OWN5bnJ0aGtmcTVwcmpjMmcyOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/75ZaxapnyMp2w/giphy.gif", isExtra: true },
+      { key: 'q6', shortTitle: "COMENTÁRIOS", title: "Feedback Aberto e Sugestões", description: "Tem alguma sugestão para otimizar o processo nesta entrega específica, identificou algum problema ou só quer demonstrar amor à objetivamente, a melhor dupla de designers desta empresa?", isText: true, gifUrl: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXpkb2ZiOHhyMjhnYm9vcGdnOHZxcmVpeWR5aWVob3Nwc2o0Ymh3NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FLKUJnRt6cGBG102B0/giphy.gif" }
     ];
 
     const emojis = { 1: '😡', 2: '😕', 3: '😐', 4: '🙂', 5: '🤩' };
@@ -447,7 +452,7 @@
       const reqContainer = document.getElementById('request-field-container');
       const designerLabel = document.getElementById('designer-label');
 
-      const activeClass = "flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-white dark:bg-[#2A2A2A] shadow-sm rounded-[2px] text-ink dark:text-white transition-all";
+      const activeClass = "flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-accent shadow-sm rounded-[2px] text-white transition-all";
       const inactiveClass = "flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:text-ink dark:hover:text-white transition-all";
 
       if (type === 'demanda') {
@@ -606,6 +611,21 @@
       const badge = document.getElementById('question-badge');
       const stepCounter = document.getElementById('step-counter');
       const progressBar = document.getElementById('progress-bar');
+      const stepDisclaimer = document.getElementById('step-disclaimer');
+
+      // Manipulação do aviso de rodapé (disclaimer)
+      if (q.disclaimer && !isGeneralReview) {
+        if (stepDisclaimer) {
+          stepDisclaimer.innerText = q.disclaimer;
+          stepDisclaimer.classList.remove('hidden');
+          stepDisclaimer.classList.add('block');
+        }
+      } else {
+        if (stepDisclaimer) {
+          stepDisclaimer.classList.add('hidden');
+          stepDisclaimer.classList.remove('block');
+        }
+      }
 
       if (isGeneralReview) {
         if (progressContainer) {
@@ -656,9 +676,20 @@
         if (ratingContainer) ratingContainer.classList.remove('hidden');
         
         const labelMin = document.getElementById('label-min');
+        const labelMid = document.getElementById('label-mid');
         const labelMax = document.getElementById('label-max');
+        
         if (labelMin) labelMin.innerText = `1 - ${q.minLabel}`;
         if (labelMax) labelMax.innerText = `5 - ${q.maxLabel}`;
+        
+        if (labelMid) {
+            if (q.midLabel) {
+                labelMid.innerText = `3 - ${q.midLabel}`;
+                labelMid.classList.remove('hidden');
+            } else {
+                labelMid.classList.add('hidden');
+            }
+        }
         
         let buttonsHtml = '';
         for (let i = 1; i <= 5; i++) {
@@ -834,21 +865,25 @@
       if (val < 2.5) return 'bg-[#E5ACA0]'; 
       if (val < 3.5) return 'bg-[#E5D0A0]'; 
       if (val < 4.5) return 'bg-[#B4C5A8]'; 
-      return 'bg-[#2C5545]'; 
+      return 'bg-[#38805A]'; 
     }
 
     function renderDashboard() {
-      const kpiMedia = document.getElementById('kpi-media');
+      const kpiMediaTxt = document.getElementById('kpi-media-txt');
+      const kpiMediaCircle = document.getElementById('kpi-media-circle');
       const kpiTotal = document.getElementById('kpi-total');
-      const kpiDestaque = document.getElementById('kpi-destaque');
+      const kpiDestaqueContainer = document.getElementById('kpi-destaque-container');
       const chartContainer = document.getElementById('chart-container');
       const feedbackList = document.getElementById('feedback-list');
+      const radarPolygon = document.getElementById('radar-polygon');
 
       // --- ESTADO DE CARREGAMENTO ---
       if (isLoadingData) {
-        if (kpiMedia) kpiMedia.innerText = '...';
+        if (kpiMediaTxt) kpiMediaTxt.innerText = '...';
         if (kpiTotal) kpiTotal.innerText = '...';
-        if (kpiDestaque) kpiDestaque.innerText = 'Buscando...';
+        if (kpiDestaqueContainer) kpiDestaqueContainer.innerHTML = '<span class="text-sm animate-pulse text-ink-light dark:text-white/50">Buscando...</span>';
+        if (kpiMediaCircle) kpiMediaCircle.setAttribute('stroke-dasharray', '0, 100');
+        if (radarPolygon) radarPolygon.setAttribute('points', '60,60 60,60 60,60 60,60');
         if (chartContainer) chartContainer.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-8 animate-pulse text-center">Sincronizando com o Google Sheets...</p>';
         if (feedbackList) feedbackList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 col-span-2 py-4 animate-pulse">Buscando avaliações...</p>';
         return;
@@ -884,9 +919,11 @@
 
       // Estado Vazio (Sem resultados para o filtro)
       if (filteredSubmissions.length === 0) {
-        if (kpiMedia) kpiMedia.innerText = '0.00';
-        if (kpiTotal) kpiTotal.innerText = '00';
-        if (kpiDestaque) kpiDestaque.innerText = '-';
+        if (kpiMediaTxt) kpiMediaTxt.innerText = '0.0';
+        if (kpiTotal) kpiTotal.innerText = '0';
+        if (kpiMediaCircle) kpiMediaCircle.setAttribute('stroke-dasharray', '0, 100');
+        if (radarPolygon) radarPolygon.setAttribute('points', '60,60 60,60 60,60 60,60');
+        if (kpiDestaqueContainer) kpiDestaqueContainer.innerHTML = '<span class="text-sm font-medium text-ink-light dark:text-white/50">-</span>';
         if (chartContainer) chartContainer.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 py-4">Nenhum dado encontrado para os filtros selecionados.</p>';
         if (feedbackList) feedbackList.innerHTML = '<p class="text-xs text-ink-light dark:text-white/50 col-span-2">Nenhum comentário encontrado para os filtros selecionados.</p>';
         return;
@@ -906,15 +943,48 @@
       // Média Global agora ignora Q4 (Valor Agregado) pois é um extra
       const globalAvg = (avgs.q1 + avgs.q2 + avgs.q3 + avgs.q5) / 4;
 
-      const mapNames = { q1: 'Pontualidade', q2: 'Qualidade', q3: 'Alinhamento', q5: 'Comunicação' };
-      let maxKey = 'q1', maxVal = avgs.q1;
+      // Cálculo de Múltiplos Destaques
+      const mapNames = { q1: 'Pontualidade', q2: 'Qualidade', q3: 'Estratégia', q5: 'Comunicação' };
+      let maxVal = -1;
       for (const [key, val] of Object.entries(avgs)) {
-        if (key !== 'q4' && key !== 'q6' && val > maxVal) { maxVal = val; maxKey = key; }
+        if (key !== 'q4' && key !== 'q6' && val > maxVal) { maxVal = val; }
+      }
+      
+      let topMetrics = [];
+      for (const [key, val] of Object.entries(avgs)) {
+        if (key !== 'q4' && key !== 'q6' && val === maxVal) { topMetrics.push(mapNames[key]); }
       }
 
-      if (kpiMedia) kpiMedia.innerText = globalAvg.toFixed(2);
-      if (kpiTotal) kpiTotal.innerText = String(total).padStart(2, '0');
-      if (kpiDestaque) kpiDestaque.innerText = mapNames[maxKey] || '-';
+      // Atualiza KPIs do Topo
+      if (kpiMediaTxt) kpiMediaTxt.innerText = globalAvg.toFixed(1);
+      if (kpiTotal) kpiTotal.innerText = String(total);
+      
+      if (kpiMediaCircle) {
+        const percentage = (globalAvg / 5) * 100;
+        kpiMediaCircle.setAttribute('stroke-dasharray', `${percentage}, 100`);
+      }
+
+      if (kpiDestaqueContainer) {
+        if (topMetrics.length === 4) {
+          kpiDestaqueContainer.innerHTML = `<span class="inline-block px-2 py-1 bg-accent text-white text-[9px] uppercase tracking-widest font-bold rounded-[2px]">Equilíbrio Total</span>`;
+        } else {
+          kpiDestaqueContainer.innerHTML = topMetrics.map(m => `<span class="inline-block px-2 py-1 bg-accent/10 border border-accent/20 text-accent dark:text-[#72A68C] text-[9px] uppercase tracking-widest font-bold rounded-[2px]">${m}</span>`).join('');
+        }
+      }
+
+      // Atualiza o Gráfico Radar
+      if (radarPolygon) {
+        // Centro (60,60), Raio Max = 40
+        const r = 40;
+        const valToR = (v) => (v / 5) * r;
+        
+        const pTop = `60,${60 - valToR(avgs.q1)}`;     // Q1: Prazo
+        const pRight = `${60 + valToR(avgs.q2)},60`;   // Q2: Qualidade
+        const pBottom = `60,${60 + valToR(avgs.q3)}`;  // Q3: Estratégia
+        const pLeft = `${60 - valToR(avgs.q5)},60`;    // Q5: Comunicação
+        
+        radarPolygon.setAttribute('points', `${pTop} ${pRight} ${pBottom} ${pLeft}`);
+      }
 
       // Reorganizado para deixar o extra no final com títulos descritivos
       const labels = [
