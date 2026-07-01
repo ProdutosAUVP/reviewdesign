@@ -78,6 +78,90 @@
       color: white;
       border-color: #38805A;
     }
+
+    /* Variáveis do WIDGET DE ACESSO RÁPIDO */
+    :root {
+      --float-bottom-pos: 40px; 
+      --float-right-pos: 40px;
+      --float-size: 60px;
+    }
+
+    /* Animações do Widget */
+    @keyframes slideUpEntrance {
+      from { transform: translateY(150px); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+
+    @keyframes floatPiggy {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    /* Estrutura Base do Widget */
+    .float-widget {
+      position: fixed;
+      bottom: var(--float-bottom-pos);
+      right: var(--float-right-pos);
+      z-index: 99999;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+      animation: slideUpEntrance 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Menu do Widget */
+    .float-widget__menu {
+      border-radius: 12px;
+      border-bottom-right-radius: 4px;
+      margin: 0 10px 15px 0;
+      width: max-content;
+      min-width: 240px;
+      transform-origin: bottom right;
+      pointer-events: auto;
+    }
+
+    /* Classe auxiliar para controlar o estado aberto do menu */
+    .float-widget__menu.is-open {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    /* Botão Principal do Widget */
+    .float-widget__btn {
+      position: relative;
+      width: var(--float-size);
+      height: var(--float-size);
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #38805A 0%, #296143 100%);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      cursor: pointer;
+      pointer-events: auto;
+      animation: floatPiggy 3s ease-in-out infinite;
+      transition: transform .2s ease;
+    }
+
+    .float-widget__btn > svg {
+      width: 45%;
+      height: 45%;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+    }
+
+    .float-widget__btn:hover  { transform: scale(1.10); }
+    .float-widget__btn:active { transform: scale(0.95); }
+
+    /* Responsivo para mobile do Widget */
+    @media (max-width: 480px) {
+      :root {
+        --float-bottom-pos: 24px;
+        --float-right-pos: 24px;
+        --float-size: 55px;
+      }
+    }
   </style>
 </head>
 <body class="bg-paper dark:bg-[#121212] text-ink dark:text-[#E0E0E0] transition-colors duration-500 relative overflow-x-hidden selection:bg-accent/20">
@@ -473,6 +557,73 @@
       </div>
     </div>
   </div>
+
+  <!-- WIDGET DE ACESSO RÁPIDO (CÓDIGO A) -->
+  <div class="float-widget flex" id="widget-container">
+    <div id="quick-access-menu" class="float-widget__menu bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 shadow-2xl opacity-0 scale-95 pointer-events-none transition-all duration-200">
+      
+      <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
+        <a href="https://produtosauvp.github.io/central/" target="_blank" class="text-sm font-bold text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group w-full">
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            Central de Produto
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 group-hover:opacity-100 transition-opacity"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+
+      <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
+        <div class="flex flex-col gap-1.5">
+          <a href="https://forms.clickup.com/36903956/f/13670m-92951/4D930BQ9H63ASARNP3" target="_blank" class="text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Abra uma solicitação
+            </div>
+          </a>
+          <a href="https://produtosauvp.github.io/q-a-design/" target="_blank" class="text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Solicite uma revisão de design
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="px-4 py-3">
+        <div class="flex flex-col gap-1.5">
+          <a href="https://produtosauvp.github.io/central/design-system" target="_blank" class="text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              Design System
+            </div>
+          </a>
+          <a href="https://produtosauvp.github.io/central/tom-e-voz" target="_blank" class="text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Tom de Voz
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative group flex items-center">
+      <!-- Tooltip (Automático inicial + Hover) -->
+      <div id="widget-tooltip" class="absolute right-full mr-4 bg-ink text-paper dark:bg-white dark:text-ink text-[10px] uppercase tracking-widest font-bold px-3 py-2 rounded-[4px] whitespace-nowrap opacity-100 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-md">
+        Acessos Rápidos & Links Úteis
+      </div>
+      
+      <!-- Botão Float -->
+      <button id="float-toggle-btn" class="float-widget__btn text-white" aria-label="Acessos Rápidos">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 12 12 17 22 12"/>
+          <polyline points="2 17 12 22 22 17"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <!-- FIM DO WIDGET DE ACESSO RÁPIDO -->
 
   <!-- ========================================== -->
   <!-- JAVASCRIPT: LÓGICA E ESTADO DA APLICAÇÃO   -->
@@ -1121,8 +1272,8 @@
         const r = 40;
         const valToR = (v) => (v / 5) * r;
         
-        const pTop = `60,${60 - valToR(avgs.q1)}`;     // Q1: Prazo
-        const pRight = `${60 + valToR(avgs.q2)},60`;   // Q2: Qualidade
+        const pTop = `60,${60 - valToR(avgs.q1)}`;      // Q1: Prazo
+        const pRight = `${60 + valToR(avgs.q2)},60`;    // Q2: Qualidade
         const pBottom = `60,${60 + valToR(avgs.q3)}`;  // Q3: Estratégia
         const pLeft = `${60 - valToR(avgs.q5)},60`;    // Q5: Comunicação
         
@@ -1309,6 +1460,14 @@
 
     // -- ASSINANDO EVENTOS DE FORMA SEGURA --
     window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const tooltip = document.getElementById('widget-tooltip');
+          if (tooltip) {
+            tooltip.classList.remove('opacity-100');
+            tooltip.classList.add('opacity-0');
+          }
+        }, 4000);
+
         const adminPassword = document.getElementById('admin-password');
         if (adminPassword) {
             adminPassword.addEventListener('keypress', function (e) {
@@ -1330,6 +1489,35 @@
                 const q = formQuestions[currentStep];
                 if (q && !q.isText) formData[`${q.key}_comment`] = e.target.value;
             });
+        }
+
+        // LÓGICA DO WIDGET FLUTUANTE (CÓDIGO A)
+        const floatBtn = document.getElementById('float-toggle-btn');
+        const quickAccessMenu = document.getElementById('quick-access-menu');
+
+        if (floatBtn && quickAccessMenu) {
+          floatBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita que o clique feche o menu imediatamente
+            
+            // Alterna o estado do menu
+            const isOpen = quickAccessMenu.classList.contains('is-open');
+            
+            if (isOpen) {
+              quickAccessMenu.classList.remove('is-open', 'opacity-100', 'scale-100');
+              quickAccessMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            } else {
+              quickAccessMenu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+              quickAccessMenu.classList.add('is-open', 'opacity-100', 'scale-100');
+            }
+          });
+
+          // Fecha o menu ao clicar fora dele
+          document.addEventListener('click', (event) => {
+            if (!quickAccessMenu.contains(event.target) && quickAccessMenu.classList.contains('is-open')) {
+              quickAccessMenu.classList.remove('is-open', 'opacity-100', 'scale-100');
+              quickAccessMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            }
+          });
         }
 
         // Inicializa na tela de Intro
