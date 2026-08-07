@@ -15,19 +15,28 @@ Produto no ClickUp.
 3. **Implantar › Nova implantação › App da Web**, com:
    - Executar como: **Eu**
    - Quem pode acessar: **Qualquer pessoa**
-4. Copie a URL gerada (termina em `/exec`).
-5. Em `index.htm`, substitua o placeholder:
+4. Copie a URL gerada em **Implantar › Gerenciar implantações** — ela termina em
+   `/exec`. Não use a que aparece na barra do navegador ao abrir a implantação:
+   aquela é o destino do redirecionamento (`script.googleusercontent.com/…/echo`),
+   com uma chave temporária que expira.
+5. Cole a URL em `GOOGLE_SHEET_REQUEST_URL`, no `index.htm`.
 
-   ```js
-   const GOOGLE_SHEET_REQUEST_URL = 'SUA_URL_DO_WEB_APP_AQUI';
-   ```
+A implantação em uso é a de `auvp.com.br`, já configurada no `index.htm`.
 
 Ao alterar o script depois, crie uma **nova versão da implantação** — a URL só
 passa a servir o código novo a partir disso.
 
-> O acesso precisa ser **Qualquer pessoa**. É isso que faz a resposta do script
-> vir com CORS liberado, e é dela que o formulário depende para confirmar a
-> gravação.
+> O acesso precisa ser **Qualquer pessoa**, e não *"Qualquer pessoa na AUVP"*. A
+> página é servida pelo GitHub Pages e requisições entre domínios não levam o
+> cookie de login do Google — com a opção restrita ao domínio, o script responde
+> com a tela de login em HTML e o envio falha, mesmo para quem está logado.
+>
+> É esse acesso que faz a resposta vir com CORS liberado, e é dela que o
+> formulário depende para confirmar a gravação.
+>
+> Como a URL fica no código da página, que é pública, quem a descobrir consegue
+> inserir linhas na planilha — mesma exposição de um Google Forms aberto. O
+> endpoint só grava: não devolve dados nem apaga nada.
 
 ## Conferindo antes de publicar
 

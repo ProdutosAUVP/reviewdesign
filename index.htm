@@ -975,10 +975,9 @@
     // Planilha de destino das solicitações: espelho da esteira de design da Área de Produto.
     const REQUEST_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1dBvXUrNmi11ZwYKdUWtBfgTsfNcvVpTuHLNeesArvAs/edit?gid=588811467#gid=588811467';
 
-    // Endpoint do Apps Script vinculado à planilha acima. Enquanto estiver com o valor
-    // abaixo, o envio fica apenas local e o resumo pode ser copiado na tela final para
-    // ser colado direto no ClickUp ou na planilha.
-    const GOOGLE_SHEET_REQUEST_URL = 'SUA_URL_DO_WEB_APP_AQUI';
+    // Endpoint do Apps Script vinculado à planilha acima. Ao trocar o script, é
+    // preciso criar uma nova versão da implantação para esta URL servir o código novo.
+    const GOOGLE_SHEET_REQUEST_URL = 'https://script.google.com/a/macros/auvp.com.br/s/AKfycbydGvxVDleBjxQivsvYa-1pdqaDTpeMu9Da-7B6ypZjoT2tC2rPMdUX9oy3sehepA464Q/exec';
 
     // --- PRELOAD DOS GIFS ---
     // Faz o download de todos os GIFs em background assim que o site carrega,
