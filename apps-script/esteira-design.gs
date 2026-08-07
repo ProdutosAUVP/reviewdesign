@@ -36,7 +36,14 @@ var PASTA_ANEXOS = 'Anexos | Solicitações de Design';
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+
+  // A trava evita que dois envios simultâneos gravem na mesma linha. Se nem ela
+  // puder ser obtida, o formulário precisa saber — por isso a resposta de erro.
+  try {
+    lock.waitLock(30000);
+  } catch (err) {
+    return resposta_({ ok: false, error: 'A planilha está ocupada. Tente novamente.' });
+  }
 
   try {
     var sheet = getSheet_();
@@ -54,7 +61,9 @@ function doPost(e) {
     });
 
     sheet.appendRow(linha);
+    SpreadsheetApp.flush();
 
+    // A linha só é confirmada depois de gravada, e é ela que o formulário exibe
     return resposta_({ ok: true, linha: sheet.getLastRow() });
   } catch (err) {
     return resposta_({ ok: false, error: String(err) });
@@ -90,6 +99,37 @@ function doGet() {
   } catch (err) {
     return resposta_({ error: String(err) });
   }
+}
+
+/**
+ * Rode esta função no editor do Apps Script para conferir a ligação com a
+ * planilha antes de publicar. Ela grava uma linha de teste, mostra a linha
+ * gravada e apaga em seguida — o log fica em Execuções.
+ */
+function testarLigacao() {
+  var sheet = getSheet_();
+  var cabecalhos = getCabecalhos_(sheet);
+
+  Logger.log('Aba: %s', sheet.getName());
+  Logger.log('Colunas (%s): %s', cabecalhos.length, cabecalhos.join(' | '));
+
+  var teste = {};
+  teste['Task Name'] = '[TESTE] Ligação do formulário';
+  teste['Status'] = 'aguardando';
+  teste['Created By'] = 'testarLigacao()';
+
+  var linhaTeste = cabecalhos.map(function (coluna) {
+    return teste[coluna] !== undefined ? teste[coluna] : '';
+  });
+
+  sheet.appendRow(linhaTeste);
+  SpreadsheetApp.flush();
+
+  var gravada = sheet.getLastRow();
+  Logger.log('Linha de teste gravada: %s', gravada);
+
+  sheet.deleteRow(gravada);
+  Logger.log('Linha de teste removida. Ligação funcionando.');
 }
 
 function getSheet_() {

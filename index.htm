@@ -234,6 +234,19 @@
         <img src="https://media.giphy.com/media/3o7TKDk86g4k5E6ZPO/giphy.gif" alt="Briefing de design" class="w-full h-32 md:h-44 object-cover grayscale-[20%] transition-transform duration-700 hover:scale-105" loading="lazy" />
       </div>
 
+      <!-- Aviso de solicitação que não chegou na planilha -->
+      <div id="request-pendente" class="hidden flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#E5ACA0]/10 border border-[#E5ACA0]/30 p-4 rounded-[2px] mb-6 w-full">
+        <p id="request-pendente-texto" class="text-[11px] leading-relaxed text-[#D96C53] dark:text-[#E5ACA0] font-medium break-words min-w-0"></p>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="btn-copiar-pendente" onclick="copiarPendente()" class="px-3 py-2 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[9px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity rounded-[2px] whitespace-nowrap">
+            Copiar resumo
+          </button>
+          <button onclick="descartarPendente()" class="px-3 py-2 border border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 text-[9px] uppercase tracking-widest font-bold hover:text-ink dark:hover:text-white transition-colors rounded-[2px] whitespace-nowrap">
+            Descartar
+          </button>
+        </div>
+      </div>
+
       <!-- Formulário em fluxo contínuo, sem separação por blocos -->
       <div class="flex flex-col gap-6 w-full">
 
@@ -327,8 +340,9 @@
           </div>
 
           <!-- Aviso sobre insumos incompletos -->
-          <div class="mt-4 bg-ink dark:bg-white text-paper dark:text-[#121212] p-4 rounded-[2px] w-full">
-            <p class="text-[11px] md:text-xs leading-relaxed break-words">
+          <div class="mt-4 flex items-start gap-3 bg-paper-dark/40 dark:bg-white/[0.06] border border-paper-dark dark:border-white/10 border-l-2 border-l-accent p-4 rounded-[2px] w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <p class="text-[11px] md:text-xs leading-relaxed text-ink-light dark:text-white/60 break-words">
               Caso a demanda não tenha todos os insumos necessários para ser executada ela ficará parada, sem execução, até que tenha todas as informações necessárias.
             </p>
           </div>
@@ -353,15 +367,18 @@
       </div>
 
       <!-- Rodapé de Envio -->
-      <div class="w-full flex flex-col-reverse md:flex-row justify-between items-center mt-8 pt-4 border-t border-paper-dark dark:border-white/10 gap-4">
-        <p id="request-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest w-full md:w-auto text-center md:text-left">Preencha todos os campos obrigatórios.</p>
-        <span id="request-hint" class="text-[9px] md:text-[10px] text-ink-light dark:text-white/40 leading-tight italic break-words w-full md:max-w-[380px] text-center md:text-right">
-          A solicitação entra na lista 🧑‍🎨 Design | Esteira e é priorizada pelo time no kickoff.
-        </span>
+      <div class="w-full mt-8 pt-4 border-t border-paper-dark dark:border-white/10">
+        <p id="request-error" class="hidden text-[11px] leading-relaxed text-[#D96C53] dark:text-[#E5ACA0] font-medium bg-[#E5ACA0]/10 border border-[#E5ACA0]/30 p-3 rounded-[2px] mb-4 w-full break-words"></p>
 
-        <button id="btn-request-submit" onclick="submitRequest()" class="w-full md:w-auto shrink-0 justify-center px-6 py-3 md:py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-          Enviar Solicitação →
-        </button>
+        <div class="w-full flex flex-col-reverse md:flex-row justify-between items-center gap-4">
+          <span id="request-hint" class="text-[9px] md:text-[10px] text-ink-light dark:text-white/40 leading-tight italic break-words w-full md:max-w-[420px] text-center md:text-left">
+            A solicitação entra na lista 🧑‍🎨 Design | Esteira e é priorizada pelo time no kickoff.
+          </span>
+
+          <button id="btn-request-submit" onclick="submitRequest()" class="w-full md:w-auto shrink-0 justify-center px-6 py-3 md:py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            Enviar Solicitação →
+          </button>
+        </div>
       </div>
     </div>
   </main>
@@ -385,6 +402,7 @@
         <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40">SLA de execução</span>
         <span id="success-sla" class="text-xs font-bold text-accent dark:text-[#72A68C] break-words"></span>
         <span id="success-sla-status" class="text-[11px] font-bold block mt-1"></span>
+        <span id="success-linha" class="text-[10px] text-ink-light dark:text-white/40 block mt-2 pt-2 border-t border-paper-dark dark:border-white/10"></span>
       </div>
     </div>
 
@@ -1449,10 +1467,7 @@
       const missing = getRequestMissingFields();
 
       if (missing.length > 0) {
-        if (errorMsg) {
-          errorMsg.innerText = `Campos obrigatórios: ${missing.join(', ')}.`;
-          errorMsg.classList.remove('hidden');
-        }
+        showRequestError(`Preencha os campos obrigatórios: ${missing.join(', ')}.`);
         return;
       }
 
@@ -1500,38 +1515,207 @@
         dataToGoogle.append('anexosJson', JSON.stringify(requestAnexos));
       }
 
-      // Dispara o envio para a Planilha
-      // mode: 'no-cors' impede erros de segurança e garante o envio no background.
-      if (GOOGLE_SHEET_REQUEST_URL !== 'SUA_URL_DO_WEB_APP_AQUI') {
-        fetch(GOOGLE_SHEET_REQUEST_URL, { method: 'POST', body: dataToGoogle, mode: 'no-cors' })
-          .then(res => console.log('Solicitação registrada na esteira com sucesso!'))
-          .catch(err => console.error('Erro ao registrar a solicitação na planilha:', err));
+      // O envio só é considerado concluído quando o Apps Script confirma a linha
+      // gravada. Sem confirmação, a solicitação fica pendente e nada é perdido.
+      enviarSolicitacao(dataToGoogle, tipo, slaStatus);
+    }
+
+    // Confirma o recebimento lendo a resposta do Apps Script. Diferente do envio
+    // com mode:'no-cors', aqui o navegador consegue ler o corpo da resposta —
+    // FormData é uma requisição simples, então não há preflight, e o Apps Script
+    // responde com CORS liberado.
+    async function postSolicitacao(body) {
+      const resposta = await fetch(GOOGLE_SHEET_REQUEST_URL, {
+        method: 'POST',
+        body: body,
+        redirect: 'follow'
+      });
+
+      if (!resposta.ok) {
+        throw new Error(`A planilha respondeu com o status ${resposta.status}.`);
       }
 
-      // Preenche a confirmação com o SLA acordado para esta demanda
-      const successSla = document.getElementById('success-sla');
-      const successTaskName = document.getElementById('success-task-name');
-      const successSlaStatus = document.getElementById('success-sla-status');
-      const linkEsteira = document.getElementById('link-esteira');
-
-      if (successSla) successSla.innerText = tipo ? `${tipo.id} — ${tipo.prazo}` : '-';
-      if (successTaskName) successTaskName.innerText = requestData.taskName;
-      if (successSlaStatus && slaStatus) {
-        successSlaStatus.innerText = slaStatus.id;
-        successSlaStatus.className = `text-[11px] font-bold block mt-1 ${slaStatus.className}`;
+      let json;
+      try {
+        json = JSON.parse(await resposta.text());
+      } catch (err) {
+        throw new Error('A planilha respondeu em um formato inesperado.');
       }
-      if (linkEsteira) linkEsteira.setAttribute('href', REQUEST_SHEET_URL);
 
-      // Finaliza o envio na interface gráfica após uma breve animação
-      setTimeout(() => {
-        isRequestSubmitted = true;
-        switchView('request-success');
+      if (!json || json.ok !== true) {
+        throw new Error(json && json.error ? json.error : 'A planilha recusou o registro.');
+      }
 
+      return json;
+    }
+
+    // Três tentativas com espera crescente, para não perder um envio por uma
+    // oscilação momentânea de rede.
+    async function postComTentativas(body, tentativas = 3) {
+      let ultimoErro;
+
+      for (let i = 0; i < tentativas; i++) {
+        try {
+          return await postSolicitacao(body);
+        } catch (err) {
+          ultimoErro = err;
+          if (i < tentativas - 1) {
+            await new Promise(r => setTimeout(r, 1500 * Math.pow(2, i)));
+          }
+        }
+      }
+
+      throw ultimoErro;
+    }
+
+    async function enviarSolicitacao(body, tipo, slaStatus) {
+      const btnSubmit = document.getElementById('btn-request-submit');
+
+      const encerrar = () => {
         if (btnSubmit) {
           btnSubmit.innerHTML = 'Enviar Solicitação →';
           btnSubmit.disabled = false;
         }
-      }, 800);
+      };
+
+      if (GOOGLE_SHEET_REQUEST_URL === 'SUA_URL_DO_WEB_APP_AQUI') {
+        salvarPendente();
+        showRequestError('O endereço da planilha ainda não foi configurado, então a solicitação não foi gravada. Ela ficou guardada neste navegador — avise o time de design.');
+        encerrar();
+        return;
+      }
+
+      try {
+        const confirmacao = await postComTentativas(body);
+
+        // Só a partir daqui a solicitação é dada como registrada
+        renderSuccessRequest(tipo, slaStatus, confirmacao.linha);
+        removerPendente();
+        isRequestSubmitted = true;
+        switchView('request-success');
+      } catch (err) {
+        salvarPendente();
+        showRequestError(`Não foi possível gravar na planilha: ${err.message} A solicitação ficou guardada neste navegador — tente enviar de novo ou copie o resumo.`);
+        console.error('Falha ao registrar a solicitação:', err);
+      } finally {
+        encerrar();
+      }
+    }
+
+    function showRequestError(mensagem) {
+      const errorMsg = document.getElementById('request-error');
+      if (!errorMsg) return;
+
+      errorMsg.innerText = mensagem;
+      errorMsg.classList.remove('hidden');
+    }
+
+    // Preenche a confirmação com o SLA acordado e a linha gravada na planilha
+    function renderSuccessRequest(tipo, slaStatus, linha) {
+      const successSla = document.getElementById('success-sla');
+      const successTaskName = document.getElementById('success-task-name');
+      const successSlaStatus = document.getElementById('success-sla-status');
+      const successLinha = document.getElementById('success-linha');
+      const linkEsteira = document.getElementById('link-esteira');
+
+      if (successSla) successSla.innerText = tipo ? `${tipo.id} — ${tipo.prazo}` : '-';
+      if (successTaskName) successTaskName.innerText = requestData.taskName;
+
+      if (successSlaStatus && slaStatus) {
+        successSlaStatus.innerText = slaStatus.id;
+        successSlaStatus.className = `text-[11px] font-bold block mt-1 ${slaStatus.className}`;
+      }
+
+      if (successLinha) {
+        successLinha.innerText = linha ? `Gravada na linha ${linha} da planilha.` : '';
+      }
+
+      if (linkEsteira) linkEsteira.setAttribute('href', REQUEST_SHEET_URL);
+    }
+
+    // ---------- RASCUNHO DE SEGURANÇA ----------
+    // Se o envio falhar, a solicitação fica no navegador para não se perder.
+    // Os anexos não entram aqui: em base64 estouram a cota do localStorage.
+    const PENDENTE_KEY = 'solicitacaoDesignPendente';
+
+    function salvarPendente() {
+      try {
+        localStorage.setItem(PENDENTE_KEY, JSON.stringify({
+          salvoEm: new Date().toISOString(),
+          resumo: buildRequestSummary(),
+          dados: requestData,
+          anexos: requestAnexos.map(a => a.nome)
+        }));
+      } catch (err) {
+        console.warn('Não foi possível guardar a solicitação neste navegador:', err);
+      }
+    }
+
+    function removerPendente() {
+      try {
+        localStorage.removeItem(PENDENTE_KEY);
+      } catch (err) {
+        // Sem localStorage disponível não há rascunho a limpar
+      }
+    }
+
+    function getPendente() {
+      try {
+        const bruto = localStorage.getItem(PENDENTE_KEY);
+        return bruto ? JSON.parse(bruto) : null;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    // Avisa, ao abrir a página, que existe uma solicitação que não chegou na planilha
+    function renderPendente() {
+      const aviso = document.getElementById('request-pendente');
+      const texto = document.getElementById('request-pendente-texto');
+      if (!aviso) return;
+
+      const pendente = getPendente();
+
+      if (!pendente) {
+        aviso.classList.add('hidden');
+        return;
+      }
+
+      const quando = pendente.salvoEm
+        ? new Date(pendente.salvoEm).toLocaleString('pt-BR')
+        : 'em uma tentativa anterior';
+
+      if (texto) {
+        texto.innerText = `A solicitação "${(pendente.dados && pendente.dados.taskName) || 'sem título'}" não chegou na planilha (${quando}). Copie o resumo e envie ao time de design, ou preencha o formulário de novo.`;
+      }
+
+      aviso.classList.remove('hidden');
+    }
+
+    function copiarPendente() {
+      const pendente = getPendente();
+      if (!pendente) return;
+
+      const btn = document.getElementById('btn-copiar-pendente');
+      const feedback = (msg) => {
+        if (!btn) return;
+        const original = btn.innerHTML;
+        btn.innerHTML = msg;
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(pendente.resumo || '')
+          .then(() => feedback('Copiado!'))
+          .catch(() => feedback('Não foi possível copiar'));
+      } else {
+        feedback('Não foi possível copiar');
+      }
+    }
+
+    function descartarPendente() {
+      removerPendente();
+      renderPendente();
     }
 
     function resetRequestForm() {
@@ -2448,6 +2632,7 @@
         // Monta os seletores de tipo e prioridade da solicitação
         renderRequestOptions();
         updateRequestProgress();
+        renderPendente();
 
         // Inicializa na tela principal (Solicitação de Demandas)
         switchView('request');
