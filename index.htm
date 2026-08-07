@@ -243,14 +243,14 @@
             <input type="text" id="req-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira o seu nome...">
           </div>
           <div class="w-full min-w-0">
-            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">0️⃣ Produto <span class="text-accent">*</span></label>
+            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Produto <span class="text-accent">*</span></label>
             <select id="req-produto" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
           <div class="w-full min-w-0 md:col-span-2">
-            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Task Name <span class="text-accent">*</span></label>
+            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Nome da demanda <span class="text-accent">*</span></label>
             <input type="text" id="req-title" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: [AUVP Capital] Criar o mockup do brinde Y">
             <p class="text-[10px] text-accent dark:text-accent-light mt-2 italic break-words">
               * Siga o padrão da esteira: [NOME DO PRODUTO] Do que se trata. Este mesmo título será usado depois na avaliação da entrega.
@@ -310,8 +310,28 @@
 
         <div class="w-full">
           <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Descrição da demanda <span class="text-accent">*</span></label>
-          <textarea id="req-description" rows="5" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Descreva o que precisa ser feito. Inclua aqui também público-alvo, formatos e dimensões, entregáveis esperados e referências visuais."></textarea>
-          <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">Vira a descrição da tarefa (Task Content) no ClickUp.</p>
+          <textarea id="req-description" rows="6" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Descreva o que precisa ser feito. Inclua aqui público-alvo, formatos e dimensões, entregáveis esperados e os links de referência, briefing ou material de apoio."></textarea>
+          <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">Cole aqui os links que forem necessários. Vira a descrição da tarefa no ClickUp.</p>
+
+          <!-- Anexos da demanda -->
+          <div class="mt-4 w-full">
+            <input type="file" id="req-anexos" multiple accept="image/*,application/pdf,.pdf,.ai,.psd,.eps,.svg,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip" onchange="handleAnexos(event)" class="hidden">
+            <label for="req-anexos" class="inline-flex items-center gap-2 px-4 py-2.5 border border-dashed border-paper-dark dark:border-white/20 rounded-[2px] text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:border-accent hover:text-ink dark:hover:text-white transition-colors cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              Anexar arquivos
+            </label>
+            <span class="text-[10px] text-ink-light dark:text-white/40 italic ml-3">Imagens, PDFs e afins. Até 10 MB por arquivo.</span>
+
+            <ul id="req-anexos-lista" class="flex flex-col gap-2 mt-3 w-full"></ul>
+            <p id="req-anexos-erro" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest mt-2"></p>
+          </div>
+
+          <!-- Aviso sobre insumos incompletos -->
+          <div class="mt-4 bg-ink dark:bg-white text-paper dark:text-[#121212] p-4 rounded-[2px] w-full">
+            <p class="text-[11px] md:text-xs leading-relaxed break-words">
+              Caso a demanda não tenha todos os insumos necessários para ser executada ela ficará parada, sem execução, até que tenha todas as informações necessárias.
+            </p>
+          </div>
         </div>
 
         <div class="w-full">
@@ -330,10 +350,6 @@
           </div>
         </div>
 
-        <div class="w-full">
-          <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">URL <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
-          <input type="url" id="req-url" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="https://... briefing, referências ou material de apoio">
-        </div>
       </div>
 
       <!-- Rodapé de Envio -->
@@ -884,7 +900,7 @@
     // são preenchidos manualmente no ClickUp, na triagem da demanda.
 
     // Qual a área a que se refere? (drop down)
-    const ESTEIRA_AREAS = ['Outros times da empresa', 'Time de produto', 'Designer'];
+    const ESTEIRA_AREAS = ['Outros times da empresa', 'Time de produto'];
 
     // O uso será interno ou externo? (drop down)
     const ESTEIRA_USOS = ['Interno', 'Externo'];
@@ -982,9 +998,16 @@
       uso: '',               // O uso será interno ou externo? (drop down)
       dataEntrega: '',       // Data de entrega (date)
       prioridade: '',        // Priority — derivada do SLA, ajustável
-      justificativa: '',     // Justificativa da prioridade (text)
-      url: ''                // URL (url)
+      justificativa: ''      // Justificativa da prioridade (text)
     });
+
+    // Limites de anexo. O base64 infla ~33%, então o total é conservador para
+    // caber com folga no POST que o Apps Script recebe.
+    const ANEXO_MAX_BYTES = 10 * 1024 * 1024;
+    const ANEXO_TOTAL_MAX_BYTES = 20 * 1024 * 1024;
+
+    // { nome, tipo, tamanho, dados (base64 sem o prefixo data:) }
+    let requestAnexos = [];
 
     let requestData = emptyRequestData();
     let isRequestSubmitted = false;
@@ -1037,6 +1060,106 @@
         const classes = base + (isSelected ? ` ${p.selectedClass} shadow-sm` : idle);
         return `<button type="button" onclick="setRequestPrioridade(${i})" class="${classes}" title="${p.id}">${p.id}</button>`;
       }).join('');
+    }
+
+    // ---------- ANEXOS ----------
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function anexosTotalBytes() {
+      return requestAnexos.reduce((soma, a) => soma + a.tamanho, 0);
+    }
+
+    function showAnexoErro(mensagem) {
+      const erro = document.getElementById('req-anexos-erro');
+      if (!erro) return;
+
+      if (mensagem) {
+        erro.innerText = mensagem;
+        erro.classList.remove('hidden');
+      } else {
+        erro.classList.add('hidden');
+      }
+    }
+
+    // Lê cada arquivo como base64 para poder viajar dentro do FormData
+    function lerArquivo(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const resultado = String(reader.result);
+          resolve({
+            nome: file.name,
+            tipo: file.type || 'application/octet-stream',
+            tamanho: file.size,
+            dados: resultado.slice(resultado.indexOf(',') + 1)
+          });
+        };
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleAnexos(event) {
+      const input = event.target;
+      const escolhidos = Array.from(input.files || []);
+      if (escolhidos.length === 0) return;
+
+      const recusados = [];
+      let total = anexosTotalBytes();
+
+      for (const file of escolhidos) {
+        if (file.size > ANEXO_MAX_BYTES) {
+          recusados.push(`${file.name} (acima de ${formatBytes(ANEXO_MAX_BYTES)})`);
+          continue;
+        }
+
+        if (total + file.size > ANEXO_TOTAL_MAX_BYTES) {
+          recusados.push(`${file.name} (estouraria o total de ${formatBytes(ANEXO_TOTAL_MAX_BYTES)})`);
+          continue;
+        }
+
+        try {
+          requestAnexos.push(await lerArquivo(file));
+          total += file.size;
+        } catch (err) {
+          recusados.push(`${file.name} (falha na leitura)`);
+        }
+      }
+
+      // Permite reanexar o mesmo arquivo depois de removê-lo da lista
+      input.value = '';
+
+      showAnexoErro(recusados.length ? `Não anexados: ${recusados.join(', ')}.` : '');
+      renderAnexos();
+    }
+
+    function removeAnexo(index) {
+      requestAnexos.splice(index, 1);
+      showAnexoErro('');
+      renderAnexos();
+    }
+
+    function renderAnexos() {
+      const lista = document.getElementById('req-anexos-lista');
+      if (!lista) return;
+
+      lista.innerHTML = requestAnexos.map((a, i) => `
+        <li class="flex items-center justify-between gap-3 px-3 py-2 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] rounded-[2px] w-full">
+          <div class="flex items-center gap-2 min-w-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent shrink-0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="text-xs text-ink dark:text-white truncate" title="${a.nome}">${a.nome}</span>
+            <span class="text-[10px] text-ink-light dark:text-white/40 shrink-0">${formatBytes(a.tamanho)}</span>
+          </div>
+          <button type="button" onclick="removeAnexo(${i})" aria-label="Remover ${a.nome}" class="text-ink-light hover:text-[#D96C53] dark:text-white/40 dark:hover:text-[#E5ACA0] transition-colors shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </li>
+      `).join('');
     }
 
     // ---------- SLA ----------
@@ -1220,7 +1343,6 @@
       requestData.uso = val('req-uso');
       requestData.dataEntrega = val('req-due-date');
       requestData.justificativa = val('req-justificativa');
-      requestData.url = val('req-url');
     }
 
     function getRequestMissingFields() {
@@ -1274,28 +1396,27 @@
       const slaStatus = getSlaStatus();
 
       const lines = [
-        `Task Name: ${requestData.taskName}`,
-        `Space: ${ESTEIRA.space}`,
-        `Folder: ${ESTEIRA.folder}`,
-        `List: ${ESTEIRA.list}`,
+        `Nome da demanda: ${requestData.taskName}`,
         ``,
-        `Tipo de Demanda: ${requestData.tipoDemanda}`,
+        `Tipo de demanda: ${requestData.tipoDemanda}`,
         `SLA: ${tipo ? tipo.prazo : '-'}`,
         `Status do SLA: ${slaStatus ? slaStatus.id : '-'}`,
         ``,
-        `0️⃣ Produto: ${requestData.produto}`,
-        `Priority: ${requestData.prioridade}`,
+        `Produto: ${requestData.produto}`,
+        `Prioridade: ${requestData.prioridade}`,
         `Data de entrega: ${dataEntregaTxt}`,
-        `Created By: ${requestData.author}`
+        `Solicitante: ${requestData.author}`
       ];
 
-      if (requestData.justificativa) lines.push(`Justificativa da prioridade: ${requestData.justificativa}`);
-      if (requestData.area) lines.push(`Qual a área a que se refere?: ${requestData.area}`);
-      if (requestData.uso) lines.push(`O uso será interno ou externo?: ${requestData.uso}`);
-      if (requestData.url) lines.push(`URL: ${requestData.url}`);
+      if (requestData.justificativa) lines.push(`Justificativa de urgência: ${requestData.justificativa}`);
+      if (requestData.area) lines.push(`Área a que se refere: ${requestData.area}`);
+      if (requestData.uso) lines.push(`Uso interno ou externo: ${requestData.uso}`);
+      if (requestAnexos.length) {
+        lines.push(`Anexos: ${requestAnexos.map(a => a.nome).join(', ')}`);
+      }
 
-      lines.push(``, `Qual o objetivo da demanda, para o que será usada?`, requestData.objetivo);
-      lines.push(``, `Task Content:`, requestData.taskContent);
+      lines.push(``, `Objetivo da demanda:`, requestData.objetivo);
+      lines.push(``, `Descrição da demanda:`, requestData.taskContent);
 
       return lines.join('\n');
     }
@@ -1365,13 +1486,19 @@
       dataToGoogle.append('O uso será interno ou externo? (drop down)', requestData.uso);
       dataToGoogle.append('Qual a área a que se refere? (drop down)', requestData.area);
       dataToGoogle.append('Qual o objetivo da demanda, para o que será usada? (text)', requestData.objetivo);
-      dataToGoogle.append('URL (url)', requestData.url);
 
       // Colunas novas, criadas pelo Apps Script na primeira solicitação recebida
       dataToGoogle.append('Task Content', requestData.taskContent);
       dataToGoogle.append('Tipo de Demanda', requestData.tipoDemanda);
       dataToGoogle.append('SLA', tipo ? tipo.prazo : '');
       dataToGoogle.append('Status do SLA', slaStatus ? slaStatus.id : '');
+      dataToGoogle.append('Anexos', requestAnexos.map(a => a.nome).join(', '));
+
+      // Os arquivos viajam em base64 e são gravados no Drive pelo Apps Script,
+      // que devolve os links para a coluna "Anexos". A chave não vira coluna.
+      if (requestAnexos.length) {
+        dataToGoogle.append('anexosJson', JSON.stringify(requestAnexos));
+      }
 
       // Dispara o envio para a Planilha
       // mode: 'no-cors' impede erros de segurança e garante o envio no background.
@@ -1411,9 +1538,12 @@
       isRequestSubmitted = false;
       prioridadeManual = false;
       requestData = emptyRequestData();
+      requestAnexos = [];
+      renderAnexos();
+      showAnexoErro('');
 
       ['req-name', 'req-title', 'req-description', 'req-objetivo',
-       'req-due-date', 'req-justificativa', 'req-url']
+       'req-due-date', 'req-justificativa']
         .forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = '';
