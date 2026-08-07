@@ -37,7 +37,6 @@ depender da ordem. Se você reordenar colunas na planilha, nada quebra.
 | --- | --- |
 | `Task Name` | Task Name |
 | `Status` | fixo: `aguardando` |
-| `Assignee` | Designer sugerido |
 | `Priority` | Prioridade (ver abaixo) |
 | `Date Created` | data e hora do envio |
 | `Created By` | Quem é você? |
@@ -52,10 +51,10 @@ depender da ordem. Se você reordenar colunas na planilha, nada quebra.
 | `Qual o objetivo da demanda, para o que será usada? (text)` | Objetivo da demanda |
 | `URL (url)` | URL |
 
-As colunas `Tasks com interface (tasks)`, `Tipagem da Tarefa (drop down)` e
-`🗓️ Alinhamento Realizado (labels)` existem na planilha mas não são coletadas pelo
-formulário — são preenchidas manualmente no ClickUp, na triagem da demanda —,
-então chegam vazias.
+As colunas `Assignee`, `Tasks com interface (tasks)`, `Tipagem da Tarefa (drop down)`
+e `🗓️ Alinhamento Realizado (labels)` existem na planilha mas não são coletadas pelo
+formulário — são preenchidas manualmente no ClickUp, na triagem da demanda —, então
+chegam vazias.
 
 ### Colunas criadas pelo script
 
