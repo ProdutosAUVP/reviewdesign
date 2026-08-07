@@ -51,8 +51,9 @@ Gravar e confirmar seguem caminhos diferentes, e **nenhum dos dois depende de
 CORS** — foi o CORS que derrubou a primeira tentativa de integração, com um
 `Failed to fetch` no navegador.
 
-1. **Gravação** — `POST` com `mode: 'no-cors'`. O navegador não deixa ler a
-   resposta, mas a requisição sai, e é isso que importa para gravar.
+1. **Gravação** — `POST` com `mode: 'no-cors'`, levando só os campos do
+   formulário. Fica em torno de 3 KB, então grava rápido. Os arquivos anexados
+   sobem depois, em requisições próprias.
 2. **Confirmação** — o formulário gera um `ID do Envio` único, manda junto com os
    dados, e depois consulta o endpoint por **JSONP** (`?envioId=…&callback=…`)
    procurando esse identificador na planilha. Uma tag `<script>` não passa por
@@ -68,7 +69,7 @@ confirmação quando termina:
 | Encontrou | *Registro confirmado na linha N da planilha.* |
 | Não encontrou | *Enviado, mas não foi possível confirmar o registro automaticamente.* |
 
-São 4 tentativas a cada 2s. Um envio normal confirma na primeira ou na segunda.
+São 8 tentativas a cada 2s. Um envio normal confirma na primeira ou na segunda.
 
 O único caso que segura o usuário no formulário é o `fetch` estourar de verdade —
 aí a solicitação não saiu, o erro é mostrado e ela fica guardada no navegador
@@ -142,16 +143,28 @@ script — nesse caso, campos sem coluna correspondente são descartados.
 
 ### Anexos
 
-Os arquivos anexados na descrição viajam em base64 dentro do campo `anexosJson`,
-que é consumido pelo script e **não** vira coluna. Cada arquivo é gravado numa pasta
-do Drive chamada `Anexos | Solicitações de Design`, criada na primeira execução, e a
-coluna `Anexos` recebe os links, um por linha.
+Os arquivos **não** viajam junto com a solicitação. Mandar tudo numa requisição só
+deixava o envio lento e arriscava estourar o limite do Apps Script: um PNG de 2 MB
+levava a requisição de 3 KB para 2,6 MB.
 
-Se a gravação no Drive falhar, a coluna mantém os nomes dos arquivos enviados, para
-que a solicitação não chegue sem indício de que havia anexos.
+A sequência passou a ser:
+
+1. A solicitação é gravada primeiro, levando apenas os **nomes** dos arquivos na
+   coluna `Anexos`.
+2. Confirmada a linha, cada arquivo sobe numa requisição própria
+   (`acao=anexo`, com o `envioId` para achar a linha).
+3. O script grava o arquivo na pasta do Drive `Anexos | Solicitações de Design` e
+   **acrescenta** o link à célula de anexos daquela linha. O primeiro link
+   substitui os nomes; os seguintes entram abaixo.
+4. O formulário confere se a quantidade de links bateu com a de arquivos.
+
+Vantagens: a solicitação nunca fica presa por causa de um arquivo grande, a falha
+de um anexo não derruba os outros nem a linha, e o progresso aparece arquivo a
+arquivo na tela de sucesso.
 
 Limites aplicados no formulário: 10 MB por arquivo e 20 MB no total. O base64 infla
-o tamanho em cerca de 33%, então o teto real do POST fica em torno de 27 MB.
+o tamanho em cerca de 33%, então cada requisição de anexo chega a ~13 MB no pior
+caso — bem abaixo do que um envio único com todos os arquivos alcançaria.
 
 ### Prioridade e SLA
 
