@@ -38,7 +38,7 @@ depender da ordem. Se você reordenar colunas na planilha, nada quebra.
 | `Task Name` | Task Name |
 | `Status` | fixo: `aguardando` |
 | `Assignee` | Designer sugerido |
-| `Priority` | derivado da priorização (ver abaixo) |
+| `Priority` | Prioridade (ver abaixo) |
 | `Date Created` | data e hora do envio |
 | `Created By` | Quem é você? |
 | `Space` | fixo: `Área de Produto` |
@@ -46,37 +46,38 @@ depender da ordem. Se você reordenar colunas na planilha, nada quebra.
 | `List` | fixo: `🧑‍🎨 Design \|  Esteira` |
 | `0️⃣ Produto (drop down)` | 0️⃣ Produto |
 | `Data de entrega (date)` | Data de entrega |
-| `Justificativa da prioridade (text)` | Justificativa da prioridade |
+| `Justificativa da prioridade (text)` | Justificativa de urgência |
 | `O uso será interno ou externo? (drop down)` | O uso será interno ou externo? |
 | `Qual a área a que se refere? (drop down)` | Qual a área a que se refere? |
 | `Qual o objetivo da demanda, para o que será usada? (text)` | Objetivo da demanda |
 | `URL (url)` | URL |
-| `🗓️ Alinhamento Realizado (labels)` | 🗓️ Alinhamento Realizado |
 
-As colunas `Tasks com interface (tasks)` e `Tipagem da Tarefa (drop down)` existem
-na planilha mas não são coletadas pelo formulário — são preenchidas manualmente no
-ClickUp, na triagem da demanda —, então chegam vazias.
+As colunas `Tasks com interface (tasks)`, `Tipagem da Tarefa (drop down)` e
+`🗓️ Alinhamento Realizado (labels)` existem na planilha mas não são coletadas pelo
+formulário — são preenchidas manualmente no ClickUp, na triagem da demanda —,
+então chegam vazias.
 
 ### Colunas criadas pelo script
 
 Na primeira solicitação recebida, o script acrescenta à direita as colunas que o
 formulário envia e a planilha ainda não tem:
 
-`Task Content`, `Tipo de Demanda`, `SLA`, `Status do SLA`,
-`1️⃣ Trimestre (drop down)`, `2️⃣ Subárea (drop down)`, `6️⃣ Priorização (drop down)`.
+`Task Content`, `Tipo de Demanda`, `SLA` e `Status do SLA`.
 
 Para desligar esse comportamento, mude `CRIAR_COLUNAS_FALTANTES` para `false` no
 script — nesse caso, campos sem coluna correspondente são descartados.
 
-### Priority
+### Prioridade e SLA
 
-A planilha guarda a prioridade nativa do ClickUp, derivada da priorização
-escolhida no formulário:
+A prioridade não é escolhida no escuro: ela é derivada da comparação entre a data
+de entrega pedida e o SLA do tipo de demanda.
 
-| 6️⃣ Priorização | Priority |
-| --- | --- |
-| Entrega no dia da solicitação | `URGENT` |
-| Now/Agora | `HIGH` |
-| Next/Depois | `NORMAL` |
-| Later/Mais Tarde | `LOW` |
-| Backlog | `LOW` |
+| Checagem de SLA | Prioridade | `Priority` na planilha |
+| --- | --- | --- |
+| Dentro do SLA | Normal | `NORMAL` |
+| No limite do SLA | Alta | `HIGH` |
+| Abaixo do SLA | Urgente | `URGENT` |
+
+Quem solicita pode sobrescrever a sugestão nos três botões. Nesse caso — e sempre
+que a prioridade for Urgente ou a data furar o SLA — a justificativa de urgência
+passa a ser obrigatória e vai para `Justificativa da prioridade (text)`.

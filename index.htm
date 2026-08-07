@@ -300,6 +300,33 @@
               <p id="req-sla-status" class="text-[11px] font-bold mt-3 pt-3 border-t border-accent/20 break-words hidden"></p>
             </div>
 
+            <!-- Data e prioridade caminham junto com o SLA: a data é medida contra ele
+                 e a prioridade é derivada do resultado dessa medição. -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-start">
+              <div class="w-full min-w-0">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Data de entrega <span class="text-accent">*</span></label>
+                <input type="date" id="req-due-date" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]">
+                <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
+                  Conferida contra o SLA do tipo escolhido.
+                </p>
+              </div>
+              <div class="w-full min-w-0">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Prioridade <span class="text-accent">*</span></label>
+                <div id="req-prioridade-container" class="grid grid-cols-3 gap-2 w-full">
+                  <!-- Botões gerados via JS -->
+                </div>
+                <p id="req-prioridade-hint" class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words min-h-[15px]"></p>
+              </div>
+            </div>
+
+            <div id="req-justificativa-container" class="w-full hidden">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-[#D96C53] dark:text-[#E5ACA0]/70 mb-2">Justificativa de urgência <span class="text-accent">*</span></label>
+              <textarea id="req-justificativa" rows="2" class="w-full border border-[#E5ACA0]/40 dark:border-[#E5ACA0]/20 p-3 rounded-[2px] text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Por que esta demanda precisa furar a fila de produção?"></textarea>
+              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
+                * Uma demanda urgente reorganiza o cronograma do time e adia outras entregas já acordadas. Use com parcimônia.
+              </p>
+            </div>
+
             <div class="w-full">
               <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Descrição da demanda <span class="text-accent">*</span></label>
               <textarea id="req-description" rows="5" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Descreva o que precisa ser feito. Inclua aqui também público-alvo, formatos e dimensões, entregáveis esperados e referências visuais."></textarea>
@@ -311,64 +338,17 @@
               <textarea id="req-objetivo" rows="2" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Qual problema do negócio ou do usuário esta peça resolve?"></textarea>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-              <div class="w-full min-w-0">
-                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">O uso será interno ou externo? <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
-                <select id="req-uso" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
-              </div>
-              <div class="w-full min-w-0">
-                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">2️⃣ Subárea <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
-                <select id="req-subarea" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- BLOCO 03: PRAZO E PRIORIZAÇÃO -->
-        <section class="w-full">
-          <span class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-4">
-            BLOCO_03 • PRAZO E PRIORIZAÇÃO
-          </span>
-          <div class="flex flex-col gap-6 w-full">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-start">
-              <div class="w-full min-w-0">
-                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Data de entrega <span class="text-accent">*</span></label>
-                <input type="date" id="req-due-date" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]">
-              </div>
-              <div class="w-full min-w-0">
-                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">🗓️ Alinhamento Realizado <span class="text-accent">*</span></label>
-                <select id="req-alinhamento" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
-              </div>
-            </div>
-
-            <div class="w-full">
-              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-3">6️⃣ Priorização <span class="text-accent">*</span></label>
-              <div id="req-priorizacao-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
-                <!-- Botões gerados via JS -->
-              </div>
-              <p id="req-priorizacao-hint" class="text-[10px] text-ink-light dark:text-white/40 mt-3 italic break-words min-h-[15px]"></p>
-            </div>
-
-            <div id="req-justificativa-container" class="w-full hidden">
-              <label class="block text-[9px] uppercase tracking-widest font-bold text-[#D96C53] dark:text-[#E5ACA0]/70 mb-2">Justificativa da prioridade <span class="text-accent">*</span></label>
-              <textarea id="req-justificativa" rows="2" class="w-full border border-[#E5ACA0]/40 dark:border-[#E5ACA0]/20 p-3 rounded-[2px] text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Por que esta demanda precisa furar a fila de produção?"></textarea>
-              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
-                * Priorização imediata reorganiza o cronograma do time e adia outras entregas já acordadas no kickoff. Use com parcimônia.
-              </p>
-            </div>
-
             <div class="w-full md:w-1/2">
-              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">1️⃣ Trimestre <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
-              <select id="req-trimestre" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">O uso será interno ou externo? <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
+              <select id="req-uso" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
             </div>
           </div>
         </section>
 
-        <!-- BLOCO 04: REFERÊNCIAS E APOIO -->
+        <!-- BLOCO 03: REFERÊNCIAS E APOIO -->
         <section class="w-full">
           <span class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-4">
-            BLOCO_04 • REFERÊNCIAS E APOIO
+            BLOCO_03 • REFERÊNCIAS E APOIO
           </span>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
             <div class="w-full min-w-0">
@@ -383,7 +363,7 @@
                 <option value="Éria Cunha de Alencar" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Éria Cunha de Alencar</option>
                 <option value="Ambos (Time de Design)" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Ambos (Time de Design)</option>
               </select>
-              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">A alocação final é definida pelo time no kickoff.</p>
+              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">A alocação final é definida pelo time na triagem.</p>
             </div>
           </div>
         </section>
@@ -933,11 +913,8 @@
     // Tipagem da Tarefa fica de fora do formulário: é preenchida manualmente no
     // ClickUp, na triagem da demanda.
 
-    // 2️⃣ Subárea (drop down)
-    const ESTEIRA_SUBAREAS = [
-      'PRODUTO', 'DESIGN', 'TECH', 'INFRA', 'DEPARTAMENTO TODO', 'REDATOR',
-      'EVENTOS', 'ATENDIMENTO', 'CS & CX', 'LOGÍSTICA', 'CONSULTORIA'
-    ];
+    // Subárea, Trimestre e Alinhamento Realizado ficam de fora do formulário:
+    // são preenchidos manualmente no ClickUp, na triagem da demanda.
 
     // Qual a área a que se refere? (drop down)
     const ESTEIRA_AREAS = ['Outros times da empresa', 'Time de produto', 'Designer'];
@@ -945,45 +922,19 @@
     // O uso será interno ou externo? (drop down)
     const ESTEIRA_USOS = ['Interno', 'Externo'];
 
-    // 1️⃣ Trimestre (drop down) — apenas os vigentes; FY24/FY25 seguem no ClickUp
-    // para as tarefas antigas, mas não fazem sentido em uma solicitação nova.
-    const ESTEIRA_TRIMESTRES = ['FY26 Q1', 'FY26 Q2', 'FY26 Q3', 'FY26 Q4'];
-
-    // 6️⃣ Priorização (drop down) — recorte voltado a quem solicita. Os demais valores
-    // da lista (Trash, Onhold, Backlog de triagem, PDI) são usados pelo próprio time.
-    const ESTEIRA_PRIORIZACOES = [
-      { id: 'Now/Agora', hint: 'Entra na execução imediata da semana.', selectedClass: 'bg-[#E5ACA0] border-[#E5ACA0] text-ink', requiresReason: true },
-      { id: 'Next/Depois', hint: 'Entra na fila logo após o que já está em execução.', selectedClass: 'bg-[#E5D0A0] border-[#E5D0A0] text-ink' },
-      { id: 'Later/Mais Tarde', hint: 'Planejada para um momento futuro, sem pressa.', selectedClass: 'bg-[#B4C5A8] border-[#B4C5A8] text-ink' },
-      { id: 'Backlog', hint: 'Fica registrada para ser priorizada em um kickoff futuro.', selectedClass: 'bg-paper-dark dark:bg-white/20 border-paper-dark dark:border-white/20 text-ink dark:text-white' },
-      { id: 'Entrega no dia da solicitação', hint: 'Urgência máxima: reorganiza o cronograma do time no mesmo dia.', selectedClass: 'bg-[#D96C53] border-[#D96C53] text-white', requiresReason: true }
+    // Priority — prioridade nativa do ClickUp, derivada da checagem de SLA.
+    const PRIORIDADES = [
+      { id: 'Normal',  clickup: 'NORMAL', selectedClass: 'bg-[#B4C5A8] border-[#B4C5A8] text-ink' },
+      { id: 'Alta',    clickup: 'HIGH',   selectedClass: 'bg-[#E5D0A0] border-[#E5D0A0] text-ink' },
+      { id: 'Urgente', clickup: 'URGENT', selectedClass: 'bg-[#D96C53] border-[#D96C53] text-white', requiresReason: true }
     ];
 
-    // 🗓️ Alinhamento Realizado (labels) — obrigatório.
-    // Agrupado por tipo e ordenado do mais recente para o mais antigo.
-    // Ao abrir um novo kickoff, basta adicionar o rótulo no topo de "Kickoffs".
-    const ESTEIRA_ALINHAMENTOS = [
-      { group: 'Kickoffs', items: [
-        'Kickoff 04/08/2026', 'Kickoff 28/07/2026', 'Kickoff 21/07/2026', 'Kickoff 14/07/2026',
-        'Kickoff 07/07/2026', 'Kickoff 30/06/2026', 'Kickoff 23/06/2026', 'Kickoff 16/06/2026',
-        'Kickoff 09/06/2026', 'Kickoff 02/06/2026', 'Kickoff 26/05/2026', 'Kickoff 19/05/2026',
-        'Kickoff 12/05/2026', 'Kickoff 05/05/2026', 'Kickoff 28/04/2026', 'Kickoff 21/04/2026',
-        'Kickoff 14/04/2026', 'Kickoff 31/03/2026', 'Kickoff 24/03/26', 'Kickoff 17/03/2026',
-        'Kickoff 10/03/26', 'Kickoff 03/03/2026', 'Kickoff 24/02/26', 'Kickoff 17/02/2026',
-        'Kickoff 10/02/2026', 'Kickoff 03/02/2026', 'Kickoff 27/01/26', 'Kickoff 20/01/26'
-      ]},
-      { group: 'Sprints', items: [
-        'Sprint 11 - 29/05/2026', 'Sprint  - 29/05/2026', 'Sprint 10 - 15/05/26',
-        'Sprint 9 - 04/05/2026', 'Sprint 8 - 17/04/2026', 'Sprint 07 - 06/04/2026',
-        'Sprint 06 - 20/03/2026', 'Sprint 05 - 06/03/2026', 'Sprint 04 - 20/02/2026',
-        'Sprint 03 - 08/02/26', 'Sprint 02 - 23/01/26', 'Sprint 01 - 12/01/26',
-        'Sprint Time Produto - Hub'
-      ]},
-      { group: 'Outros', items: ['Manteve - 31/03/2026', 'Kickoff de 2025'] }
-    ];
-
-    // Opção para quem ainda não passou por um kickoff — o time faz a triagem depois.
-    const ALINHAMENTO_PENDENTE = 'Ainda não alinhado (incluir no próximo kickoff)';
+    // Cada resultado da checagem de SLA aponta para uma prioridade.
+    const SLA_PARA_PRIORIDADE = {
+      'Dentro do SLA': 'Normal',
+      'No limite do SLA': 'Alta',
+      'Abaixo do SLA': 'Urgente'
+    };
 
     // ==========================================================================
     // SLA POR TIPO DE DEMANDA
@@ -1059,21 +1010,19 @@
       area: '',              // Qual a área a que se refere? (drop down)
       taskName: '',          // Task Name — obrigatório
       tipoDemanda: '',       // Tipo de Demanda — obrigatório, define o SLA
-      subarea: '',           // 2️⃣ Subárea (drop down)
       taskContent: '',       // Task Content
       objetivo: '',          // Qual o objetivo da demanda, para o que será usada? (text)
       uso: '',               // O uso será interno ou externo? (drop down)
       dataEntrega: '',       // Data de entrega (date)
-      priorizacao: '',       // 6️⃣ Priorização (drop down)
+      prioridade: '',        // Priority — derivada do SLA, ajustável
       justificativa: '',     // Justificativa da prioridade (text)
-      trimestre: '',         // 1️⃣ Trimestre (drop down)
-      alinhamento: '',       // 🗓️ Alinhamento Realizado (labels) — obrigatório
       url: '',               // URL (url)
       designer: 'Sem preferência' // Assignee
     });
 
     let requestData = emptyRequestData();
     let isRequestSubmitted = false;
+    let prioridadeManual = false;
 
     // ==========================================
     // FORMULÁRIO DE SOLICITAÇÃO DE DEMANDAS
@@ -1104,41 +1053,24 @@
       fillSelect('req-tipo', SLA_TIPOS.map(t => t.id), 'Selecione o tipo...');
       fillSelect('req-produto', ESTEIRA_PRODUTOS, 'Selecione o produto...');
       fillSelect('req-area', ESTEIRA_AREAS, 'Selecione a área...');
-      fillSelect('req-subarea', ESTEIRA_SUBAREAS, 'Selecione a subárea...');
       fillSelect('req-uso', ESTEIRA_USOS, 'Selecione o uso...');
-      fillSelect('req-trimestre', ESTEIRA_TRIMESTRES, 'Selecione o trimestre...');
-
-      // Alinhamento Realizado é agrupado por tipo de cerimônia
-      const alinhamentoEl = document.getElementById('req-alinhamento');
-      if (alinhamentoEl) {
-        const optionClass = 'text-ink dark:text-white bg-white dark:bg-[#1A1A1A]';
-        let html = `<option value="" disabled selected class="text-ink-light bg-white dark:bg-[#1A1A1A]">Selecione o alinhamento...</option>`;
-        html += `<option value="${ALINHAMENTO_PENDENTE}" class="${optionClass}">${ALINHAMENTO_PENDENTE}</option>`;
-        html += ESTEIRA_ALINHAMENTOS.map(g => `
-          <optgroup label="${g.group}" class="bg-white dark:bg-[#1A1A1A]">
-            ${g.items.map(i => `<option value="${i}" class="${optionClass}">${i}</option>`).join('')}
-          </optgroup>
-        `).join('');
-        alinhamentoEl.innerHTML = html;
-      }
 
       renderRequestButtons();
     }
 
-    // A Priorização usa botões, no mesmo padrão visual do wizard de satisfação
+    // A Prioridade usa botões, no mesmo padrão visual do wizard de satisfação
     function renderRequestButtons() {
-      const priorizacaoContainer = document.getElementById('req-priorizacao-container');
+      const container = document.getElementById('req-prioridade-container');
+      if (!container) return;
 
       const base = "w-full py-2.5 px-2 text-[9px] md:text-[10px] uppercase tracking-widest font-bold rounded-[2px] border transition-all duration-200 truncate";
       const idle = " border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 hover:border-accent hover:text-ink dark:hover:text-white";
 
-      if (priorizacaoContainer) {
-        priorizacaoContainer.innerHTML = ESTEIRA_PRIORIZACOES.map((p, i) => {
-          const isSelected = requestData.priorizacao === p.id;
-          const classes = base + (isSelected ? ` ${p.selectedClass} shadow-sm` : idle);
-          return `<button type="button" onclick="setRequestPriorizacao(${i})" class="${classes}" title="${p.id}">${p.id}</button>`;
-        }).join('');
-      }
+      container.innerHTML = PRIORIDADES.map((p, i) => {
+        const isSelected = requestData.prioridade === p.id;
+        const classes = base + (isSelected ? ` ${p.selectedClass} shadow-sm` : idle);
+        return `<button type="button" onclick="setRequestPrioridade(${i})" class="${classes}" title="${p.id}">${p.id}</button>`;
+      }).join('');
     }
 
     // ---------- SLA ----------
@@ -1231,28 +1163,63 @@
       updateRequestProgress();
     }
 
-    function setRequestPriorizacao(index) {
-      const priorizacao = ESTEIRA_PRIORIZACOES[index];
-      if (!priorizacao) return;
+    // Escolha manual: a partir daqui a prioridade para de acompanhar o SLA
+    function setRequestPrioridade(index) {
+      const prioridade = PRIORIDADES[index];
+      if (!prioridade) return;
 
-      requestData.priorizacao = priorizacao.id;
+      requestData.prioridade = prioridade.id;
+      prioridadeManual = true;
+
       renderRequestButtons();
-
-      const hint = document.getElementById('req-priorizacao-hint');
-      if (hint) hint.innerText = priorizacao.hint;
-
+      renderPrioridadeHint();
       updateJustificativaVisibility();
       updateRequestProgress();
     }
 
-    // A justificativa é exigida quando a demanda fura a fila (priorização urgente)
-    // ou quando a data pedida fica abaixo do SLA do tipo escolhido.
-    function requestNeedsReason() {
-      const priorizacao = ESTEIRA_PRIORIZACOES.find(p => p.id === requestData.priorizacao);
-      if (priorizacao && priorizacao.requiresReason) return true;
+    // Enquanto ninguém mexer nos botões, a prioridade acompanha a checagem de SLA
+    function applySlaPriority() {
+      if (prioridadeManual) return;
 
       const slaStatus = getSlaStatus();
-      return Boolean(slaStatus && slaStatus.needsReason);
+      const sugerida = slaStatus ? SLA_PARA_PRIORIDADE[slaStatus.id] : '';
+
+      if (sugerida && requestData.prioridade !== sugerida) {
+        requestData.prioridade = sugerida;
+        renderRequestButtons();
+      }
+    }
+
+    function renderPrioridadeHint() {
+      const hint = document.getElementById('req-prioridade-hint');
+      if (!hint) return;
+
+      const slaStatus = getSlaStatus();
+      const sugerida = slaStatus ? SLA_PARA_PRIORIDADE[slaStatus.id] : '';
+
+      if (!sugerida) {
+        hint.innerText = 'Escolha o tipo de demanda e a data para o SLA definir a prioridade.';
+        return;
+      }
+
+      hint.innerText = requestData.prioridade === sugerida
+        ? `Definida pelo SLA — ${slaStatus.id}.`
+        : `O SLA aponta ${sugerida}. Justifique a mudança abaixo.`;
+    }
+
+    // A justificativa é exigida quando a demanda é urgente, quando a prioridade
+    // escolhida diverge do que o SLA aponta ou quando a data fura o SLA.
+    function requestNeedsReason() {
+      const prioridade = PRIORIDADES.find(p => p.id === requestData.prioridade);
+      if (prioridade && prioridade.requiresReason) return true;
+
+      const slaStatus = getSlaStatus();
+      if (!slaStatus) return false;
+
+      if (slaStatus.needsReason) return true;
+
+      const sugerida = SLA_PARA_PRIORIDADE[slaStatus.id];
+      return Boolean(requestData.prioridade && sugerida && requestData.prioridade !== sugerida);
     }
 
     function updateJustificativaVisibility() {
@@ -1282,14 +1249,11 @@
       requestData.area = val('req-area');
       requestData.taskName = val('req-title');
       requestData.tipoDemanda = val('req-tipo');
-      requestData.subarea = val('req-subarea');
       requestData.taskContent = val('req-description');
       requestData.objetivo = val('req-objetivo');
       requestData.uso = val('req-uso');
       requestData.dataEntrega = val('req-due-date');
       requestData.justificativa = val('req-justificativa');
-      requestData.trimestre = val('req-trimestre');
-      requestData.alinhamento = val('req-alinhamento');
       requestData.url = val('req-url');
 
       const designerEl = document.getElementById('req-designer');
@@ -1305,8 +1269,7 @@
       if (!requestData.taskContent) missing.push('Descrição');
       if (!requestData.objetivo) missing.push('Objetivo');
       if (!requestData.dataEntrega) missing.push('Data de entrega');
-      if (!requestData.priorizacao) missing.push('Priorização');
-      if (!requestData.alinhamento) missing.push('Alinhamento Realizado');
+      if (!requestData.prioridade) missing.push('Prioridade');
       if (requestNeedsReason() && !requestData.justificativa) missing.push('Justificativa da prioridade');
       return missing;
     }
@@ -1314,14 +1277,17 @@
     function updateRequestProgress() {
       syncRequestData();
 
-      // A data e o tipo alimentam a checagem de SLA, então o cartão é reavaliado aqui
+      // A data e o tipo alimentam a checagem de SLA, que por sua vez define a
+      // prioridade sugerida — tudo é reavaliado aqui a cada alteração na tela.
       renderSlaCard();
+      applySlaPriority();
+      renderPrioridadeHint();
       updateJustificativaVisibility();
 
       const required = [
         requestData.author, requestData.taskName, requestData.tipoDemanda, requestData.produto,
         requestData.taskContent, requestData.objetivo, requestData.dataEntrega,
-        requestData.priorizacao, requestData.alinhamento
+        requestData.prioridade
       ];
       if (requestNeedsReason()) required.push(requestData.justificativa);
 
@@ -1355,17 +1321,14 @@
         `Status do SLA: ${slaStatus ? slaStatus.id : '-'}`,
         ``,
         `0️⃣ Produto: ${requestData.produto}`,
-        `🗓️ Alinhamento Realizado: ${requestData.alinhamento}`,
-        `6️⃣ Priorização: ${requestData.priorizacao}`,
+        `Priority: ${requestData.prioridade}`,
         `Data de entrega: ${dataEntregaTxt}`,
         `Created By: ${requestData.author}`
       ];
 
       if (requestData.justificativa) lines.push(`Justificativa da prioridade: ${requestData.justificativa}`);
       if (requestData.area) lines.push(`Qual a área a que se refere?: ${requestData.area}`);
-      if (requestData.subarea) lines.push(`2️⃣ Subárea: ${requestData.subarea}`);
       if (requestData.uso) lines.push(`O uso será interno ou externo?: ${requestData.uso}`);
-      if (requestData.trimestre) lines.push(`1️⃣ Trimestre: ${requestData.trimestre}`);
       if (requestData.url) lines.push(`URL: ${requestData.url}`);
       if (requestData.designer !== 'Sem preferência') lines.push(`Assignee sugerido: ${requestData.designer}`);
 
@@ -1392,18 +1355,6 @@
           .catch(() => feedback('Não foi possível copiar'));
       } else {
         feedback('Não foi possível copiar');
-      }
-    }
-
-    // A esteira usa a prioridade nativa do ClickUp além do campo de priorização
-    function mapPriorityToClickUp(priorizacao) {
-      switch (priorizacao) {
-        case 'Entrega no dia da solicitação': return 'URGENT';
-        case 'Now/Agora': return 'HIGH';
-        case 'Next/Depois': return 'NORMAL';
-        case 'Later/Mais Tarde':
-        case 'Backlog': return 'LOW';
-        default: return 'NORMAL';
       }
     }
 
@@ -1440,7 +1391,7 @@
       dataToGoogle.append('Task Name', requestData.taskName);
       dataToGoogle.append('Status', 'aguardando');
       dataToGoogle.append('Assignee', requestData.designer);
-      dataToGoogle.append('Priority', mapPriorityToClickUp(requestData.priorizacao));
+      dataToGoogle.append('Priority', (PRIORIDADES.find(p => p.id === requestData.prioridade) || {}).clickup || '');
       dataToGoogle.append('Date Created', new Date().toISOString());
       dataToGoogle.append('Created By', requestData.author);
       dataToGoogle.append('Space', ESTEIRA.space);
@@ -1453,16 +1404,12 @@
       dataToGoogle.append('Qual a área a que se refere? (drop down)', requestData.area);
       dataToGoogle.append('Qual o objetivo da demanda, para o que será usada? (text)', requestData.objetivo);
       dataToGoogle.append('URL (url)', requestData.url);
-      dataToGoogle.append('🗓️ Alinhamento Realizado (labels)', requestData.alinhamento);
 
       // Colunas novas, criadas pelo Apps Script na primeira solicitação recebida
       dataToGoogle.append('Task Content', requestData.taskContent);
       dataToGoogle.append('Tipo de Demanda', requestData.tipoDemanda);
       dataToGoogle.append('SLA', tipo ? tipo.prazo : '');
       dataToGoogle.append('Status do SLA', slaStatus ? slaStatus.id : '');
-      dataToGoogle.append('1️⃣ Trimestre (drop down)', requestData.trimestre);
-      dataToGoogle.append('2️⃣ Subárea (drop down)', requestData.subarea);
-      dataToGoogle.append('6️⃣ Priorização (drop down)', requestData.priorizacao);
 
       // Dispara o envio para a Planilha
       // mode: 'no-cors' impede erros de segurança e garante o envio no background.
@@ -1500,6 +1447,7 @@
 
     function resetRequestForm() {
       isRequestSubmitted = false;
+      prioridadeManual = false;
       requestData = emptyRequestData();
 
       ['req-name', 'req-title', 'req-description', 'req-objetivo',
@@ -1509,7 +1457,7 @@
           if (el) el.value = '';
         });
 
-      ['req-tipo', 'req-produto', 'req-area', 'req-subarea', 'req-uso', 'req-trimestre', 'req-alinhamento']
+      ['req-tipo', 'req-produto', 'req-area', 'req-uso']
         .forEach(id => {
           const el = document.getElementById(id);
           if (el) el.selectedIndex = 0;
@@ -1524,8 +1472,7 @@
       const justificativaContainer = document.getElementById('req-justificativa-container');
       if (justificativaContainer) justificativaContainer.classList.add('hidden');
 
-      const hint = document.getElementById('req-priorizacao-hint');
-      if (hint) hint.innerText = '';
+      renderPrioridadeHint();
 
       const errorMsg = document.getElementById('request-error');
       if (errorMsg) errorMsg.classList.add('hidden');
