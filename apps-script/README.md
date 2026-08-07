@@ -29,14 +29,13 @@ passa a servir o código novo a partir disso.
 > O acesso precisa ser **Qualquer pessoa**, e não *"Qualquer pessoa na AUVP"*. A
 > página é servida pelo GitHub Pages e requisições entre domínios não levam o
 > cookie de login do Google — com a opção restrita ao domínio, o script responde
-> com a tela de login em HTML e o envio falha, mesmo para quem está logado.
->
-> É esse acesso que faz a resposta vir com CORS liberado, e é dela que o
-> formulário depende para confirmar a gravação.
+> com a tela de login em HTML, e tanto a gravação quanto a confirmação falham,
+> mesmo para quem está logado na conta da empresa.
 >
 > Como a URL fica no código da página, que é pública, quem a descobrir consegue
 > inserir linhas na planilha — mesma exposição de um Google Forms aberto. O
-> endpoint só grava: não devolve dados nem apaga nada.
+> endpoint grava e consulta pelo identificador do envio: não lista dados de
+> terceiros nem apaga nada.
 
 ## Conferindo antes de publicar
 
@@ -48,23 +47,44 @@ Se essa função rodar sem erro, a ligação entre script e planilha está de p�
 
 ## Como o formulário garante a gravação
 
-O envio **não** usa `mode: 'no-cors'`. O formulário lê a resposta do script e só
-mostra a tela de sucesso quando recebe `{ ok: true, linha: N }` — e exibe esse
-número de linha na confirmação, para que dê para conferir na planilha.
+Gravar e confirmar seguem caminhos diferentes, e **nenhum dos dois depende de
+CORS** — foi o CORS que derrubou a primeira tentativa de integração, com um
+`Failed to fetch` no navegador.
 
-Quando algo dá errado:
+1. **Gravação** — `POST` com `mode: 'no-cors'`. O navegador não deixa ler a
+   resposta, mas a requisição sai, e é isso que importa para gravar.
+2. **Confirmação** — o formulário gera um `ID do Envio` único, manda junto com os
+   dados, e depois consulta o endpoint por **JSONP** (`?envioId=…&callback=…`)
+   procurando esse identificador na planilha. Uma tag `<script>` não passa por
+   CORS, então funciona onde o `fetch` é bloqueado.
 
-1. **Três tentativas** com espera crescente (1,5s, 3s), para absorver oscilação de rede.
-2. Se todas falharem, a tela de sucesso **não** aparece. O erro é mostrado com o
-   motivo devolvido pelo script.
-3. A solicitação fica guardada no navegador (`localStorage`). Ao reabrir a página,
-   um aviso mostra qual demanda não chegou e oferece copiar o resumo.
+A tela de sucesso só aparece quando a consulta encontra a linha — e é o número
+dela que aparece na confirmação, para dar para conferir na planilha.
+
+A consulta é repetida até encontrar: 6 tentativas a cada 2,5s sem anexos, e 10 a
+cada 4s com anexos, já que aí cada arquivo é gravado no Drive antes da linha.
+
+Se nada for encontrado nesse intervalo, a tela de sucesso **não** aparece: o erro
+é mostrado e a solicitação fica guardada no navegador (`localStorage`). Ao reabrir
+a página, um aviso mostra qual demanda não chegou e oferece copiar o resumo.
 
 Os anexos não entram nesse rascunho de segurança — em base64 estouram a cota do
 `localStorage` —, então o resumo guardado lista apenas os nomes dos arquivos.
 
 Enquanto o `GOOGLE_SHEET_REQUEST_URL` estiver com o placeholder, o formulário
 recusa o envio com uma mensagem explícita, em vez de fingir sucesso.
+
+### Diagnóstico rápido
+
+Abra numa **janela anônima**:
+
+```
+<URL /exec>?envioId=teste
+```
+
+- Devolveu `{"ok":false}` → endpoint público e respondendo. Tudo certo.
+- Caiu numa tela de login → o acesso da implantação está restrito ao domínio.
+  Corrija em **Gerenciar implantações** e salve como nova versão.
 
 ## Como o mapeamento funciona
 
@@ -102,7 +122,9 @@ descrição da demanda.
 Na primeira solicitação recebida, o script acrescenta à direita as colunas que o
 formulário envia e a planilha ainda não tem:
 
-`Task Content`, `Tipo de Demanda`, `SLA`, `Status do SLA` e `Anexos`.
+`ID do Envio`, `Task Content`, `Tipo de Demanda`, `SLA`, `Status do SLA` e `Anexos`.
+
+A coluna `ID do Envio` é a que sustenta a confirmação — não a apague nem a renomeie.
 
 Para desligar esse comportamento, mude `CRIAR_COLUNAS_FALTANTES` para `false` no
 script — nesse caso, campos sem coluna correspondente são descartados.
