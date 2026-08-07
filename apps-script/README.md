@@ -58,15 +58,26 @@ CORS** — foi o CORS que derrubou a primeira tentativa de integração, com um
    procurando esse identificador na planilha. Uma tag `<script>` não passa por
    CORS, então funciona onde o `fetch` é bloqueado.
 
-A tela de sucesso só aparece quando a consulta encontra a linha — e é o número
-dela que aparece na confirmação, para dar para conferir na planilha.
+A tela de sucesso aparece assim que o POST sai — em torno de 0,1s. A conferência
+roda **em segundo plano**, sem prender quem está usando, e atualiza a linha de
+confirmação quando termina:
 
-A consulta é repetida até encontrar: 6 tentativas a cada 2,5s sem anexos, e 10 a
-cada 4s com anexos, já que aí cada arquivo é gravado no Drive antes da linha.
+| Estado | O que aparece na tela de sucesso |
+| --- | --- |
+| Conferindo | *Conferindo o registro na planilha…* |
+| Encontrou | *Registro confirmado na linha N da planilha.* |
+| Não encontrou | *Enviado, mas não foi possível confirmar o registro automaticamente.* |
 
-Se nada for encontrado nesse intervalo, a tela de sucesso **não** aparece: o erro
-é mostrado e a solicitação fica guardada no navegador (`localStorage`). Ao reabrir
-a página, um aviso mostra qual demanda não chegou e oferece copiar o resumo.
+São 4 tentativas a cada 2s. Um envio normal confirma na primeira ou na segunda.
+
+O único caso que segura o usuário no formulário é o `fetch` estourar de verdade —
+aí a solicitação não saiu, o erro é mostrado e ela fica guardada no navegador
+(`localStorage`). Ao reabrir a página, um aviso mostra qual demanda não chegou e
+oferece copiar o resumo.
+
+Quando o envio sai mas a conferência não encontra, **nada é guardado como
+pendente**: reenviar criaria uma linha duplicada. O aviso na tela pede para
+conferir na planilha, e o resumo continua copiável.
 
 Os anexos não entram nesse rascunho de segurança — em base64 estouram a cota do
 `localStorage` —, então o resumo guardado lista apenas os nomes dos arquivos.
