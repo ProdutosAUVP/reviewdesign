@@ -236,33 +236,18 @@
 
       <div class="flex flex-col gap-10 w-full">
 
-        <!-- BLOCO 01: SOLICITANTE E DESTINO NA ESTEIRA -->
+        <!-- BLOCO 01: SOLICITANTE -->
+        <!-- O destino na esteira (Space / Folder / List) não aparece na tela: é fixo
+             e vai apenas no payload, para a demanda cair no lugar certo do ClickUp. -->
         <section class="w-full">
           <span class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-4">
-            BLOCO_01 • SOLICITANTE E DESTINO
+            BLOCO_01 • SOLICITANTE
           </span>
-
-          <!-- Destino fixo: toda solicitação cai na esteira de design da Área de Produto -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 p-4 bg-paper-dark/30 dark:bg-white/5 rounded-[4px] w-full">
-            <div class="min-w-0">
-              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Space</span>
-              <span id="destino-space" class="text-xs font-bold text-ink dark:text-white block truncate"></span>
-            </div>
-            <div class="min-w-0">
-              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Folder</span>
-              <span id="destino-folder" class="text-xs font-bold text-ink dark:text-white block truncate"></span>
-            </div>
-            <div class="min-w-0">
-              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">List</span>
-              <span id="destino-list" class="text-xs font-bold text-accent dark:text-[#72A68C] block truncate"></span>
-            </div>
-          </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
             <div class="w-full min-w-0">
               <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Quem é você? <span class="text-accent">*</span></label>
               <input type="text" id="req-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira o seu nome...">
-              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">Registrado no campo <span class="font-bold">Author</span> da tarefa.</p>
             </div>
             <div class="w-full min-w-0">
               <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">0️⃣ Produto <span class="text-accent">*</span></label>
@@ -282,12 +267,37 @@
           </span>
           <div class="flex flex-col gap-6 w-full">
 
-            <div class="w-full">
-              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Task Name <span class="text-accent">*</span></label>
-              <input type="text" id="req-title" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: [AUVP Capital] Criar o mockup do brinde Y">
-              <p class="text-[10px] text-accent dark:text-accent-light mt-2 italic break-words">
-                * Siga o padrão da esteira: [NOME DO PRODUTO] Do que se trata. Este mesmo título será usado depois na avaliação da entrega.
-              </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+              <div class="w-full min-w-0 md:col-span-2">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Task Name <span class="text-accent">*</span></label>
+                <input type="text" id="req-title" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: [AUVP Capital] Criar o mockup do brinde Y">
+                <p class="text-[10px] text-accent dark:text-accent-light mt-2 italic break-words">
+                  * Siga o padrão da esteira: [NOME DO PRODUTO] Do que se trata. Este mesmo título será usado depois na avaliação da entrega.
+                </p>
+              </div>
+              <div class="w-full min-w-0">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Tipo de demanda <span class="text-accent">*</span></label>
+                <select id="req-tipo" onchange="setRequestTipo()" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+                <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
+                  Define o SLA de execução.
+                </p>
+              </div>
+            </div>
+
+            <!-- SLA da demanda selecionada -->
+            <div id="req-sla-card" class="w-full hidden border border-accent/20 bg-accent/5 dark:bg-white/5 rounded-[4px] p-4 md:p-5">
+              <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 w-full">
+                <div class="min-w-0 flex-1">
+                  <span class="text-[9px] uppercase tracking-widest font-bold text-accent dark:text-[#72A68C] block mb-1">SLA de execução</span>
+                  <span id="req-sla-prazo" class="text-lg md:text-xl font-medium text-ink dark:text-white block leading-tight break-words"></span>
+                  <span id="req-sla-obs" class="text-[11px] text-ink-light dark:text-white/60 italic block mt-1 break-words"></span>
+                </div>
+                <div class="shrink-0 sm:text-right">
+                  <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Contagem</span>
+                  <span id="req-sla-range" class="text-[11px] font-bold text-ink dark:text-white block whitespace-nowrap"></span>
+                </div>
+              </div>
+              <p id="req-sla-status" class="text-[11px] font-bold mt-3 pt-3 border-t border-accent/20 break-words hidden"></p>
             </div>
 
             <div class="w-full">
@@ -412,12 +422,13 @@
     <h2 class="text-2xl md:text-3xl font-medium text-ink dark:text-white mb-3 px-2">Solicitação registrada.</h2>
     <p class="text-sm text-ink-light dark:text-white/70 mb-6 px-4">O briefing entrou na esteira de design da Área de Produto. A priorização final é confirmada pelo time no próximo kickoff.</p>
 
-    <!-- Destino do registro na esteira -->
-    <div class="max-w-[400px] mx-auto mb-8 px-4">
+    <!-- SLA acordado para a demanda registrada -->
+    <div class="max-w-[420px] mx-auto mb-8 px-4">
       <div class="flex flex-col gap-1 p-4 bg-paper-dark/30 dark:bg-white/5 rounded-[4px] text-left w-full">
-        <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40">Registrado em</span>
-        <span id="success-destino" class="text-xs font-bold text-accent dark:text-[#72A68C] break-words"></span>
-        <span id="success-task-name" class="text-[11px] text-ink dark:text-white/80 break-words mt-1"></span>
+        <span id="success-task-name" class="text-xs font-bold text-ink dark:text-white break-words mb-2"></span>
+        <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40">SLA de execução</span>
+        <span id="success-sla" class="text-xs font-bold text-accent dark:text-[#72A68C] break-words"></span>
+        <span id="success-sla-status" class="text-[11px] font-bold block mt-1"></span>
       </div>
     </div>
 
@@ -912,7 +923,6 @@
       space: 'Área de Produto',
       spaceId: '90113989879',
       folder: 'hidden',
-      folderLabel: '— (lista direta no space)',
       list: '🧑‍🎨 Design |  Esteira',
       listId: '901112432875'
     };
@@ -986,6 +996,37 @@
     // Opção para quem ainda não passou por um kickoff — o time faz a triagem depois.
     const ALINHAMENTO_PENDENTE = 'Ainda não alinhado (incluir no próximo kickoff)';
 
+    // ==========================================================================
+    // SLA POR TIPO DE DEMANDA
+    // --------------------------------------------------------------------------
+    // minDays / maxDays são os extremos do prazo em dias corridos e alimentam a
+    // checagem entre a data pedida e o SLA. O texto de `prazo` é o que aparece
+    // para quem solicita.
+    // ==========================================================================
+    const SLA_TIPOS = [
+      { id: 'Embalagens', prazo: '1 a 2 semanas', obs: 'Entrega de conceito.', minDays: 7, maxDays: 14 },
+      { id: 'LPs', prazo: '3 dias a 1 semana', obs: 'Primeira versão, incluindo o alinhamento anterior e já com a copy pronta.', minDays: 3, maxDays: 7 },
+      { id: 'Ferramentas', prazo: '15 dias a 2 meses', obs: '', minDays: 15, maxDays: 60 },
+      { id: 'Apresentações', prazo: '3 dias a 1 semana', obs: '', minDays: 3, maxDays: 7 },
+      { id: 'Produtos físicos (projeto gráfico)', prazo: '3 dias a 1 semana', obs: 'Contado após a entrega da faca.', minDays: 3, maxDays: 7 },
+      { id: 'Produtos físicos (conceitualização)', prazo: '1 a 2 dias', obs: 'Por produto.', minDays: 1, maxDays: 2 },
+      { id: 'OOHs', prazo: '3 dias a 1 semana', obs: 'A depender do solicitante.', minDays: 3, maxDays: 7 },
+      { id: 'Thumbs', prazo: '1 a 2 dias', obs: '', minDays: 1, maxDays: 2 },
+      { id: 'Modelos editáveis (apresentações)', prazo: '2 a 4 dias', obs: '', minDays: 2, maxDays: 4 },
+      { id: 'Modelos editáveis (placas, assinaturas etc)', prazo: '1 a 2 dias', obs: '', minDays: 1, maxDays: 2 },
+      { id: 'Apostilas', prazo: '1 a 2 semanas', obs: 'Por apostila.', minDays: 7, maxDays: 14 },
+      { id: 'Mapas mentais', prazo: '2 a 4 dias', obs: 'Por módulo.', minDays: 2, maxDays: 4 },
+      { id: 'Diagramação (geral)', prazo: '1 a 2 semanas', obs: 'A depender do volume.', minDays: 7, maxDays: 14 },
+      { id: 'Fluxogramas', prazo: '1 a 2 semanas', obs: '', minDays: 7, maxDays: 14 },
+      { id: 'Pesquisa quantitativa', prazo: '1 a 2 dias', obs: '', minDays: 1, maxDays: 2 },
+      { id: 'Pesquisa qualitativa', prazo: '1 a 2 semanas', obs: '', minDays: 7, maxDays: 14 },
+      { id: 'Melhorias pontuais', prazo: '3 dias a 1 semana', obs: '', minDays: 3, maxDays: 7 },
+      { id: 'Análise de performance das páginas e ferramentas', prazo: '1 semana', obs: '', minDays: 7, maxDays: 7 },
+      { id: 'Manutenção da plataforma de aulas', prazo: '3 dias a 1 semana', obs: '', minDays: 3, maxDays: 7 },
+      { id: 'Criação de uma nova versão da logo', prazo: '1 a 2 dias', obs: '', minDays: 1, maxDays: 2 },
+      { id: 'Banners e posts', prazo: '2 a 4 dias', obs: 'Por tela.', minDays: 2, maxDays: 4 }
+    ];
+
     // --- CONFIGURAÇÃO GOOGLE SHEETS ---
     // URL gerada no Google Apps Script para recebimento dos dados
     const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzFegtxUtZU7GL9bqd3FuHRvij40ufqqY-tN2z1eavxzBmhd3Di-J0blUezDXARDJcU/exec';
@@ -1024,10 +1065,11 @@
     // Estado do formulário de solicitação de demandas.
     // Cada chave corresponde a um campo real da esteira de design no ClickUp.
     const emptyRequestData = () => ({
-      author: '',            // Author (users)
+      author: '',            // Created By
       produto: '',           // 0️⃣ Produto (drop down) — obrigatório
       area: '',              // Qual a área a que se refere? (drop down)
       taskName: '',          // Task Name — obrigatório
+      tipoDemanda: '',       // Tipo de Demanda — obrigatório, define o SLA
       tipagem: '',           // Tipagem da Tarefa (drop down) — obrigatório
       subarea: '',           // 2️⃣ Subárea (drop down)
       taskContent: '',       // Task Content
@@ -1069,16 +1111,9 @@
       el.innerHTML = html;
     }
 
-    // Preenche o cabeçalho de destino e todos os seletores vindos da esteira
+    // Preenche todos os seletores vindos da esteira
     function renderRequestOptions() {
-      const destinoSpace = document.getElementById('destino-space');
-      const destinoFolder = document.getElementById('destino-folder');
-      const destinoList = document.getElementById('destino-list');
-
-      if (destinoSpace) destinoSpace.innerText = ESTEIRA.space;
-      if (destinoFolder) destinoFolder.innerText = ESTEIRA.folderLabel;
-      if (destinoList) destinoList.innerText = ESTEIRA.list;
-
+      fillSelect('req-tipo', SLA_TIPOS.map(t => t.id), 'Selecione o tipo...');
       fillSelect('req-produto', ESTEIRA_PRODUTOS, 'Selecione o produto...');
       fillSelect('req-area', ESTEIRA_AREAS, 'Selecione a área...');
       fillSelect('req-subarea', ESTEIRA_SUBAREAS, 'Selecione a subárea...');
@@ -1127,6 +1162,96 @@
       }
     }
 
+    // ---------- SLA ----------
+
+    function getSlaTipo() {
+      return SLA_TIPOS.find(t => t.id === requestData.tipoDemanda) || null;
+    }
+
+    // Compara a data pedida com o SLA do tipo escolhido.
+    // Retorna null quando ainda não dá para avaliar (falta tipo ou data).
+    function getSlaStatus() {
+      const tipo = getSlaTipo();
+      if (!tipo || !requestData.dataEntrega) return null;
+
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      const entrega = new Date(requestData.dataEntrega + 'T00:00:00');
+      const dias = Math.round((entrega - hoje) / 86400000);
+
+      const dataMinima = new Date(hoje.getTime() + tipo.maxDays * 86400000);
+      const dataMinimaTxt = dataMinima.toLocaleDateString('pt-BR');
+
+      if (dias < tipo.minDays) {
+        return {
+          id: 'Abaixo do SLA',
+          dias,
+          message: `Prazo abaixo do SLA (${tipo.prazo}). Dentro do SLA, a entrega sairia a partir de ${dataMinimaTxt}. Justifique abaixo para o time avaliar.`,
+          className: 'text-[#D96C53] dark:text-[#E5ACA0]',
+          needsReason: true
+        };
+      }
+
+      if (dias < tipo.maxDays) {
+        return {
+          id: 'No limite do SLA',
+          dias,
+          message: `Prazo apertado, mas dentro do SLA (${tipo.prazo}). Folga total dentro do SLA a partir de ${dataMinimaTxt}.`,
+          className: 'text-amber-600 dark:text-amber-400',
+          needsReason: false
+        };
+      }
+
+      return {
+        id: 'Dentro do SLA',
+        dias,
+        message: `Prazo confortável para o SLA de ${tipo.prazo}.`,
+        className: 'text-accent dark:text-[#72A68C]',
+        needsReason: false
+      };
+    }
+
+    // Mostra o SLA do tipo escolhido e o resultado da checagem contra a data pedida
+    function renderSlaCard() {
+      const card = document.getElementById('req-sla-card');
+      const prazoEl = document.getElementById('req-sla-prazo');
+      const obsEl = document.getElementById('req-sla-obs');
+      const rangeEl = document.getElementById('req-sla-range');
+      const statusEl = document.getElementById('req-sla-status');
+      if (!card) return;
+
+      const tipo = getSlaTipo();
+
+      if (!tipo) {
+        card.classList.add('hidden');
+        return;
+      }
+
+      card.classList.remove('hidden');
+      if (prazoEl) prazoEl.innerText = tipo.prazo;
+      if (obsEl) obsEl.innerText = tipo.obs;
+      if (rangeEl) rangeEl.innerText = `${tipo.minDays} a ${tipo.maxDays} dias corridos`;
+
+      const status = getSlaStatus();
+      if (statusEl) {
+        if (status) {
+          statusEl.innerText = `${status.id} — ${status.message}`;
+          statusEl.className = `text-[11px] font-bold mt-3 pt-3 border-t border-accent/20 break-words ${status.className}`;
+        } else {
+          statusEl.classList.add('hidden');
+          statusEl.className = 'text-[11px] font-bold mt-3 pt-3 border-t border-accent/20 break-words hidden';
+        }
+      }
+    }
+
+    function setRequestTipo() {
+      syncRequestData();
+      renderSlaCard();
+      updateJustificativaVisibility();
+      updateRequestProgress();
+    }
+
     function setRequestTipagem(index) {
       const tipagem = ESTEIRA_TIPAGENS[index];
       if (!tipagem) return;
@@ -1145,26 +1270,33 @@
       const hint = document.getElementById('req-priorizacao-hint');
       if (hint) hint.innerText = priorizacao.hint;
 
-      // A justificativa só é exigida quando a demanda precisa furar a fila
-      const justificativaContainer = document.getElementById('req-justificativa-container');
-      if (justificativaContainer) {
-        if (priorizacao.requiresReason) {
-          justificativaContainer.classList.remove('hidden');
-        } else {
-          justificativaContainer.classList.add('hidden');
-          requestData.justificativa = '';
-          const justificativaInput = document.getElementById('req-justificativa');
-          if (justificativaInput) justificativaInput.value = '';
-        }
-      }
-
+      updateJustificativaVisibility();
       updateRequestProgress();
     }
 
-    // A priorização escolhida exige justificativa?
+    // A justificativa é exigida quando a demanda fura a fila (priorização urgente)
+    // ou quando a data pedida fica abaixo do SLA do tipo escolhido.
     function requestNeedsReason() {
-      const selected = ESTEIRA_PRIORIZACOES.find(p => p.id === requestData.priorizacao);
-      return Boolean(selected && selected.requiresReason);
+      const priorizacao = ESTEIRA_PRIORIZACOES.find(p => p.id === requestData.priorizacao);
+      if (priorizacao && priorizacao.requiresReason) return true;
+
+      const slaStatus = getSlaStatus();
+      return Boolean(slaStatus && slaStatus.needsReason);
+    }
+
+    function updateJustificativaVisibility() {
+      const container = document.getElementById('req-justificativa-container');
+      if (!container) return;
+
+      if (requestNeedsReason()) {
+        container.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.add('hidden');
+      requestData.justificativa = '';
+      const input = document.getElementById('req-justificativa');
+      if (input) input.value = '';
     }
 
     // Espelha os campos da tela no estado antes de qualquer validação ou envio
@@ -1178,6 +1310,7 @@
       requestData.produto = val('req-produto');
       requestData.area = val('req-area');
       requestData.taskName = val('req-title');
+      requestData.tipoDemanda = val('req-tipo');
       requestData.subarea = val('req-subarea');
       requestData.taskContent = val('req-description');
       requestData.objetivo = val('req-objetivo');
@@ -1196,6 +1329,7 @@
       const missing = [];
       if (!requestData.author) missing.push('Nome');
       if (!requestData.taskName) missing.push('Task Name');
+      if (!requestData.tipoDemanda) missing.push('Tipo de demanda');
       if (!requestData.produto) missing.push('Produto');
       if (!requestData.tipagem) missing.push('Tipagem da Tarefa');
       if (!requestData.taskContent) missing.push('Descrição');
@@ -1210,9 +1344,13 @@
     function updateRequestProgress() {
       syncRequestData();
 
+      // A data e o tipo alimentam a checagem de SLA, então o cartão é reavaliado aqui
+      renderSlaCard();
+      updateJustificativaVisibility();
+
       const required = [
-        requestData.author, requestData.taskName, requestData.produto, requestData.tipagem,
-        requestData.taskContent, requestData.objetivo, requestData.dataEntrega,
+        requestData.author, requestData.taskName, requestData.tipoDemanda, requestData.produto,
+        requestData.tipagem, requestData.taskContent, requestData.objetivo, requestData.dataEntrega,
         requestData.priorizacao, requestData.alinhamento
       ];
       if (requestNeedsReason()) required.push(requestData.justificativa);
@@ -1233,18 +1371,25 @@
         ? new Date(requestData.dataEntrega + 'T12:00:00').toLocaleDateString('pt-BR')
         : '-';
 
+      const tipo = getSlaTipo();
+      const slaStatus = getSlaStatus();
+
       const lines = [
         `Task Name: ${requestData.taskName}`,
         `Space: ${ESTEIRA.space}`,
         `Folder: ${ESTEIRA.folder}`,
         `List: ${ESTEIRA.list}`,
         ``,
+        `Tipo de Demanda: ${requestData.tipoDemanda}`,
+        `SLA: ${tipo ? tipo.prazo : '-'}`,
+        `Status do SLA: ${slaStatus ? slaStatus.id : '-'}`,
+        ``,
         `0️⃣ Produto: ${requestData.produto}`,
         `Tipagem da Tarefa: ${requestData.tipagem}`,
         `🗓️ Alinhamento Realizado: ${requestData.alinhamento}`,
         `6️⃣ Priorização: ${requestData.priorizacao}`,
         `Data de entrega: ${dataEntregaTxt}`,
-        `Author: ${requestData.author}`
+        `Created By: ${requestData.author}`
       ];
 
       if (requestData.justificativa) lines.push(`Justificativa da prioridade: ${requestData.justificativa}`);
@@ -1281,6 +1426,18 @@
       }
     }
 
+    // A esteira usa a prioridade nativa do ClickUp além do campo de priorização
+    function mapPriorityToClickUp(priorizacao) {
+      switch (priorizacao) {
+        case 'Entrega no dia da solicitação': return 'URGENT';
+        case 'Now/Agora': return 'HIGH';
+        case 'Next/Depois': return 'NORMAL';
+        case 'Later/Mais Tarde':
+        case 'Backlog': return 'LOW';
+        default: return 'NORMAL';
+      }
+    }
+
     function submitRequest() {
       syncRequestData();
 
@@ -1303,33 +1460,41 @@
         btnSubmit.disabled = true;
       }
 
-      const dateNow = new Date().toISOString().split('T')[0];
+      const tipo = getSlaTipo();
+      const slaStatus = getSlaStatus();
 
-      // Payload no formato da esteira. As chaves usam nomes ASCII estáveis; o
-      // comentário ao lado indica a coluna correspondente no export do ClickUp,
-      // que é o cabeçalho esperado na planilha de destino.
+      // As chaves são exatamente os cabeçalhos da planilha de respostas, para o
+      // Apps Script casar cada valor com a sua coluna sem nenhuma tradução.
+      // Colunas que ainda não existem na planilha são criadas pelo script.
       const dataToGoogle = new FormData();
       dataToGoogle.append('formType', 'solicitacao');
-      dataToGoogle.append('dateCreated', dateNow);                          // Date Created
-      dataToGoogle.append('taskName', requestData.taskName);                // Task Name
-      dataToGoogle.append('space', ESTEIRA.space);                          // Space
-      dataToGoogle.append('folder', ESTEIRA.folder);                        // Folder
-      dataToGoogle.append('list', ESTEIRA.list);                            // List
-      dataToGoogle.append('taskContent', requestData.taskContent);          // Task Content
-      dataToGoogle.append('produto', requestData.produto);                  // 0️⃣ Produto (drop down)
-      dataToGoogle.append('trimestre', requestData.trimestre);              // 1️⃣ Trimestre (drop down)
-      dataToGoogle.append('subarea', requestData.subarea);                  // 2️⃣ Subárea (drop down)
-      dataToGoogle.append('priorizacao', requestData.priorizacao);          // 6️⃣ Priorização (drop down)
-      dataToGoogle.append('author', requestData.author);                    // Author (users)
-      dataToGoogle.append('dataEntrega', requestData.dataEntrega);          // Data de entrega (date)
-      dataToGoogle.append('justificativa', requestData.justificativa);      // Justificativa da prioridade (text)
-      dataToGoogle.append('uso', requestData.uso);                          // O uso será interno ou externo? (drop down)
-      dataToGoogle.append('area', requestData.area);                        // Qual a área a que se refere? (drop down)
-      dataToGoogle.append('objetivo', requestData.objetivo);                // Qual o objetivo da demanda... (text)
-      dataToGoogle.append('tipagem', requestData.tipagem);                  // Tipagem da Tarefa (drop down)
-      dataToGoogle.append('url', requestData.url);                          // URL (url)
-      dataToGoogle.append('alinhamento', requestData.alinhamento);          // 🗓️ Alinhamento Realizado (labels)
-      dataToGoogle.append('assignee', requestData.designer);                // Assignee
+      dataToGoogle.append('Task Name', requestData.taskName);
+      dataToGoogle.append('Status', 'aguardando');
+      dataToGoogle.append('Assignee', requestData.designer);
+      dataToGoogle.append('Priority', mapPriorityToClickUp(requestData.priorizacao));
+      dataToGoogle.append('Date Created', new Date().toISOString());
+      dataToGoogle.append('Created By', requestData.author);
+      dataToGoogle.append('Space', ESTEIRA.space);
+      dataToGoogle.append('Folder', ESTEIRA.folder);
+      dataToGoogle.append('List', ESTEIRA.list);
+      dataToGoogle.append('0️⃣ Produto (drop down)', requestData.produto);
+      dataToGoogle.append('Data de entrega (date)', requestData.dataEntrega);
+      dataToGoogle.append('Justificativa da prioridade (text)', requestData.justificativa);
+      dataToGoogle.append('O uso será interno ou externo? (drop down)', requestData.uso);
+      dataToGoogle.append('Qual a área a que se refere? (drop down)', requestData.area);
+      dataToGoogle.append('Qual o objetivo da demanda, para o que será usada? (text)', requestData.objetivo);
+      dataToGoogle.append('Tipagem da Tarefa (drop down)', requestData.tipagem);
+      dataToGoogle.append('URL (url)', requestData.url);
+      dataToGoogle.append('🗓️ Alinhamento Realizado (labels)', requestData.alinhamento);
+
+      // Colunas novas, criadas pelo Apps Script na primeira solicitação recebida
+      dataToGoogle.append('Task Content', requestData.taskContent);
+      dataToGoogle.append('Tipo de Demanda', requestData.tipoDemanda);
+      dataToGoogle.append('SLA', tipo ? tipo.prazo : '');
+      dataToGoogle.append('Status do SLA', slaStatus ? slaStatus.id : '');
+      dataToGoogle.append('1️⃣ Trimestre (drop down)', requestData.trimestre);
+      dataToGoogle.append('2️⃣ Subárea (drop down)', requestData.subarea);
+      dataToGoogle.append('6️⃣ Priorização (drop down)', requestData.priorizacao);
 
       // Dispara o envio para a Planilha
       // mode: 'no-cors' impede erros de segurança e garante o envio no background.
@@ -1339,13 +1504,18 @@
           .catch(err => console.error('Erro ao registrar a solicitação na planilha:', err));
       }
 
-      // Preenche a confirmação com o destino real do registro
-      const successDestino = document.getElementById('success-destino');
+      // Preenche a confirmação com o SLA acordado para esta demanda
+      const successSla = document.getElementById('success-sla');
       const successTaskName = document.getElementById('success-task-name');
+      const successSlaStatus = document.getElementById('success-sla-status');
       const linkEsteira = document.getElementById('link-esteira');
 
-      if (successDestino) successDestino.innerText = `${ESTEIRA.space} › ${ESTEIRA.list}`;
+      if (successSla) successSla.innerText = tipo ? `${tipo.id} — ${tipo.prazo}` : '-';
       if (successTaskName) successTaskName.innerText = requestData.taskName;
+      if (successSlaStatus && slaStatus) {
+        successSlaStatus.innerText = slaStatus.id;
+        successSlaStatus.className = `text-[11px] font-bold block mt-1 ${slaStatus.className}`;
+      }
       if (linkEsteira) linkEsteira.setAttribute('href', REQUEST_SHEET_URL);
 
       // Finaliza o envio na interface gráfica após uma breve animação
@@ -1371,11 +1541,14 @@
           if (el) el.value = '';
         });
 
-      ['req-produto', 'req-area', 'req-subarea', 'req-uso', 'req-trimestre', 'req-alinhamento']
+      ['req-tipo', 'req-produto', 'req-area', 'req-subarea', 'req-uso', 'req-trimestre', 'req-alinhamento']
         .forEach(id => {
           const el = document.getElementById(id);
           if (el) el.selectedIndex = 0;
         });
+
+      const slaCard = document.getElementById('req-sla-card');
+      if (slaCard) slaCard.classList.add('hidden');
 
       const designerEl = document.getElementById('req-designer');
       if (designerEl) designerEl.value = 'Sem preferência';
