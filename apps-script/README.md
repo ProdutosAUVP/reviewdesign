@@ -50,12 +50,12 @@ depender da ordem. Se você reordenar colunas na planilha, nada quebra.
 | `O uso será interno ou externo? (drop down)` | O uso será interno ou externo? |
 | `Qual a área a que se refere? (drop down)` | Qual a área a que se refere? |
 | `Qual o objetivo da demanda, para o que será usada? (text)` | Objetivo da demanda |
-| `Tipagem da Tarefa (drop down)` | Tipagem da Tarefa |
 | `URL (url)` | URL |
 | `🗓️ Alinhamento Realizado (labels)` | 🗓️ Alinhamento Realizado |
 
-A coluna `Tasks com interface (tasks)` existe na planilha mas não é coletada pelo
-formulário, então fica vazia.
+As colunas `Tasks com interface (tasks)` e `Tipagem da Tarefa (drop down)` existem
+na planilha mas não são coletadas pelo formulário — são preenchidas manualmente no
+ClickUp, na triagem da demanda —, então chegam vazias.
 
 ### Colunas criadas pelo script
 

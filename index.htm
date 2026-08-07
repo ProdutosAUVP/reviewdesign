@@ -301,13 +301,6 @@
             </div>
 
             <div class="w-full">
-              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-3">Tipagem da Tarefa <span class="text-accent">*</span></label>
-              <div id="req-tipagem-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 w-full">
-                <!-- Botões gerados via JS -->
-              </div>
-            </div>
-
-            <div class="w-full">
               <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Descrição da demanda <span class="text-accent">*</span></label>
               <textarea id="req-description" rows="5" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Descreva o que precisa ser feito. Inclua aqui também público-alvo, formatos e dimensões, entregáveis esperados e referências visuais."></textarea>
               <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">Vira a descrição da tarefa (Task Content) no ClickUp.</p>
@@ -937,12 +930,8 @@
       'PMP', 'Portal', 'SPP', 'Veridion'
     ];
 
-    // Tipagem da Tarefa (drop down) — obrigatório
-    const ESTEIRA_TIPAGENS = [
-      '🛠️ Ajuste / Melhoria', '✍️ Criação & Conteúdo', '✅ Revisão & Qualidade',
-      '🚀 Estratégico', '⚙️ Operacional', '⌨️ Nova funcionalidade',
-      '🔍 Descoberta (Discovery)', 'Desenvolvimento profissional'
-    ];
+    // Tipagem da Tarefa fica de fora do formulário: é preenchida manualmente no
+    // ClickUp, na triagem da demanda.
 
     // 2️⃣ Subárea (drop down)
     const ESTEIRA_SUBAREAS = [
@@ -1070,7 +1059,6 @@
       area: '',              // Qual a área a que se refere? (drop down)
       taskName: '',          // Task Name — obrigatório
       tipoDemanda: '',       // Tipo de Demanda — obrigatório, define o SLA
-      tipagem: '',           // Tipagem da Tarefa (drop down) — obrigatório
       subarea: '',           // 2️⃣ Subárea (drop down)
       taskContent: '',       // Task Content
       objetivo: '',          // Qual o objetivo da demanda, para o que será usada? (text)
@@ -1137,21 +1125,12 @@
       renderRequestButtons();
     }
 
-    // Tipagem e Priorização usam botões, no mesmo padrão visual do wizard de satisfação
+    // A Priorização usa botões, no mesmo padrão visual do wizard de satisfação
     function renderRequestButtons() {
-      const tipagemContainer = document.getElementById('req-tipagem-container');
       const priorizacaoContainer = document.getElementById('req-priorizacao-container');
 
       const base = "w-full py-2.5 px-2 text-[9px] md:text-[10px] uppercase tracking-widest font-bold rounded-[2px] border transition-all duration-200 truncate";
       const idle = " border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 hover:border-accent hover:text-ink dark:hover:text-white";
-
-      if (tipagemContainer) {
-        tipagemContainer.innerHTML = ESTEIRA_TIPAGENS.map((t, i) => {
-          const isSelected = requestData.tipagem === t;
-          const classes = base + (isSelected ? " bg-accent border-accent text-white shadow-sm" : idle);
-          return `<button type="button" onclick="setRequestTipagem(${i})" class="${classes}" title="${t}">${t}</button>`;
-        }).join('');
-      }
 
       if (priorizacaoContainer) {
         priorizacaoContainer.innerHTML = ESTEIRA_PRIORIZACOES.map((p, i) => {
@@ -1252,14 +1231,6 @@
       updateRequestProgress();
     }
 
-    function setRequestTipagem(index) {
-      const tipagem = ESTEIRA_TIPAGENS[index];
-      if (!tipagem) return;
-      requestData.tipagem = tipagem;
-      renderRequestButtons();
-      updateRequestProgress();
-    }
-
     function setRequestPriorizacao(index) {
       const priorizacao = ESTEIRA_PRIORIZACOES[index];
       if (!priorizacao) return;
@@ -1331,7 +1302,6 @@
       if (!requestData.taskName) missing.push('Task Name');
       if (!requestData.tipoDemanda) missing.push('Tipo de demanda');
       if (!requestData.produto) missing.push('Produto');
-      if (!requestData.tipagem) missing.push('Tipagem da Tarefa');
       if (!requestData.taskContent) missing.push('Descrição');
       if (!requestData.objetivo) missing.push('Objetivo');
       if (!requestData.dataEntrega) missing.push('Data de entrega');
@@ -1350,7 +1320,7 @@
 
       const required = [
         requestData.author, requestData.taskName, requestData.tipoDemanda, requestData.produto,
-        requestData.tipagem, requestData.taskContent, requestData.objetivo, requestData.dataEntrega,
+        requestData.taskContent, requestData.objetivo, requestData.dataEntrega,
         requestData.priorizacao, requestData.alinhamento
       ];
       if (requestNeedsReason()) required.push(requestData.justificativa);
@@ -1385,7 +1355,6 @@
         `Status do SLA: ${slaStatus ? slaStatus.id : '-'}`,
         ``,
         `0️⃣ Produto: ${requestData.produto}`,
-        `Tipagem da Tarefa: ${requestData.tipagem}`,
         `🗓️ Alinhamento Realizado: ${requestData.alinhamento}`,
         `6️⃣ Priorização: ${requestData.priorizacao}`,
         `Data de entrega: ${dataEntregaTxt}`,
@@ -1483,7 +1452,6 @@
       dataToGoogle.append('O uso será interno ou externo? (drop down)', requestData.uso);
       dataToGoogle.append('Qual a área a que se refere? (drop down)', requestData.area);
       dataToGoogle.append('Qual o objetivo da demanda, para o que será usada? (text)', requestData.objetivo);
-      dataToGoogle.append('Tipagem da Tarefa (drop down)', requestData.tipagem);
       dataToGoogle.append('URL (url)', requestData.url);
       dataToGoogle.append('🗓️ Alinhamento Realizado (labels)', requestData.alinhamento);
 
