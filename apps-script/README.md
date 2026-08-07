@@ -35,7 +35,7 @@ depender da ordem. Se você reordenar colunas na planilha, nada quebra.
 
 | Coluna | Origem no formulário |
 | --- | --- |
-| `Task Name` | Task Name |
+| `Task Name` | Nome da demanda |
 | `Status` | fixo: `aguardando` |
 | `Priority` | Prioridade (ver abaixo) |
 | `Date Created` | data e hora do envio |
@@ -43,28 +43,41 @@ depender da ordem. Se você reordenar colunas na planilha, nada quebra.
 | `Space` | fixo: `Área de Produto` |
 | `Folder` | fixo: `hidden` |
 | `List` | fixo: `🧑‍🎨 Design \|  Esteira` |
-| `0️⃣ Produto (drop down)` | 0️⃣ Produto |
+| `0️⃣ Produto (drop down)` | Produto |
 | `Data de entrega (date)` | Data de entrega |
 | `Justificativa da prioridade (text)` | Justificativa de urgência |
 | `O uso será interno ou externo? (drop down)` | O uso será interno ou externo? |
 | `Qual a área a que se refere? (drop down)` | Qual a área a que se refere? |
 | `Qual o objetivo da demanda, para o que será usada? (text)` | Objetivo da demanda |
-| `URL (url)` | URL |
 
-As colunas `Assignee`, `Tasks com interface (tasks)`, `Tipagem da Tarefa (drop down)`
-e `🗓️ Alinhamento Realizado (labels)` existem na planilha mas não são coletadas pelo
-formulário — são preenchidas manualmente no ClickUp, na triagem da demanda —, então
-chegam vazias.
+As colunas `Assignee`, `Tasks com interface (tasks)`, `Tipagem da Tarefa (drop down)`,
+`URL (url)` e `🗓️ Alinhamento Realizado (labels)` existem na planilha mas não são
+coletadas pelo formulário, então chegam vazias. As de triagem são preenchidas
+manualmente no ClickUp; os links de referência passaram a ser colados dentro da
+descrição da demanda.
 
 ### Colunas criadas pelo script
 
 Na primeira solicitação recebida, o script acrescenta à direita as colunas que o
 formulário envia e a planilha ainda não tem:
 
-`Task Content`, `Tipo de Demanda`, `SLA` e `Status do SLA`.
+`Task Content`, `Tipo de Demanda`, `SLA`, `Status do SLA` e `Anexos`.
 
 Para desligar esse comportamento, mude `CRIAR_COLUNAS_FALTANTES` para `false` no
 script — nesse caso, campos sem coluna correspondente são descartados.
+
+### Anexos
+
+Os arquivos anexados na descrição viajam em base64 dentro do campo `anexosJson`,
+que é consumido pelo script e **não** vira coluna. Cada arquivo é gravado numa pasta
+do Drive chamada `Anexos | Solicitações de Design`, criada na primeira execução, e a
+coluna `Anexos` recebe os links, um por linha.
+
+Se a gravação no Drive falhar, a coluna mantém os nomes dos arquivos enviados, para
+que a solicitação não chegue sem indício de que havia anexos.
+
+Limites aplicados no formulário: 10 MB por arquivo e 20 MB no total. O base64 infla
+o tamanho em cerca de 33%, então o teto real do POST fica em torno de 27 MB.
 
 ### Prioridade e SLA
 

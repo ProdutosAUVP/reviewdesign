@@ -29,7 +29,10 @@ var ABA_RESPOSTAS = '';
 var CRIAR_COLUNAS_FALTANTES = true;
 
 // Chaves de controle que não viram coluna na planilha.
-var CHAVES_IGNORADAS = ['formType'];
+var CHAVES_IGNORADAS = ['formType', 'anexosJson'];
+
+// Pasta do Drive onde os anexos das solicitações são guardados.
+var PASTA_ANEXOS = 'Anexos | Solicitações de Design';
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -38,6 +41,10 @@ function doPost(e) {
   try {
     var sheet = getSheet_();
     var dados = (e && e.parameter) ? e.parameter : {};
+
+    // Os arquivos chegam em base64 e viram links do Drive na coluna "Anexos"
+    var anexosUrls = salvarAnexos_(dados.anexosJson);
+    if (anexosUrls) dados['Anexos'] = anexosUrls;
 
     var cabecalhos = getCabecalhos_(sheet);
     cabecalhos = garantirColunas_(sheet, cabecalhos, dados);
@@ -120,6 +127,54 @@ function garantirColunas_(sheet, cabecalhos, dados) {
   sheet.getRange(1, 1, 1, atualizados.length).setValues([atualizados]);
 
   return atualizados;
+}
+
+/**
+ * Grava os anexos no Drive e devolve os links, um por linha.
+ * Em caso de falha devolve string vazia — a coluna "Anexos" mantém os nomes dos
+ * arquivos enviados pelo formulário, para que nada se perca silenciosamente.
+ */
+function salvarAnexos_(anexosJson) {
+  if (!anexosJson) return '';
+
+  var anexos;
+  try {
+    anexos = JSON.parse(anexosJson);
+  } catch (err) {
+    return '';
+  }
+
+  if (!anexos || !anexos.length) return '';
+
+  try {
+    var pasta = getPastaAnexos_();
+
+    return anexos.map(function (anexo) {
+      var blob = Utilities.newBlob(
+        Utilities.base64Decode(anexo.dados),
+        anexo.tipo || 'application/octet-stream',
+        anexo.nome
+      );
+
+      var arquivo = pasta.createFile(blob);
+
+      // Link acessível para quem tem o endereço, dentro do domínio.
+      try {
+        arquivo.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (err) {
+        // Contas fora do Workspace não aceitam esse modo; segue o padrão da pasta.
+      }
+
+      return arquivo.getUrl();
+    }).join('\n');
+  } catch (err) {
+    return '';
+  }
+}
+
+function getPastaAnexos_() {
+  var pastas = DriveApp.getFoldersByName(PASTA_ANEXOS);
+  return pastas.hasNext() ? pastas.next() : DriveApp.createFolder(PASTA_ANEXOS);
 }
 
 function resposta_(conteudo) {
