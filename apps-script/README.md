@@ -25,6 +25,38 @@ Produto no ClickUp.
 Ao alterar o script depois, crie uma **nova versão da implantação** — a URL só
 passa a servir o código novo a partir disso.
 
+> O acesso precisa ser **Qualquer pessoa**. É isso que faz a resposta do script
+> vir com CORS liberado, e é dela que o formulário depende para confirmar a
+> gravação.
+
+## Conferindo antes de publicar
+
+No editor do Apps Script, rode a função **`testarLigacao`**. Ela grava uma linha de
+teste, registra no log a aba, a lista de colunas e o número da linha gravada, e em
+seguida apaga a linha. O resultado aparece em **Execuções**.
+
+Se essa função rodar sem erro, a ligação entre script e planilha está de pé.
+
+## Como o formulário garante a gravação
+
+O envio **não** usa `mode: 'no-cors'`. O formulário lê a resposta do script e só
+mostra a tela de sucesso quando recebe `{ ok: true, linha: N }` — e exibe esse
+número de linha na confirmação, para que dê para conferir na planilha.
+
+Quando algo dá errado:
+
+1. **Três tentativas** com espera crescente (1,5s, 3s), para absorver oscilação de rede.
+2. Se todas falharem, a tela de sucesso **não** aparece. O erro é mostrado com o
+   motivo devolvido pelo script.
+3. A solicitação fica guardada no navegador (`localStorage`). Ao reabrir a página,
+   um aviso mostra qual demanda não chegou e oferece copiar o resumo.
+
+Os anexos não entram nesse rascunho de segurança — em base64 estouram a cota do
+`localStorage` —, então o resumo guardado lista apenas os nomes dos arquivos.
+
+Enquanto o `GOOGLE_SHEET_REQUEST_URL` estiver com o placeholder, o formulário
+recusa o envio com uma mensagem explícita, em vez de fingir sucesso.
+
 ## Como o mapeamento funciona
 
 O formulário envia cada campo usando como chave o **nome exato da coluna**. O
