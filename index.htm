@@ -1566,15 +1566,15 @@
       });
     }
 
-    // Procura o envio na planilha até encontrar. Com anexos a gravação demora mais,
-    // porque cada arquivo é salvo no Drive antes de a linha ser escrita.
-    async function confirmarEnvio(envioId, tentativas, esperaMs) {
+    // Procura o envio na planilha. Roda em segundo plano, com a tela de sucesso já
+    // na frente do usuário, então pode ser curto: se não achar, o aviso é brando.
+    async function confirmarEnvio(envioId, tentativas = 4, esperaMs = 2000) {
       for (let i = 0; i < tentativas; i++) {
         await new Promise(r => setTimeout(r, esperaMs));
 
         try {
           const url = `${GOOGLE_SHEET_REQUEST_URL}?envioId=${encodeURIComponent(envioId)}`;
-          const resposta = await consultarPorJsonp(url);
+          const resposta = await consultarPorJsonp(url, 6000);
           if (resposta && resposta.ok && resposta.linha) return resposta;
         } catch (err) {
           console.warn('Tentativa de confirmação falhou:', err.message);
@@ -1582,6 +1582,22 @@
       }
 
       return null;
+    }
+
+    // Atualiza a linha de confirmação na tela de sucesso, sem travar o usuário
+    async function confirmarEmSegundoPlano(envioId) {
+      const alvo = document.getElementById('success-linha');
+      const confirmacao = await confirmarEnvio(envioId);
+
+      if (!alvo) return;
+
+      if (confirmacao) {
+        alvo.innerText = `Registro confirmado na linha ${confirmacao.linha} da planilha.`;
+        alvo.className = 'text-[10px] text-accent dark:text-[#72A68C] font-bold block mt-2 pt-2 border-t border-paper-dark dark:border-white/10';
+      } else {
+        alvo.innerText = 'Enviado, mas não foi possível confirmar o registro automaticamente. Confira na planilha ou copie o resumo abaixo.';
+        alvo.className = 'text-[10px] text-amber-600 dark:text-amber-400 font-bold block mt-2 pt-2 border-t border-paper-dark dark:border-white/10 leading-relaxed';
+      }
     }
 
     async function enviarSolicitacao(body, tipo, slaStatus, envioId) {
@@ -1601,9 +1617,9 @@
         return;
       }
 
+      // Gravação. Com 'no-cors' a resposta é opaca: se o fetch não estourar, a
+      // requisição saiu. Só um erro de rede de verdade cai no catch.
       try {
-        // 1. Gravação. O 'no-cors' devolve uma resposta opaca: só saberemos se deu
-        //    certo pela consulta seguinte.
         await fetch(GOOGLE_SHEET_REQUEST_URL, { method: 'POST', body: body, mode: 'no-cors' });
       } catch (err) {
         salvarPendente();
@@ -1612,23 +1628,15 @@
         return;
       }
 
-      // 2. Confirmação. Com anexos a gravação passa pelo Drive, então damos mais tempo.
-      if (btnSubmit) btnSubmit.innerHTML = 'Confirmando na planilha...';
-
-      const comAnexos = requestAnexos.length > 0;
-      const confirmacao = await confirmarEnvio(envioId, comAnexos ? 10 : 6, comAnexos ? 4000 : 2500);
-
-      if (confirmacao) {
-        renderSuccessRequest(tipo, slaStatus, confirmacao.linha);
-        removerPendente();
-        isRequestSubmitted = true;
-        switchView('request-success');
-      } else {
-        salvarPendente();
-        showRequestError('A solicitação foi enviada, mas não apareceu na planilha dentro do tempo esperado. Ela ficou guardada neste navegador — copie o resumo e avise o time de design antes de enviar de novo, para não duplicar.');
-      }
-
+      // A tela de sucesso entra na hora. A conferência do registro continua
+      // rodando atrás e atualiza a linha de confirmação quando terminar.
+      renderSuccessRequest(tipo, slaStatus);
+      removerPendente();
+      isRequestSubmitted = true;
+      switchView('request-success');
       encerrar();
+
+      confirmarEmSegundoPlano(envioId);
     }
 
     function showRequestError(mensagem) {
@@ -1639,8 +1647,9 @@
       errorMsg.classList.remove('hidden');
     }
 
-    // Preenche a confirmação com o SLA acordado e a linha gravada na planilha
-    function renderSuccessRequest(tipo, slaStatus, linha) {
+    // Preenche a confirmação com o SLA acordado. A linha da planilha entra depois,
+    // quando a conferência em segundo plano terminar.
+    function renderSuccessRequest(tipo, slaStatus) {
       const successSla = document.getElementById('success-sla');
       const successTaskName = document.getElementById('success-task-name');
       const successSlaStatus = document.getElementById('success-sla-status');
@@ -1656,7 +1665,8 @@
       }
 
       if (successLinha) {
-        successLinha.innerText = linha ? `Gravada na linha ${linha} da planilha.` : '';
+        successLinha.innerText = 'Conferindo o registro na planilha...';
+        successLinha.className = 'text-[10px] text-ink-light dark:text-white/40 block mt-2 pt-2 border-t border-paper-dark dark:border-white/10 animate-pulse';
       }
 
       if (linkEsteira) linkEsteira.setAttribute('href', REQUEST_SHEET_URL);
