@@ -34,6 +34,10 @@ var CHAVES_IGNORADAS = ['formType', 'anexosJson'];
 // Pasta do Drive onde os anexos das solicitações são guardados.
 var PASTA_ANEXOS = 'Anexos | Solicitações de Design';
 
+// Coluna que guarda o identificador de cada envio. É por ela que o formulário
+// confirma que a solicitação chegou.
+var COLUNA_ENVIO_ID = 'ID do Envio';
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
 
@@ -73,14 +77,28 @@ function doPost(e) {
 }
 
 /**
- * Devolve as respostas já registradas, para consulta pela aplicação.
+ * Duas funções:
+ *   - com ?envioId=... devolve a linha daquele envio, para o formulário confirmar
+ *     que a solicitação chegou;
+ *   - sem parâmetro, devolve todas as respostas registradas.
+ *
+ * Aceita ?callback=... e responde em JSONP. É assim que o formulário consulta:
+ * uma tag <script> não passa por CORS, então funciona mesmo onde o fetch é
+ * bloqueado pelo navegador.
  */
-function doGet() {
+function doGet(e) {
+  var params = (e && e.parameter) ? e.parameter : {};
+  var callback = params.callback;
+
   try {
+    if (params.envioId) {
+      return resposta_(localizarEnvio_(params.envioId), callback);
+    }
+
     var sheet = getSheet_();
     var valores = sheet.getDataRange().getValues();
 
-    if (valores.length < 2) return resposta_([]);
+    if (valores.length < 2) return resposta_([], callback);
 
     var cabecalhos = valores[0];
     var linhas = valores.slice(1)
@@ -95,10 +113,34 @@ function doGet() {
         return item;
       });
 
-    return resposta_(linhas);
+    return resposta_(linhas, callback);
   } catch (err) {
-    return resposta_({ error: String(err) });
+    return resposta_({ ok: false, error: String(err) }, callback);
   }
+}
+
+/**
+ * Procura, de baixo para cima, a linha gravada com o identificador informado.
+ * A busca começa pelo fim porque o envio recém-chegado está entre os últimos.
+ */
+function localizarEnvio_(envioId) {
+  var sheet = getSheet_();
+  var valores = sheet.getDataRange().getValues();
+
+  if (valores.length < 2) return { ok: false };
+
+  var coluna = valores[0].indexOf(COLUNA_ENVIO_ID);
+  if (coluna === -1) {
+    return { ok: false, error: 'A planilha ainda não tem a coluna "' + COLUNA_ENVIO_ID + '".' };
+  }
+
+  for (var i = valores.length - 1; i >= 1; i--) {
+    if (String(valores[i][coluna]).trim() === String(envioId).trim()) {
+      return { ok: true, linha: i + 1 };
+    }
+  }
+
+  return { ok: false };
 }
 
 /**
@@ -217,8 +259,19 @@ function getPastaAnexos_() {
   return pastas.hasNext() ? pastas.next() : DriveApp.createFolder(PASTA_ANEXOS);
 }
 
-function resposta_(conteudo) {
+/**
+ * Responde em JSON ou, quando vier um callback, em JSONP.
+ */
+function resposta_(conteudo, callback) {
+  var texto = JSON.stringify(conteudo);
+
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + '(' + texto + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+
   return ContentService
-    .createTextOutput(JSON.stringify(conteudo))
+    .createTextOutput(texto)
     .setMimeType(ContentService.MimeType.JSON);
 }

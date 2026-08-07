@@ -1480,11 +1480,15 @@
       const tipo = getSlaTipo();
       const slaStatus = getSlaStatus();
 
+      // Identificador do envio: é por ele que a confirmação encontra a linha
+      const envioId = gerarEnvioId();
+
       // As chaves são exatamente os cabeçalhos da planilha de respostas, para o
       // Apps Script casar cada valor com a sua coluna sem nenhuma tradução.
       // Colunas que ainda não existem na planilha são criadas pelo script.
       const dataToGoogle = new FormData();
       dataToGoogle.append('formType', 'solicitacao');
+      dataToGoogle.append('ID do Envio', envioId);
       dataToGoogle.append('Task Name', requestData.taskName);
       dataToGoogle.append('Status', 'aguardando');
       dataToGoogle.append('Assignee', ''); // a alocação é definida pelo time na triagem
@@ -1516,58 +1520,71 @@
 
       // O envio só é considerado concluído quando o Apps Script confirma a linha
       // gravada. Sem confirmação, a solicitação fica pendente e nada é perdido.
-      enviarSolicitacao(dataToGoogle, tipo, slaStatus);
+      enviarSolicitacao(dataToGoogle, tipo, slaStatus, envioId);
     }
 
-    // Confirma o recebimento lendo a resposta do Apps Script. Diferente do envio
-    // com mode:'no-cors', aqui o navegador consegue ler o corpo da resposta —
-    // FormData é uma requisição simples, então não há preflight, e o Apps Script
-    // responde com CORS liberado.
-    async function postSolicitacao(body) {
-      const resposta = await fetch(GOOGLE_SHEET_REQUEST_URL, {
-        method: 'POST',
-        body: body,
-        redirect: 'follow'
+    // ==========================================================================
+    // ENVIO E CONFIRMAÇÃO
+    // --------------------------------------------------------------------------
+    // A gravação e a confirmação usam caminhos diferentes, e nenhum deles depende
+    // de CORS:
+    //
+    //   1. A gravação vai por POST com mode:'no-cors'. O navegador não deixa ler a
+    //      resposta, mas a requisição sai — e é isso que importa para gravar.
+    //   2. A confirmação vem por JSONP: uma tag <script> apontando para o mesmo
+    //      endpoint, procurando o identificador do envio na planilha. Tag <script>
+    //      não passa por CORS, então funciona onde o fetch é bloqueado.
+    //
+    // O resultado é o mesmo de antes — a tela de sucesso só aparece com a linha
+    // confirmada —, mas sem depender de o Apps Script devolver cabeçalho CORS.
+    // ==========================================================================
+
+    function gerarEnvioId() {
+      return 'req-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+    }
+
+    // Consulta o endpoint por tag <script>, contornando o CORS por completo
+    function consultarPorJsonp(url, timeoutMs = 20000) {
+      return new Promise((resolve, reject) => {
+        const nomeCallback = 'cbEsteira' + Math.random().toString(36).slice(2, 10);
+        const script = document.createElement('script');
+        let timer;
+
+        const limpar = () => {
+          clearTimeout(timer);
+          delete window[nomeCallback];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        };
+
+        window[nomeCallback] = (dados) => { limpar(); resolve(dados); };
+
+        script.onerror = () => { limpar(); reject(new Error('A planilha não respondeu à consulta.')); };
+        timer = setTimeout(() => { limpar(); reject(new Error('A consulta à planilha demorou demais.')); }, timeoutMs);
+
+        script.src = `${url}${url.indexOf('?') === -1 ? '?' : '&'}callback=${nomeCallback}`;
+        document.body.appendChild(script);
       });
-
-      if (!resposta.ok) {
-        throw new Error(`A planilha respondeu com o status ${resposta.status}.`);
-      }
-
-      let json;
-      try {
-        json = JSON.parse(await resposta.text());
-      } catch (err) {
-        throw new Error('A planilha respondeu em um formato inesperado.');
-      }
-
-      if (!json || json.ok !== true) {
-        throw new Error(json && json.error ? json.error : 'A planilha recusou o registro.');
-      }
-
-      return json;
     }
 
-    // Três tentativas com espera crescente, para não perder um envio por uma
-    // oscilação momentânea de rede.
-    async function postComTentativas(body, tentativas = 3) {
-      let ultimoErro;
-
+    // Procura o envio na planilha até encontrar. Com anexos a gravação demora mais,
+    // porque cada arquivo é salvo no Drive antes de a linha ser escrita.
+    async function confirmarEnvio(envioId, tentativas, esperaMs) {
       for (let i = 0; i < tentativas; i++) {
+        await new Promise(r => setTimeout(r, esperaMs));
+
         try {
-          return await postSolicitacao(body);
+          const url = `${GOOGLE_SHEET_REQUEST_URL}?envioId=${encodeURIComponent(envioId)}`;
+          const resposta = await consultarPorJsonp(url);
+          if (resposta && resposta.ok && resposta.linha) return resposta;
         } catch (err) {
-          ultimoErro = err;
-          if (i < tentativas - 1) {
-            await new Promise(r => setTimeout(r, 1500 * Math.pow(2, i)));
-          }
+          console.warn('Tentativa de confirmação falhou:', err.message);
         }
       }
 
-      throw ultimoErro;
+      return null;
     }
 
-    async function enviarSolicitacao(body, tipo, slaStatus) {
+    async function enviarSolicitacao(body, tipo, slaStatus, envioId) {
       const btnSubmit = document.getElementById('btn-request-submit');
 
       const encerrar = () => {
@@ -1585,20 +1602,33 @@
       }
 
       try {
-        const confirmacao = await postComTentativas(body);
+        // 1. Gravação. O 'no-cors' devolve uma resposta opaca: só saberemos se deu
+        //    certo pela consulta seguinte.
+        await fetch(GOOGLE_SHEET_REQUEST_URL, { method: 'POST', body: body, mode: 'no-cors' });
+      } catch (err) {
+        salvarPendente();
+        showRequestError(`Não foi possível enviar: ${err.message}. A solicitação ficou guardada neste navegador — tente de novo ou copie o resumo.`);
+        encerrar();
+        return;
+      }
 
-        // Só a partir daqui a solicitação é dada como registrada
+      // 2. Confirmação. Com anexos a gravação passa pelo Drive, então damos mais tempo.
+      if (btnSubmit) btnSubmit.innerHTML = 'Confirmando na planilha...';
+
+      const comAnexos = requestAnexos.length > 0;
+      const confirmacao = await confirmarEnvio(envioId, comAnexos ? 10 : 6, comAnexos ? 4000 : 2500);
+
+      if (confirmacao) {
         renderSuccessRequest(tipo, slaStatus, confirmacao.linha);
         removerPendente();
         isRequestSubmitted = true;
         switchView('request-success');
-      } catch (err) {
+      } else {
         salvarPendente();
-        showRequestError(`Não foi possível gravar na planilha: ${err.message} A solicitação ficou guardada neste navegador — tente enviar de novo ou copie o resumo.`);
-        console.error('Falha ao registrar a solicitação:', err);
-      } finally {
-        encerrar();
+        showRequestError('A solicitação foi enviada, mas não apareceu na planilha dentro do tempo esperado. Ela ficou guardada neste navegador — copie o resumo e avise o time de design antes de enviar de novo, para não duplicar.');
       }
+
+      encerrar();
     }
 
     function showRequestError(mensagem) {
