@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Satisfação Time de Design - Avaliação</title>
+  <title>Time de Design - Solicitações & Satisfação</title>
   
   <!-- Favicon -->
   <link rel="icon" href="https://raw.githubusercontent.com/ProdutosAUVP/reviewdesign/main/meme_this_is_fine_dog.png" type="image/png">
@@ -176,13 +176,16 @@
         <img src="https://raw.githubusercontent.com/ProdutosAUVP/reviewdesign/main/olho-branco%20(2).svg" alt="Olho AUVP" class="h-4 md:h-5 lg:h-6 w-auto invert dark:invert-0 opacity-90 transition-all duration-500 shrink-0" />
         <div class="flex flex-col min-w-0">
           <span class="text-[clamp(12px,3.5vw,20px)] md:text-xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-0.5 whitespace-nowrap truncate block">
-            <span class="hidden md:inline">Satisfação Time de</span><span class="md:hidden">Satisfação</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
+            <span id="nav-brand-long" class="hidden md:inline">Solicitação de</span><span id="nav-brand-short" class="md:hidden">Solicitação</span> <span id="nav-brand-accent" class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
           </span>
         </div>
       </div>
-      
-      <div class="flex items-center gap-3 md:gap-6 shrink-0">
-        <button id="btn-nav-form" onclick="returnToFormOrIntro()" class="btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1">
+
+      <div class="flex items-center gap-2.5 md:gap-6 shrink-0">
+        <button id="btn-nav-request" onclick="goToRequest()" class="btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1">
+          Solicitação
+        </button>
+        <button id="btn-nav-form" onclick="returnToFormOrIntro()" class="btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
           Formulário
         </button>
         <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" class="btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
@@ -198,9 +201,249 @@
   </nav>
 
   <!-- ========================================== -->
+  <!-- VISÃO PRINCIPAL: SOLICITAÇÃO DE DEMANDAS   -->
+  <!-- ========================================== -->
+  <main id="view-request" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] block">
+    <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-5 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+
+      <!-- Cabeçalho Integrado (Título e Preenchimento) -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-paper-dark dark:border-white/10 pb-4 mb-6 gap-4 md:gap-6">
+        <div class="relative w-full md:w-auto">
+          <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2 md:mt-0">
+            Solicitação de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Design.</span>
+          </h1>
+          <p class="text-xs text-ink-light dark:text-white/60 font-medium mt-2 font-satoshi max-w-md">
+            Abra a sua demanda direto na esteira de design da Área de Produto. Quanto mais claro for o briefing, mais rápida e certeira será a entrega.
+          </p>
+        </div>
+
+        <!-- Preenchimento Compacto -->
+        <div class="w-full md:w-1/3 flex flex-col justify-end">
+          <div class="flex justify-between items-end mb-2">
+            <span class="text-[9px] uppercase font-bold tracking-widest text-ink-light dark:text-white/50">Preenchimento</span>
+            <span id="request-progress-counter" class="text-xs font-bold text-ink dark:text-white">0%</span>
+          </div>
+          <div class="w-full h-[2px] bg-paper-dark dark:bg-white/10 relative overflow-hidden">
+            <div id="request-progress-bar" class="absolute top-0 left-0 h-[2px] bg-accent transition-all duration-500 ease-out" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GIF ANIMADO DE INTRODUÇÃO -->
+      <div class="w-full mb-8 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 relative shadow-sm">
+        <img src="https://media.giphy.com/media/3o7TKDk86g4k5E6ZPO/giphy.gif" alt="Briefing de design" class="w-full h-32 md:h-44 object-cover grayscale-[20%] transition-transform duration-700 hover:scale-105" loading="lazy" />
+      </div>
+
+      <div class="flex flex-col gap-10 w-full">
+
+        <!-- BLOCO 01: SOLICITANTE E DESTINO NA ESTEIRA -->
+        <section class="w-full">
+          <span class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-4">
+            BLOCO_01 • SOLICITANTE E DESTINO
+          </span>
+
+          <!-- Destino fixo: toda solicitação cai na esteira de design da Área de Produto -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 p-4 bg-paper-dark/30 dark:bg-white/5 rounded-[4px] w-full">
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Space</span>
+              <span id="destino-space" class="text-xs font-bold text-ink dark:text-white block truncate"></span>
+            </div>
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">Folder</span>
+              <span id="destino-folder" class="text-xs font-bold text-ink dark:text-white block truncate"></span>
+            </div>
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1">List</span>
+              <span id="destino-list" class="text-xs font-bold text-accent dark:text-[#72A68C] block truncate"></span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            <div class="w-full min-w-0">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Quem é você? <span class="text-accent">*</span></label>
+              <input type="text" id="req-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Insira o seu nome...">
+              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">Registrado no campo <span class="font-bold">Author</span> da tarefa.</p>
+            </div>
+            <div class="w-full min-w-0">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">0️⃣ Produto <span class="text-accent">*</span></label>
+              <select id="req-produto" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+            </div>
+            <div class="w-full min-w-0 md:col-span-2">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Qual a área a que se refere? <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
+              <select id="req-area" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOCO 02: A DEMANDA -->
+        <section class="w-full">
+          <span class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-4">
+            BLOCO_02 • A DEMANDA
+          </span>
+          <div class="flex flex-col gap-6 w-full">
+
+            <div class="w-full">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Task Name <span class="text-accent">*</span></label>
+              <input type="text" id="req-title" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: [AUVP Capital] Criar o mockup do brinde Y">
+              <p class="text-[10px] text-accent dark:text-accent-light mt-2 italic break-words">
+                * Siga o padrão da esteira: [NOME DO PRODUTO] Do que se trata. Este mesmo título será usado depois na avaliação da entrega.
+              </p>
+            </div>
+
+            <div class="w-full">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-3">Tipagem da Tarefa <span class="text-accent">*</span></label>
+              <div id="req-tipagem-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 w-full">
+                <!-- Botões gerados via JS -->
+              </div>
+            </div>
+
+            <div class="w-full">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Descrição da demanda <span class="text-accent">*</span></label>
+              <textarea id="req-description" rows="5" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Descreva o que precisa ser feito. Inclua aqui também público-alvo, formatos e dimensões, entregáveis esperados e referências visuais."></textarea>
+              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">Vira a descrição da tarefa (Task Content) no ClickUp.</p>
+            </div>
+
+            <div class="w-full">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Qual o objetivo da demanda, para o que será usada? <span class="text-accent">*</span></label>
+              <textarea id="req-objetivo" rows="2" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Qual problema do negócio ou do usuário esta peça resolve?"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              <div class="w-full min-w-0">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">O uso será interno ou externo? <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
+                <select id="req-uso" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+              </div>
+              <div class="w-full min-w-0">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">2️⃣ Subárea <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
+                <select id="req-subarea" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOCO 03: PRAZO E PRIORIZAÇÃO -->
+        <section class="w-full">
+          <span class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-4">
+            BLOCO_03 • PRAZO E PRIORIZAÇÃO
+          </span>
+          <div class="flex flex-col gap-6 w-full">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-start">
+              <div class="w-full min-w-0">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Data de entrega <span class="text-accent">*</span></label>
+                <input type="date" id="req-due-date" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]">
+              </div>
+              <div class="w-full min-w-0">
+                <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">🗓️ Alinhamento Realizado <span class="text-accent">*</span></label>
+                <select id="req-alinhamento" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+              </div>
+            </div>
+
+            <div class="w-full">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-3">6️⃣ Priorização <span class="text-accent">*</span></label>
+              <div id="req-priorizacao-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
+                <!-- Botões gerados via JS -->
+              </div>
+              <p id="req-priorizacao-hint" class="text-[10px] text-ink-light dark:text-white/40 mt-3 italic break-words min-h-[15px]"></p>
+            </div>
+
+            <div id="req-justificativa-container" class="w-full hidden">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-[#D96C53] dark:text-[#E5ACA0]/70 mb-2">Justificativa da prioridade <span class="text-accent">*</span></label>
+              <textarea id="req-justificativa" rows="2" class="w-full border border-[#E5ACA0]/40 dark:border-[#E5ACA0]/20 p-3 rounded-[2px] text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Por que esta demanda precisa furar a fila de produção?"></textarea>
+              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
+                * Priorização imediata reorganiza o cronograma do time e adia outras entregas já acordadas no kickoff. Use com parcimônia.
+              </p>
+            </div>
+
+            <div class="w-full md:w-1/2">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">1️⃣ Trimestre <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
+              <select id="req-trimestre" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOCO 04: REFERÊNCIAS E APOIO -->
+        <section class="w-full">
+          <span class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-4">
+            BLOCO_04 • REFERÊNCIAS E APOIO
+          </span>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            <div class="w-full min-w-0">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">URL <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
+              <input type="url" id="req-url" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="https://... briefing, referências ou material de apoio">
+            </div>
+            <div class="w-full min-w-0">
+              <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Designer sugerido <span class="normal-case tracking-normal font-medium opacity-60">(opcional)</span></label>
+              <select id="req-designer" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer">
+                <option value="Sem preferência" selected class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Sem preferência</option>
+                <option value="Armando Custodio Neto" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Armando Custodio Neto</option>
+                <option value="Éria Cunha de Alencar" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Éria Cunha de Alencar</option>
+                <option value="Ambos (Time de Design)" class="text-ink dark:text-white bg-white dark:bg-[#1A1A1A]">Ambos (Time de Design)</option>
+              </select>
+              <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic">A alocação final é definida pelo time no kickoff.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Rodapé de Envio -->
+      <div class="w-full flex flex-col-reverse md:flex-row justify-between items-center mt-8 pt-4 border-t border-paper-dark dark:border-white/10 gap-4">
+        <p id="request-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest w-full md:w-auto text-center md:text-left">Preencha todos os campos obrigatórios.</p>
+        <span id="request-hint" class="text-[9px] md:text-[10px] text-ink-light dark:text-white/40 leading-tight italic break-words w-full md:max-w-[380px] text-center md:text-right">
+          A solicitação entra na lista 🧑‍🎨 Design | Esteira e é priorizada pelo time no kickoff.
+        </span>
+
+        <button id="btn-request-submit" onclick="submitRequest()" class="w-full md:w-auto shrink-0 justify-center px-6 py-3 md:py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          Enviar Solicitação →
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- VISÃO: SUCESSO DA SOLICITAÇÃO              -->
+  <!-- ========================================== -->
+  <div id="view-request-success" class="max-w-[600px] mx-auto mt-10 md:mt-16 px-4 md:px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center w-full">
+
+    <div class="w-full max-w-[250px] md:max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 shadow-sm">
+      <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHQzY3RwbXA3aWZ3czU0dTRhYTduOXFybnRleHBvbnVjYzZ4OXE2YiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VXEZKbtw9IVrhXHGas/giphy.gif" alt="Solicitação enviada" class="w-full h-auto object-cover grayscale-[20%]" loading="lazy" />
+    </div>
+
+    <h2 class="text-2xl md:text-3xl font-medium text-ink dark:text-white mb-3 px-2">Solicitação registrada.</h2>
+    <p class="text-sm text-ink-light dark:text-white/70 mb-6 px-4">O briefing entrou na esteira de design da Área de Produto. A priorização final é confirmada pelo time no próximo kickoff.</p>
+
+    <!-- Destino do registro na esteira -->
+    <div class="max-w-[400px] mx-auto mb-8 px-4">
+      <div class="flex flex-col gap-1 p-4 bg-paper-dark/30 dark:bg-white/5 rounded-[4px] text-left w-full">
+        <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40">Registrado em</span>
+        <span id="success-destino" class="text-xs font-bold text-accent dark:text-[#72A68C] break-words"></span>
+        <span id="success-task-name" class="text-[11px] text-ink dark:text-white/80 break-words mt-1"></span>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full px-4">
+      <button onclick="resetRequestForm()" class="w-full sm:w-auto justify-center px-6 py-3 border border-paper-dark dark:border-white/20 text-ink dark:text-white text-[10px] uppercase tracking-widest font-bold hover:border-ink dark:hover:border-white transition-colors">
+        Nova solicitação
+      </button>
+      <button id="btn-copy-request" onclick="copyRequestSummary()" class="w-full sm:w-auto justify-center px-6 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity flex items-center gap-2">
+        Copiar resumo
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </button>
+      <a id="link-esteira" href="#" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto justify-center px-6 py-3 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity flex items-center gap-2">
+        Abrir a esteira
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+
+    <p class="text-[10px] text-ink-light dark:text-white/40 mt-6 px-4 italic">
+      Assim que a entrega for concluída, avalie o trabalho no <button onclick="returnToFormOrIntro()" class="text-accent dark:text-[#72A68C] font-bold underline underline-offset-2 hover:opacity-80 transition-opacity not-italic">formulário de satisfação</button>.
+    </p>
+  </div>
+
+  <!-- ========================================== -->
   <!-- VISÃO 0: INTRO / IDENTIFICAÇÃO             -->
   <!-- ========================================== -->
-  <main id="view-intro" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] block">
+  <main id="view-intro" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] hidden">
     <div class="w-full max-w-[600px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-10 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
       
       <!-- CABEÇALHO INTRO (Fixo) -->
@@ -655,9 +898,105 @@
 
     const emojis = { 1: '😡', 2: '😕', 3: '😐', 4: '🙂', 5: '🤩' };
 
+    // ==========================================================================
+    // ESTRUTURA DA ESTEIRA DE DESIGN (ClickUp — Área de Produto)
+    // --------------------------------------------------------------------------
+    // Os valores abaixo espelham exatamente os campos da lista "🧑‍🎨 Design | Esteira"
+    // (list_id 901112432875, dentro do space "Área de Produto", sem pasta).
+    // Ao alterar um drop down no ClickUp, replique a mudança aqui.
+    // ==========================================================================
+
+    // Destino fixo de toda solicitação. "hidden" é o valor que o próprio ClickUp
+    // exporta na coluna Folder quando a lista fica direto no space.
+    const ESTEIRA = {
+      space: 'Área de Produto',
+      spaceId: '90113989879',
+      folder: 'hidden',
+      folderLabel: '— (lista direta no space)',
+      list: '🧑‍🎨 Design |  Esteira',
+      listId: '901112432875'
+    };
+
+    // 0️⃣ Produto (drop down) — obrigatório
+    const ESTEIRA_PRODUTOS = [
+      'Administrativo', 'AUVP Agro', 'AUVP Analítica', 'AUVP Banking', 'AUVP Capital',
+      'AUVP Consultoria', 'AUVP Corporate', 'AUVP Escola', 'AUVP Escola Agro',
+      'AUVP Experience', 'AUVP Pro', 'AUVP Seguros', 'AUVP Wealth', 'Casa AUVP',
+      'Consultoria Agro', 'Conteúdo', 'FEC', 'Geral Produto', 'Giro da Bolsa', 'HUB',
+      'Interno', 'Investidor Sardinha', 'Investidor Sardinha Cripto', 'Novos negócios',
+      'PMP', 'Portal', 'SPP', 'Veridion'
+    ];
+
+    // Tipagem da Tarefa (drop down) — obrigatório
+    const ESTEIRA_TIPAGENS = [
+      '🛠️ Ajuste / Melhoria', '✍️ Criação & Conteúdo', '✅ Revisão & Qualidade',
+      '🚀 Estratégico', '⚙️ Operacional', '⌨️ Nova funcionalidade',
+      '🔍 Descoberta (Discovery)', 'Desenvolvimento profissional'
+    ];
+
+    // 2️⃣ Subárea (drop down)
+    const ESTEIRA_SUBAREAS = [
+      'PRODUTO', 'DESIGN', 'TECH', 'INFRA', 'DEPARTAMENTO TODO', 'REDATOR',
+      'EVENTOS', 'ATENDIMENTO', 'CS & CX', 'LOGÍSTICA', 'CONSULTORIA'
+    ];
+
+    // Qual a área a que se refere? (drop down)
+    const ESTEIRA_AREAS = ['Outros times da empresa', 'Time de produto', 'Designer'];
+
+    // O uso será interno ou externo? (drop down)
+    const ESTEIRA_USOS = ['Interno', 'Externo'];
+
+    // 1️⃣ Trimestre (drop down) — apenas os vigentes; FY24/FY25 seguem no ClickUp
+    // para as tarefas antigas, mas não fazem sentido em uma solicitação nova.
+    const ESTEIRA_TRIMESTRES = ['FY26 Q1', 'FY26 Q2', 'FY26 Q3', 'FY26 Q4'];
+
+    // 6️⃣ Priorização (drop down) — recorte voltado a quem solicita. Os demais valores
+    // da lista (Trash, Onhold, Backlog de triagem, PDI) são usados pelo próprio time.
+    const ESTEIRA_PRIORIZACOES = [
+      { id: 'Now/Agora', hint: 'Entra na execução imediata da semana.', selectedClass: 'bg-[#E5ACA0] border-[#E5ACA0] text-ink', requiresReason: true },
+      { id: 'Next/Depois', hint: 'Entra na fila logo após o que já está em execução.', selectedClass: 'bg-[#E5D0A0] border-[#E5D0A0] text-ink' },
+      { id: 'Later/Mais Tarde', hint: 'Planejada para um momento futuro, sem pressa.', selectedClass: 'bg-[#B4C5A8] border-[#B4C5A8] text-ink' },
+      { id: 'Backlog', hint: 'Fica registrada para ser priorizada em um kickoff futuro.', selectedClass: 'bg-paper-dark dark:bg-white/20 border-paper-dark dark:border-white/20 text-ink dark:text-white' },
+      { id: 'Entrega no dia da solicitação', hint: 'Urgência máxima: reorganiza o cronograma do time no mesmo dia.', selectedClass: 'bg-[#D96C53] border-[#D96C53] text-white', requiresReason: true }
+    ];
+
+    // 🗓️ Alinhamento Realizado (labels) — obrigatório.
+    // Agrupado por tipo e ordenado do mais recente para o mais antigo.
+    // Ao abrir um novo kickoff, basta adicionar o rótulo no topo de "Kickoffs".
+    const ESTEIRA_ALINHAMENTOS = [
+      { group: 'Kickoffs', items: [
+        'Kickoff 04/08/2026', 'Kickoff 28/07/2026', 'Kickoff 21/07/2026', 'Kickoff 14/07/2026',
+        'Kickoff 07/07/2026', 'Kickoff 30/06/2026', 'Kickoff 23/06/2026', 'Kickoff 16/06/2026',
+        'Kickoff 09/06/2026', 'Kickoff 02/06/2026', 'Kickoff 26/05/2026', 'Kickoff 19/05/2026',
+        'Kickoff 12/05/2026', 'Kickoff 05/05/2026', 'Kickoff 28/04/2026', 'Kickoff 21/04/2026',
+        'Kickoff 14/04/2026', 'Kickoff 31/03/2026', 'Kickoff 24/03/26', 'Kickoff 17/03/2026',
+        'Kickoff 10/03/26', 'Kickoff 03/03/2026', 'Kickoff 24/02/26', 'Kickoff 17/02/2026',
+        'Kickoff 10/02/2026', 'Kickoff 03/02/2026', 'Kickoff 27/01/26', 'Kickoff 20/01/26'
+      ]},
+      { group: 'Sprints', items: [
+        'Sprint 11 - 29/05/2026', 'Sprint  - 29/05/2026', 'Sprint 10 - 15/05/26',
+        'Sprint 9 - 04/05/2026', 'Sprint 8 - 17/04/2026', 'Sprint 07 - 06/04/2026',
+        'Sprint 06 - 20/03/2026', 'Sprint 05 - 06/03/2026', 'Sprint 04 - 20/02/2026',
+        'Sprint 03 - 08/02/26', 'Sprint 02 - 23/01/26', 'Sprint 01 - 12/01/26',
+        'Sprint Time Produto - Hub'
+      ]},
+      { group: 'Outros', items: ['Manteve - 31/03/2026', 'Kickoff de 2025'] }
+    ];
+
+    // Opção para quem ainda não passou por um kickoff — o time faz a triagem depois.
+    const ALINHAMENTO_PENDENTE = 'Ainda não alinhado (incluir no próximo kickoff)';
+
     // --- CONFIGURAÇÃO GOOGLE SHEETS ---
     // URL gerada no Google Apps Script para recebimento dos dados
     const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzFegtxUtZU7GL9bqd3FuHRvij40ufqqY-tN2z1eavxzBmhd3Di-J0blUezDXARDJcU/exec';
+
+    // Planilha de destino das solicitações: espelho da esteira de design da Área de Produto.
+    const REQUEST_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1dBvXUrNmi11ZwYKdUWtBfgTsfNcvVpTuHLNeesArvAs/edit?gid=588811467#gid=588811467';
+
+    // Endpoint do Apps Script vinculado à planilha acima. Enquanto estiver com o valor
+    // abaixo, o envio fica apenas local e o resumo pode ser copiado na tela final para
+    // ser colado direto no ClickUp ou na planilha.
+    const GOOGLE_SHEET_REQUEST_URL = 'SUA_URL_DO_WEB_APP_AQUI';
 
     // --- PRELOAD DOS GIFS ---
     // Faz o download de todos os GIFs em background assim que o site carrega,
@@ -682,6 +1021,378 @@
 
     let isAuthenticated = false;
 
+    // Estado do formulário de solicitação de demandas.
+    // Cada chave corresponde a um campo real da esteira de design no ClickUp.
+    const emptyRequestData = () => ({
+      author: '',            // Author (users)
+      produto: '',           // 0️⃣ Produto (drop down) — obrigatório
+      area: '',              // Qual a área a que se refere? (drop down)
+      taskName: '',          // Task Name — obrigatório
+      tipagem: '',           // Tipagem da Tarefa (drop down) — obrigatório
+      subarea: '',           // 2️⃣ Subárea (drop down)
+      taskContent: '',       // Task Content
+      objetivo: '',          // Qual o objetivo da demanda, para o que será usada? (text)
+      uso: '',               // O uso será interno ou externo? (drop down)
+      dataEntrega: '',       // Data de entrega (date)
+      priorizacao: '',       // 6️⃣ Priorização (drop down)
+      justificativa: '',     // Justificativa da prioridade (text)
+      trimestre: '',         // 1️⃣ Trimestre (drop down)
+      alinhamento: '',       // 🗓️ Alinhamento Realizado (labels) — obrigatório
+      url: '',               // URL (url)
+      designer: 'Sem preferência' // Assignee
+    });
+
+    let requestData = emptyRequestData();
+    let isRequestSubmitted = false;
+
+    // ==========================================
+    // FORMULÁRIO DE SOLICITAÇÃO DE DEMANDAS
+    // ==========================================
+    function goToRequest() {
+      // Se a solicitação já foi enviada, recomeça o fluxo do zero
+      if (isRequestSubmitted) {
+        resetRequestForm();
+        return;
+      }
+
+      switchView('request');
+    }
+
+    // Monta um <select> a partir de uma lista simples de valores
+    function fillSelect(id, options, placeholder) {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const optionClass = 'text-ink dark:text-white bg-white dark:bg-[#1A1A1A]';
+      let html = `<option value="" disabled selected class="text-ink-light bg-white dark:bg-[#1A1A1A]">${placeholder}</option>`;
+      html += options.map(o => `<option value="${o}" class="${optionClass}">${o}</option>`).join('');
+      el.innerHTML = html;
+    }
+
+    // Preenche o cabeçalho de destino e todos os seletores vindos da esteira
+    function renderRequestOptions() {
+      const destinoSpace = document.getElementById('destino-space');
+      const destinoFolder = document.getElementById('destino-folder');
+      const destinoList = document.getElementById('destino-list');
+
+      if (destinoSpace) destinoSpace.innerText = ESTEIRA.space;
+      if (destinoFolder) destinoFolder.innerText = ESTEIRA.folderLabel;
+      if (destinoList) destinoList.innerText = ESTEIRA.list;
+
+      fillSelect('req-produto', ESTEIRA_PRODUTOS, 'Selecione o produto...');
+      fillSelect('req-area', ESTEIRA_AREAS, 'Selecione a área...');
+      fillSelect('req-subarea', ESTEIRA_SUBAREAS, 'Selecione a subárea...');
+      fillSelect('req-uso', ESTEIRA_USOS, 'Selecione o uso...');
+      fillSelect('req-trimestre', ESTEIRA_TRIMESTRES, 'Selecione o trimestre...');
+
+      // Alinhamento Realizado é agrupado por tipo de cerimônia
+      const alinhamentoEl = document.getElementById('req-alinhamento');
+      if (alinhamentoEl) {
+        const optionClass = 'text-ink dark:text-white bg-white dark:bg-[#1A1A1A]';
+        let html = `<option value="" disabled selected class="text-ink-light bg-white dark:bg-[#1A1A1A]">Selecione o alinhamento...</option>`;
+        html += `<option value="${ALINHAMENTO_PENDENTE}" class="${optionClass}">${ALINHAMENTO_PENDENTE}</option>`;
+        html += ESTEIRA_ALINHAMENTOS.map(g => `
+          <optgroup label="${g.group}" class="bg-white dark:bg-[#1A1A1A]">
+            ${g.items.map(i => `<option value="${i}" class="${optionClass}">${i}</option>`).join('')}
+          </optgroup>
+        `).join('');
+        alinhamentoEl.innerHTML = html;
+      }
+
+      renderRequestButtons();
+    }
+
+    // Tipagem e Priorização usam botões, no mesmo padrão visual do wizard de satisfação
+    function renderRequestButtons() {
+      const tipagemContainer = document.getElementById('req-tipagem-container');
+      const priorizacaoContainer = document.getElementById('req-priorizacao-container');
+
+      const base = "w-full py-2.5 px-2 text-[9px] md:text-[10px] uppercase tracking-widest font-bold rounded-[2px] border transition-all duration-200 truncate";
+      const idle = " border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 hover:border-accent hover:text-ink dark:hover:text-white";
+
+      if (tipagemContainer) {
+        tipagemContainer.innerHTML = ESTEIRA_TIPAGENS.map((t, i) => {
+          const isSelected = requestData.tipagem === t;
+          const classes = base + (isSelected ? " bg-accent border-accent text-white shadow-sm" : idle);
+          return `<button type="button" onclick="setRequestTipagem(${i})" class="${classes}" title="${t}">${t}</button>`;
+        }).join('');
+      }
+
+      if (priorizacaoContainer) {
+        priorizacaoContainer.innerHTML = ESTEIRA_PRIORIZACOES.map((p, i) => {
+          const isSelected = requestData.priorizacao === p.id;
+          const classes = base + (isSelected ? ` ${p.selectedClass} shadow-sm` : idle);
+          return `<button type="button" onclick="setRequestPriorizacao(${i})" class="${classes}" title="${p.id}">${p.id}</button>`;
+        }).join('');
+      }
+    }
+
+    function setRequestTipagem(index) {
+      const tipagem = ESTEIRA_TIPAGENS[index];
+      if (!tipagem) return;
+      requestData.tipagem = tipagem;
+      renderRequestButtons();
+      updateRequestProgress();
+    }
+
+    function setRequestPriorizacao(index) {
+      const priorizacao = ESTEIRA_PRIORIZACOES[index];
+      if (!priorizacao) return;
+
+      requestData.priorizacao = priorizacao.id;
+      renderRequestButtons();
+
+      const hint = document.getElementById('req-priorizacao-hint');
+      if (hint) hint.innerText = priorizacao.hint;
+
+      // A justificativa só é exigida quando a demanda precisa furar a fila
+      const justificativaContainer = document.getElementById('req-justificativa-container');
+      if (justificativaContainer) {
+        if (priorizacao.requiresReason) {
+          justificativaContainer.classList.remove('hidden');
+        } else {
+          justificativaContainer.classList.add('hidden');
+          requestData.justificativa = '';
+          const justificativaInput = document.getElementById('req-justificativa');
+          if (justificativaInput) justificativaInput.value = '';
+        }
+      }
+
+      updateRequestProgress();
+    }
+
+    // A priorização escolhida exige justificativa?
+    function requestNeedsReason() {
+      const selected = ESTEIRA_PRIORIZACOES.find(p => p.id === requestData.priorizacao);
+      return Boolean(selected && selected.requiresReason);
+    }
+
+    // Espelha os campos da tela no estado antes de qualquer validação ou envio
+    function syncRequestData() {
+      const val = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+      };
+
+      requestData.author = val('req-name');
+      requestData.produto = val('req-produto');
+      requestData.area = val('req-area');
+      requestData.taskName = val('req-title');
+      requestData.subarea = val('req-subarea');
+      requestData.taskContent = val('req-description');
+      requestData.objetivo = val('req-objetivo');
+      requestData.uso = val('req-uso');
+      requestData.dataEntrega = val('req-due-date');
+      requestData.justificativa = val('req-justificativa');
+      requestData.trimestre = val('req-trimestre');
+      requestData.alinhamento = val('req-alinhamento');
+      requestData.url = val('req-url');
+
+      const designerEl = document.getElementById('req-designer');
+      requestData.designer = designerEl ? designerEl.value : 'Sem preferência';
+    }
+
+    function getRequestMissingFields() {
+      const missing = [];
+      if (!requestData.author) missing.push('Nome');
+      if (!requestData.taskName) missing.push('Task Name');
+      if (!requestData.produto) missing.push('Produto');
+      if (!requestData.tipagem) missing.push('Tipagem da Tarefa');
+      if (!requestData.taskContent) missing.push('Descrição');
+      if (!requestData.objetivo) missing.push('Objetivo');
+      if (!requestData.dataEntrega) missing.push('Data de entrega');
+      if (!requestData.priorizacao) missing.push('Priorização');
+      if (!requestData.alinhamento) missing.push('Alinhamento Realizado');
+      if (requestNeedsReason() && !requestData.justificativa) missing.push('Justificativa da prioridade');
+      return missing;
+    }
+
+    function updateRequestProgress() {
+      syncRequestData();
+
+      const required = [
+        requestData.author, requestData.taskName, requestData.produto, requestData.tipagem,
+        requestData.taskContent, requestData.objetivo, requestData.dataEntrega,
+        requestData.priorizacao, requestData.alinhamento
+      ];
+      if (requestNeedsReason()) required.push(requestData.justificativa);
+
+      const filled = required.filter(v => v && String(v).trim() !== '').length;
+      const pct = Math.round((filled / required.length) * 100);
+
+      const bar = document.getElementById('request-progress-bar');
+      const counter = document.getElementById('request-progress-counter');
+
+      if (bar) bar.style.width = `${pct}%`;
+      if (counter) counter.innerText = `${pct}%`;
+    }
+
+    // Resumo com os rótulos exatos da esteira, pronto para colar no ClickUp ou na planilha
+    function buildRequestSummary() {
+      const dataEntregaTxt = requestData.dataEntrega
+        ? new Date(requestData.dataEntrega + 'T12:00:00').toLocaleDateString('pt-BR')
+        : '-';
+
+      const lines = [
+        `Task Name: ${requestData.taskName}`,
+        `Space: ${ESTEIRA.space}`,
+        `Folder: ${ESTEIRA.folder}`,
+        `List: ${ESTEIRA.list}`,
+        ``,
+        `0️⃣ Produto: ${requestData.produto}`,
+        `Tipagem da Tarefa: ${requestData.tipagem}`,
+        `🗓️ Alinhamento Realizado: ${requestData.alinhamento}`,
+        `6️⃣ Priorização: ${requestData.priorizacao}`,
+        `Data de entrega: ${dataEntregaTxt}`,
+        `Author: ${requestData.author}`
+      ];
+
+      if (requestData.justificativa) lines.push(`Justificativa da prioridade: ${requestData.justificativa}`);
+      if (requestData.area) lines.push(`Qual a área a que se refere?: ${requestData.area}`);
+      if (requestData.subarea) lines.push(`2️⃣ Subárea: ${requestData.subarea}`);
+      if (requestData.uso) lines.push(`O uso será interno ou externo?: ${requestData.uso}`);
+      if (requestData.trimestre) lines.push(`1️⃣ Trimestre: ${requestData.trimestre}`);
+      if (requestData.url) lines.push(`URL: ${requestData.url}`);
+      if (requestData.designer !== 'Sem preferência') lines.push(`Assignee sugerido: ${requestData.designer}`);
+
+      lines.push(``, `Qual o objetivo da demanda, para o que será usada?`, requestData.objetivo);
+      lines.push(``, `Task Content:`, requestData.taskContent);
+
+      return lines.join('\n');
+    }
+
+    function copyRequestSummary() {
+      const btn = document.getElementById('btn-copy-request');
+      const summary = buildRequestSummary();
+
+      const feedback = (msg) => {
+        if (!btn) return;
+        const original = btn.innerHTML;
+        btn.innerHTML = msg;
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summary)
+          .then(() => feedback('Resumo copiado!'))
+          .catch(() => feedback('Não foi possível copiar'));
+      } else {
+        feedback('Não foi possível copiar');
+      }
+    }
+
+    function submitRequest() {
+      syncRequestData();
+
+      const errorMsg = document.getElementById('request-error');
+      const btnSubmit = document.getElementById('btn-request-submit');
+      const missing = getRequestMissingFields();
+
+      if (missing.length > 0) {
+        if (errorMsg) {
+          errorMsg.innerText = `Campos obrigatórios: ${missing.join(', ')}.`;
+          errorMsg.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (errorMsg) errorMsg.classList.add('hidden');
+
+      if (btnSubmit) {
+        btnSubmit.innerHTML = 'Enviando...';
+        btnSubmit.disabled = true;
+      }
+
+      const dateNow = new Date().toISOString().split('T')[0];
+
+      // Payload no formato da esteira. As chaves usam nomes ASCII estáveis; o
+      // comentário ao lado indica a coluna correspondente no export do ClickUp,
+      // que é o cabeçalho esperado na planilha de destino.
+      const dataToGoogle = new FormData();
+      dataToGoogle.append('formType', 'solicitacao');
+      dataToGoogle.append('dateCreated', dateNow);                          // Date Created
+      dataToGoogle.append('taskName', requestData.taskName);                // Task Name
+      dataToGoogle.append('space', ESTEIRA.space);                          // Space
+      dataToGoogle.append('folder', ESTEIRA.folder);                        // Folder
+      dataToGoogle.append('list', ESTEIRA.list);                            // List
+      dataToGoogle.append('taskContent', requestData.taskContent);          // Task Content
+      dataToGoogle.append('produto', requestData.produto);                  // 0️⃣ Produto (drop down)
+      dataToGoogle.append('trimestre', requestData.trimestre);              // 1️⃣ Trimestre (drop down)
+      dataToGoogle.append('subarea', requestData.subarea);                  // 2️⃣ Subárea (drop down)
+      dataToGoogle.append('priorizacao', requestData.priorizacao);          // 6️⃣ Priorização (drop down)
+      dataToGoogle.append('author', requestData.author);                    // Author (users)
+      dataToGoogle.append('dataEntrega', requestData.dataEntrega);          // Data de entrega (date)
+      dataToGoogle.append('justificativa', requestData.justificativa);      // Justificativa da prioridade (text)
+      dataToGoogle.append('uso', requestData.uso);                          // O uso será interno ou externo? (drop down)
+      dataToGoogle.append('area', requestData.area);                        // Qual a área a que se refere? (drop down)
+      dataToGoogle.append('objetivo', requestData.objetivo);                // Qual o objetivo da demanda... (text)
+      dataToGoogle.append('tipagem', requestData.tipagem);                  // Tipagem da Tarefa (drop down)
+      dataToGoogle.append('url', requestData.url);                          // URL (url)
+      dataToGoogle.append('alinhamento', requestData.alinhamento);          // 🗓️ Alinhamento Realizado (labels)
+      dataToGoogle.append('assignee', requestData.designer);                // Assignee
+
+      // Dispara o envio para a Planilha
+      // mode: 'no-cors' impede erros de segurança e garante o envio no background.
+      if (GOOGLE_SHEET_REQUEST_URL !== 'SUA_URL_DO_WEB_APP_AQUI') {
+        fetch(GOOGLE_SHEET_REQUEST_URL, { method: 'POST', body: dataToGoogle, mode: 'no-cors' })
+          .then(res => console.log('Solicitação registrada na esteira com sucesso!'))
+          .catch(err => console.error('Erro ao registrar a solicitação na planilha:', err));
+      }
+
+      // Preenche a confirmação com o destino real do registro
+      const successDestino = document.getElementById('success-destino');
+      const successTaskName = document.getElementById('success-task-name');
+      const linkEsteira = document.getElementById('link-esteira');
+
+      if (successDestino) successDestino.innerText = `${ESTEIRA.space} › ${ESTEIRA.list}`;
+      if (successTaskName) successTaskName.innerText = requestData.taskName;
+      if (linkEsteira) linkEsteira.setAttribute('href', REQUEST_SHEET_URL);
+
+      // Finaliza o envio na interface gráfica após uma breve animação
+      setTimeout(() => {
+        isRequestSubmitted = true;
+        switchView('request-success');
+
+        if (btnSubmit) {
+          btnSubmit.innerHTML = 'Enviar Solicitação →';
+          btnSubmit.disabled = false;
+        }
+      }, 800);
+    }
+
+    function resetRequestForm() {
+      isRequestSubmitted = false;
+      requestData = emptyRequestData();
+
+      ['req-name', 'req-title', 'req-description', 'req-objetivo',
+       'req-due-date', 'req-justificativa', 'req-url']
+        .forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+
+      ['req-produto', 'req-area', 'req-subarea', 'req-uso', 'req-trimestre', 'req-alinhamento']
+        .forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.selectedIndex = 0;
+        });
+
+      const designerEl = document.getElementById('req-designer');
+      if (designerEl) designerEl.value = 'Sem preferência';
+
+      const justificativaContainer = document.getElementById('req-justificativa-container');
+      if (justificativaContainer) justificativaContainer.classList.add('hidden');
+
+      const hint = document.getElementById('req-priorizacao-hint');
+      if (hint) hint.innerText = '';
+
+      const errorMsg = document.getElementById('request-error');
+      if (errorMsg) errorMsg.classList.add('hidden');
+
+      renderRequestButtons();
+      updateRequestProgress();
+      switchView('request');
+    }
     // --- NOVA LÓGICA DE INICIALIZAÇÃO ---
     function setReviewType(type) {
       reviewType = type;
@@ -811,15 +1522,23 @@
       document.documentElement.classList.toggle('dark');
     }
 
+    // Identidade do cabeçalho por seção da aplicação
+    const navBrands = {
+      request:   { long: 'Solicitação de',     short: 'Solicitação', accent: 'Design.',   title: 'Solicitação de Design - Time de Design' },
+      form:      { long: 'Satisfação Time de', short: 'Satisfação',  accent: 'Design.',   title: 'Satisfação Time de Design - Avaliação' },
+      dashboard: { long: 'Painel de',          short: 'Painel',      accent: 'Métricas.', title: 'Painel de Métricas - Time de Design' }
+    };
+
     function switchView(view) {
-      const views = ['view-intro', 'view-form', 'view-success', 'view-dashboard', 'view-auth'];
-      
+      const views = ['view-request', 'view-request-success', 'view-intro', 'view-form', 'view-success', 'view-dashboard', 'view-auth'];
+
       // Esconde todas as telas de forma segura
       views.forEach(v => {
         const el = document.getElementById(v);
         if (el) el.classList.add('hidden');
       });
-      
+
+      const btnRequest = document.getElementById('btn-nav-request');
       const btnForm = document.getElementById('btn-nav-form');
       const btnDash = document.getElementById('btn-nav-dashboard');
 
@@ -831,14 +1550,36 @@
       if (targetView) targetView.classList.remove('hidden');
 
       // Manipula botões da navegação
-      if (view === 'form' || view === 'intro' || view === 'success') {
+      let brandKey = 'request';
+
+      if (view === 'request' || view === 'request-success') {
+        brandKey = 'request';
+        if (btnRequest) btnRequest.className = activeClass;
+        if (btnForm) btnForm.className = inactiveClass;
+        if (btnDash) btnDash.className = inactiveClass;
+      } else if (view === 'form' || view === 'intro' || view === 'success') {
+        brandKey = 'form';
         if (btnForm) btnForm.className = activeClass;
+        if (btnRequest) btnRequest.className = inactiveClass;
         if (btnDash) btnDash.className = inactiveClass;
       } else if (view === 'dashboard' || view === 'auth') {
+        brandKey = 'dashboard';
         if (btnDash) btnDash.className = activeClass;
+        if (btnRequest) btnRequest.className = inactiveClass;
         if (btnForm) btnForm.className = inactiveClass;
         if (view === 'dashboard') renderDashboard();
       }
+
+      // Atualiza a assinatura editorial do cabeçalho
+      const brand = navBrands[brandKey];
+      const brandLong = document.getElementById('nav-brand-long');
+      const brandShort = document.getElementById('nav-brand-short');
+      const brandAccent = document.getElementById('nav-brand-accent');
+
+      if (brandLong) brandLong.innerText = brand.long;
+      if (brandShort) brandShort.innerText = brand.short;
+      if (brandAccent) brandAccent.innerText = brand.accent;
+      document.title = brand.title;
     }
 
     function renderStep() {
@@ -1491,6 +2232,13 @@
             });
         }
 
+        // Atualiza a barra de preenchimento da solicitação conforme o usuário digita
+        const requestView = document.getElementById('view-request');
+        if (requestView) {
+            requestView.addEventListener('input', updateRequestProgress);
+            requestView.addEventListener('change', updateRequestProgress);
+        }
+
         // LÓGICA DO WIDGET FLUTUANTE (CÓDIGO A)
         const floatBtn = document.getElementById('float-toggle-btn');
         const quickAccessMenu = document.getElementById('quick-access-menu');
@@ -1520,8 +2268,12 @@
           });
         }
 
-        // Inicializa na tela de Intro
-        switchView('intro');
+        // Monta os seletores de tipo e prioridade da solicitação
+        renderRequestOptions();
+        updateRequestProgress();
+
+        // Inicializa na tela principal (Solicitação de Demandas)
+        switchView('request');
     });
 
   </script>
