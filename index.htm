@@ -1486,7 +1486,12 @@
       // As chaves são exatamente os cabeçalhos da planilha de respostas, para o
       // Apps Script casar cada valor com a sua coluna sem nenhuma tradução.
       // Colunas que ainda não existem na planilha são criadas pelo script.
-      const dataToGoogle = new FormData();
+      //
+      // URLSearchParams e não FormData: o corpo sai como
+      // application/x-www-form-urlencoded, que é o formato que o Apps Script
+      // preenche em e.parameter de maneira confiável. Com multipart (FormData)
+      // o e.parameter pode chegar vazio, e aí a linha é gravada em branco.
+      const dataToGoogle = new URLSearchParams();
       dataToGoogle.append('formType', 'solicitacao');
       dataToGoogle.append('ID do Envio', envioId);
       dataToGoogle.append('Task Name', requestData.taskName);
@@ -1576,7 +1581,10 @@
       return null;
     }
 
-    async function confirmarEnvio(envioId, tentativas = 8, esperaMs = 2000) {
+    // Curto de propósito: se o POST não confirmar rápido, o caminho alternativo
+    // assume. Como a gravação é idempotente pelo identificador, tentar cedo não
+    // corre risco de duplicar a linha.
+    async function confirmarEnvio(envioId, tentativas = 4, esperaMs = 1500) {
       for (let i = 0; i < tentativas; i++) {
         await new Promise(r => setTimeout(r, esperaMs));
         const resposta = await consultarEnvio(envioId);
@@ -1599,10 +1607,47 @@
       alvo.className = `text-[10px] block mt-2 pt-2 border-t border-paper-dark dark:border-white/10 leading-relaxed ${tons[tom] || tons.neutro}`;
     }
 
+    // Segundo caminho de gravação: os campos vão na própria URL, por JSONP.
+    // O Apps Script sempre entrega parâmetros de URL em e.parameter, e a resposta
+    // é legível — então, quando isto falha, o motivo real aparece na tela.
+    async function gravarPelaUrl(dataToGoogle) {
+      const params = new URLSearchParams(dataToGoogle);
+      params.set('acao', 'gravar');
+
+      const url = `${GOOGLE_SHEET_REQUEST_URL}?${params.toString()}`;
+
+      // URL longa demais é recusada antes de sair, para não virar um erro obscuro
+      if (url.length > 7000) {
+        throw new Error('A descrição é longa demais para o envio alternativo.');
+      }
+
+      const resposta = await consultarPorJsonp(url, 20000);
+
+      if (!resposta || resposta.ok !== true) {
+        throw new Error(resposta && resposta.error ? resposta.error : 'A planilha recusou o registro.');
+      }
+
+      return resposta;
+    }
+
     // Atualiza a linha de confirmação na tela de sucesso, sem travar o usuário
-    async function confirmarEmSegundoPlano(envioId) {
+    async function confirmarEmSegundoPlano(envioId, dataToGoogle) {
       const alvo = document.getElementById('success-linha');
-      const confirmacao = await confirmarEnvio(envioId);
+      let confirmacao = await confirmarEnvio(envioId);
+
+      // O POST não chegou. Tenta o segundo caminho — a gravação é idempotente
+      // pelo identificador do envio, então não há risco de duplicar a linha.
+      if (!confirmacao) {
+        pintarStatus(alvo, 'O primeiro envio não chegou. Tentando por outro caminho...', 'neutro');
+
+        try {
+          confirmacao = await gravarPelaUrl(dataToGoogle);
+        } catch (err) {
+          pintarStatus(alvo, `Não foi possível gravar na planilha: ${err.message} Copie o resumo abaixo e avise o time de design.`, 'alerta');
+          console.error('Falha no envio alternativo:', err);
+          return;
+        }
+      }
 
       if (!confirmacao) {
         pintarStatus(alvo, 'Enviado, mas não foi possível confirmar o registro automaticamente. Confira na planilha ou copie o resumo abaixo.', 'alerta');
@@ -1629,12 +1674,14 @@
         const anexo = requestAnexos[i];
         pintarStatus(alvo, `Registro na linha ${linha}. Enviando anexo ${i + 1} de ${total} (${anexo.nome})...`, 'neutro');
 
-        const corpo = new FormData();
+        const corpo = new URLSearchParams();
         corpo.append('acao', 'anexo');
         corpo.append('envioId', envioId);
         corpo.append('nomeArquivo', anexo.nome);
         corpo.append('tipoArquivo', anexo.tipo);
-        corpo.append('dadosArquivo', anexo.dados);
+
+        // base64 web-safe: sem '+' e '/', o percent-encoding não infla o corpo
+        corpo.append('dadosArquivo', anexo.dados.replace(/\+/g, '-').replace(/\//g, '_'));
 
         try {
           await fetch(GOOGLE_SHEET_REQUEST_URL, { method: 'POST', body: corpo, mode: 'no-cors' });
@@ -1701,7 +1748,7 @@
       switchView('request-success');
       encerrar();
 
-      confirmarEmSegundoPlano(envioId);
+      confirmarEmSegundoPlano(envioId, body);
     }
 
     function showRequestError(mensagem) {
