@@ -29,7 +29,10 @@ var ABA_RESPOSTAS = '';
 var CRIAR_COLUNAS_FALTANTES = true;
 
 // Chaves de controle que não viram coluna na planilha.
-var CHAVES_IGNORADAS = ['formType', 'anexosJson'];
+var CHAVES_IGNORADAS = ['formType', 'acao', 'envioId', 'nomeArquivo', 'tipoArquivo', 'dadosArquivo'];
+
+// Coluna onde os links dos anexos são acumulados.
+var COLUNA_ANEXOS = 'Anexos';
 
 // Pasta do Drive onde os anexos das solicitações são guardados.
 var PASTA_ANEXOS = 'Anexos | Solicitações de Design';
@@ -53,9 +56,11 @@ function doPost(e) {
     var sheet = getSheet_();
     var dados = (e && e.parameter) ? e.parameter : {};
 
-    // Os arquivos chegam em base64 e viram links do Drive na coluna "Anexos"
-    var anexosUrls = salvarAnexos_(dados.anexosJson);
-    if (anexosUrls) dados['Anexos'] = anexosUrls;
+    // Os anexos chegam depois da solicitação, um arquivo por requisição, e vão
+    // sendo acrescentados à linha que já foi gravada.
+    if (dados.acao === 'anexo') {
+      return resposta_(anexarArquivo_(sheet, dados));
+    }
 
     var cabecalhos = getCabecalhos_(sheet);
     cabecalhos = garantirColunas_(sheet, cabecalhos, dados);
@@ -134,13 +139,32 @@ function localizarEnvio_(envioId) {
     return { ok: false, error: 'A planilha ainda não tem a coluna "' + COLUNA_ENVIO_ID + '".' };
   }
 
+  var colunaAnexos = valores[0].indexOf(COLUNA_ANEXOS);
+
   for (var i = valores.length - 1; i >= 1; i--) {
     if (String(valores[i][coluna]).trim() === String(envioId).trim()) {
-      return { ok: true, linha: i + 1 };
+      return {
+        ok: true,
+        linha: i + 1,
+        anexos: colunaAnexos === -1 ? 0 : contarLinks_(valores[i][colunaAnexos])
+      };
     }
   }
 
   return { ok: false };
+}
+
+/**
+ * Conta quantos links do Drive já foram acrescentados à célula de anexos.
+ * Enquanto só houver os nomes dos arquivos, o resultado é zero.
+ */
+function contarLinks_(valor) {
+  var texto = String(valor || '').trim();
+  if (texto.indexOf('http') !== 0) return 0;
+
+  return texto.split('\n').filter(function (linha) {
+    return linha.trim().indexOf('http') === 0;
+  }).length;
 }
 
 /**
@@ -212,46 +236,57 @@ function garantirColunas_(sheet, cabecalhos, dados) {
 }
 
 /**
- * Grava os anexos no Drive e devolve os links, um por linha.
- * Em caso de falha devolve string vazia — a coluna "Anexos" mantém os nomes dos
- * arquivos enviados pelo formulário, para que nada se perca silenciosamente.
+ * Grava um arquivo no Drive e acrescenta o link à coluna de anexos da linha
+ * daquele envio. Recebe um arquivo por vez: requisições menores são mais rápidas
+ * e a falha de um arquivo não derruba os outros.
  */
-function salvarAnexos_(anexosJson) {
-  if (!anexosJson) return '';
-
-  var anexos;
-  try {
-    anexos = JSON.parse(anexosJson);
-  } catch (err) {
-    return '';
+function anexarArquivo_(sheet, dados) {
+  if (!dados.envioId || !dados.dadosArquivo) {
+    return { ok: false, error: 'Anexo sem identificador do envio ou sem conteúdo.' };
   }
 
-  if (!anexos || !anexos.length) return '';
-
-  try {
-    var pasta = getPastaAnexos_();
-
-    return anexos.map(function (anexo) {
-      var blob = Utilities.newBlob(
-        Utilities.base64Decode(anexo.dados),
-        anexo.tipo || 'application/octet-stream',
-        anexo.nome
-      );
-
-      var arquivo = pasta.createFile(blob);
-
-      // Link acessível para quem tem o endereço, dentro do domínio.
-      try {
-        arquivo.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
-      } catch (err) {
-        // Contas fora do Workspace não aceitam esse modo; segue o padrão da pasta.
-      }
-
-      return arquivo.getUrl();
-    }).join('\n');
-  } catch (err) {
-    return '';
+  var alvo = localizarEnvio_(dados.envioId);
+  if (!alvo.ok) {
+    return { ok: false, error: 'A linha do envio ' + dados.envioId + ' não foi encontrada.' };
   }
+
+  var url;
+  try {
+    var blob = Utilities.newBlob(
+      Utilities.base64Decode(dados.dadosArquivo),
+      dados.tipoArquivo || 'application/octet-stream',
+      dados.nomeArquivo || 'anexo'
+    );
+
+    var arquivo = getPastaAnexos_().createFile(blob);
+
+    // Link acessível para quem tem o endereço, dentro do domínio.
+    try {
+      arquivo.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (err) {
+      // Contas fora do Workspace não aceitam esse modo; segue o padrão da pasta.
+    }
+
+    url = arquivo.getUrl();
+  } catch (err) {
+    return { ok: false, error: 'Falha ao gravar o arquivo no Drive: ' + err };
+  }
+
+  var coluna = getCabecalhos_(sheet).indexOf(COLUNA_ANEXOS);
+  if (coluna === -1) {
+    return { ok: false, error: 'A planilha não tem a coluna "' + COLUNA_ANEXOS + '".' };
+  }
+
+  // A célula começa com os nomes dos arquivos; o primeiro link a chegar a
+  // substitui, e os seguintes vão sendo acrescentados abaixo.
+  var celula = sheet.getRange(alvo.linha, coluna + 1);
+  var atual = String(celula.getValue() || '');
+  var novo = atual.indexOf('http') === 0 ? atual + '\n' + url : url;
+
+  celula.setValue(novo);
+  SpreadsheetApp.flush();
+
+  return { ok: true, linha: alvo.linha, url: url };
 }
 
 function getPastaAnexos_() {

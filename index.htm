@@ -1510,13 +1510,9 @@
       dataToGoogle.append('Tipo de Demanda', requestData.tipoDemanda);
       dataToGoogle.append('SLA', tipo ? tipo.prazo : '');
       dataToGoogle.append('Status do SLA', slaStatus ? slaStatus.id : '');
+      // Só os nomes viajam com a solicitação. Os arquivos sobem depois, um a um,
+      // para manter esta requisição pequena e a gravação da linha rápida.
       dataToGoogle.append('Anexos', requestAnexos.map(a => a.nome).join(', '));
-
-      // Os arquivos viajam em base64 e são gravados no Drive pelo Apps Script,
-      // que devolve os links para a coluna "Anexos". A chave não vira coluna.
-      if (requestAnexos.length) {
-        dataToGoogle.append('anexosJson', JSON.stringify(requestAnexos));
-      }
 
       // O envio só é considerado concluído quando o Apps Script confirma a linha
       // gravada. Sem confirmação, a solicitação fica pendente e nada é perdido.
@@ -1566,22 +1562,41 @@
       });
     }
 
-    // Procura o envio na planilha. Roda em segundo plano, com a tela de sucesso já
-    // na frente do usuário, então pode ser curto: se não achar, o aviso é brando.
-    async function confirmarEnvio(envioId, tentativas = 4, esperaMs = 2000) {
-      for (let i = 0; i < tentativas; i++) {
-        await new Promise(r => setTimeout(r, esperaMs));
-
-        try {
-          const url = `${GOOGLE_SHEET_REQUEST_URL}?envioId=${encodeURIComponent(envioId)}`;
-          const resposta = await consultarPorJsonp(url, 6000);
-          if (resposta && resposta.ok && resposta.linha) return resposta;
-        } catch (err) {
-          console.warn('Tentativa de confirmação falhou:', err.message);
-        }
+    // Consulta a linha do envio. Roda em segundo plano, com a tela de sucesso já
+    // na frente do usuário, então pode insistir sem incomodar ninguém.
+    async function consultarEnvio(envioId) {
+      try {
+        const url = `${GOOGLE_SHEET_REQUEST_URL}?envioId=${encodeURIComponent(envioId)}`;
+        const resposta = await consultarPorJsonp(url, 8000);
+        if (resposta && resposta.ok && resposta.linha) return resposta;
+      } catch (err) {
+        console.warn('Consulta de confirmação falhou:', err.message);
       }
 
       return null;
+    }
+
+    async function confirmarEnvio(envioId, tentativas = 8, esperaMs = 2000) {
+      for (let i = 0; i < tentativas; i++) {
+        await new Promise(r => setTimeout(r, esperaMs));
+        const resposta = await consultarEnvio(envioId);
+        if (resposta) return resposta;
+      }
+
+      return null;
+    }
+
+    function pintarStatus(alvo, texto, tom) {
+      if (!alvo) return;
+
+      const tons = {
+        neutro: 'text-ink-light dark:text-white/40',
+        ok: 'text-accent dark:text-[#72A68C] font-bold',
+        alerta: 'text-amber-600 dark:text-amber-400 font-bold'
+      };
+
+      alvo.innerText = texto;
+      alvo.className = `text-[10px] block mt-2 pt-2 border-t border-paper-dark dark:border-white/10 leading-relaxed ${tons[tom] || tons.neutro}`;
     }
 
     // Atualiza a linha de confirmação na tela de sucesso, sem travar o usuário
@@ -1589,15 +1604,65 @@
       const alvo = document.getElementById('success-linha');
       const confirmacao = await confirmarEnvio(envioId);
 
-      if (!alvo) return;
-
-      if (confirmacao) {
-        alvo.innerText = `Registro confirmado na linha ${confirmacao.linha} da planilha.`;
-        alvo.className = 'text-[10px] text-accent dark:text-[#72A68C] font-bold block mt-2 pt-2 border-t border-paper-dark dark:border-white/10';
-      } else {
-        alvo.innerText = 'Enviado, mas não foi possível confirmar o registro automaticamente. Confira na planilha ou copie o resumo abaixo.';
-        alvo.className = 'text-[10px] text-amber-600 dark:text-amber-400 font-bold block mt-2 pt-2 border-t border-paper-dark dark:border-white/10 leading-relaxed';
+      if (!confirmacao) {
+        pintarStatus(alvo, 'Enviado, mas não foi possível confirmar o registro automaticamente. Confira na planilha ou copie o resumo abaixo.', 'alerta');
+        return;
       }
+
+      if (!requestAnexos.length) {
+        pintarStatus(alvo, `Registro confirmado na linha ${confirmacao.linha} da planilha.`, 'ok');
+        return;
+      }
+
+      // A linha já está gravada; agora os arquivos sobem um a um
+      await enviarAnexos(envioId, confirmacao.linha, alvo);
+    }
+
+    // Cada arquivo vira uma requisição própria. Requisições menores são mais
+    // rápidas e mais confiáveis do que um único envio com tudo junto, e a falha
+    // de um arquivo não derruba os outros nem a solicitação.
+    async function enviarAnexos(envioId, linha, alvo) {
+      const total = requestAnexos.length;
+      let enviados = 0;
+
+      for (let i = 0; i < total; i++) {
+        const anexo = requestAnexos[i];
+        pintarStatus(alvo, `Registro na linha ${linha}. Enviando anexo ${i + 1} de ${total} (${anexo.nome})...`, 'neutro');
+
+        const corpo = new FormData();
+        corpo.append('acao', 'anexo');
+        corpo.append('envioId', envioId);
+        corpo.append('nomeArquivo', anexo.nome);
+        corpo.append('tipoArquivo', anexo.tipo);
+        corpo.append('dadosArquivo', anexo.dados);
+
+        try {
+          await fetch(GOOGLE_SHEET_REQUEST_URL, { method: 'POST', body: corpo, mode: 'no-cors' });
+          enviados++;
+        } catch (err) {
+          console.error(`Falha ao enviar o anexo ${anexo.nome}:`, err);
+        }
+      }
+
+      if (enviados < total) {
+        pintarStatus(alvo, `Registro na linha ${linha}. ${total - enviados} de ${total} anexos não subiram — reenvie os arquivos ao time de design.`, 'alerta');
+        return;
+      }
+
+      // Confere se os links chegaram na planilha
+      pintarStatus(alvo, `Registro na linha ${linha}. Conferindo os anexos...`, 'neutro');
+
+      for (let i = 0; i < 10; i++) {
+        await new Promise(r => setTimeout(r, 2500));
+        const resposta = await consultarEnvio(envioId);
+
+        if (resposta && (resposta.anexos || 0) >= total) {
+          pintarStatus(alvo, `Registro confirmado na linha ${linha}, com ${total} ${total === 1 ? 'anexo' : 'anexos'} na planilha.`, 'ok');
+          return;
+        }
+      }
+
+      pintarStatus(alvo, `Registro confirmado na linha ${linha}. Os anexos foram enviados, mas ainda não apareceram na planilha — confira em instantes.`, 'alerta');
     }
 
     async function enviarSolicitacao(body, tipo, slaStatus, envioId) {
