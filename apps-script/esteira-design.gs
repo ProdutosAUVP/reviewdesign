@@ -41,6 +41,10 @@ var PASTA_ANEXOS = 'Anexos | Solicitações de Design';
 // confirma que a solicitação chegou.
 var COLUNA_ENVIO_ID = 'ID do Envio';
 
+// Aparece no diagnóstico. Serve para saber se a implantação em uso já está
+// servindo esta versão do script.
+var VERSAO = '2026-08-07-c';
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
 
@@ -54,7 +58,7 @@ function doPost(e) {
 
   try {
     var sheet = getSheet_();
-    var dados = (e && e.parameter) ? e.parameter : {};
+    var dados = lerParametros_(e);
 
     // Os anexos chegam depois da solicitação, um arquivo por requisição, e vão
     // sendo acrescentados à linha que já foi gravada.
@@ -62,23 +66,118 @@ function doPost(e) {
       return resposta_(anexarArquivo_(sheet, dados));
     }
 
-    var cabecalhos = getCabecalhos_(sheet);
-    cabecalhos = garantirColunas_(sheet, cabecalhos, dados);
-
-    var linha = cabecalhos.map(function (coluna) {
-      return dados[coluna] !== undefined ? dados[coluna] : '';
-    });
-
-    sheet.appendRow(linha);
-    SpreadsheetApp.flush();
-
-    // A linha só é confirmada depois de gravada, e é ela que o formulário exibe
-    return resposta_({ ok: true, linha: sheet.getLastRow() });
+    return resposta_(gravarSolicitacao_(sheet, dados));
   } catch (err) {
     return resposta_({ ok: false, error: String(err) });
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Grava a solicitação. É idempotente pelo identificador do envio: se a linha já
+ * existe, devolve a linha existente em vez de duplicar. Isso permite que o
+ * formulário tente por mais de um caminho sem risco de gravar duas vezes.
+ */
+function gravarSolicitacao_(sheet, dados) {
+  var envioId = dados[COLUNA_ENVIO_ID] || dados.envioId;
+
+  if (envioId) {
+    var jaExiste = localizarEnvio_(envioId);
+    if (jaExiste.ok) return { ok: true, linha: jaExiste.linha, repetido: true };
+  }
+
+  var cabecalhos = getCabecalhos_(sheet);
+  cabecalhos = garantirColunas_(sheet, cabecalhos, dados);
+
+  var linha = cabecalhos.map(function (coluna) {
+    return dados[coluna] !== undefined ? dados[coluna] : '';
+  });
+
+  sheet.appendRow(linha);
+  SpreadsheetApp.flush();
+
+  return { ok: true, linha: sheet.getLastRow() };
+}
+
+/**
+ * Retrato do que o script enxerga, para conferir a publicação sem adivinhação.
+ */
+function diagnosticar_() {
+  var sheet = getSheet_();
+  var cabecalhos = getCabecalhos_(sheet);
+
+  return {
+    ok: true,
+    versao: VERSAO,
+    aba: sheet.getName(),
+    colunas: cabecalhos,
+    totalColunas: cabecalhos.length,
+    totalLinhas: sheet.getLastRow(),
+    temColunaEnvioId: cabecalhos.indexOf(COLUNA_ENVIO_ID) !== -1,
+    temColunaAnexos: cabecalhos.indexOf(COLUNA_ANEXOS) !== -1
+  };
+}
+
+/**
+ * Lê os campos enviados, seja qual for o formato do corpo.
+ *
+ * O caminho normal é e.parameter, preenchido quando o corpo vem como
+ * application/x-www-form-urlencoded. Se vier vazio — o que acontece com
+ * multipart/form-data — o corpo cru é lido na mão, para que nenhuma
+ * solicitação seja gravada em branco por causa do formato.
+ */
+function lerParametros_(e) {
+  var dados = (e && e.parameter) ? e.parameter : {};
+
+  if (Object.keys(dados).length > 0) return dados;
+  if (!e || !e.postData || !e.postData.contents) return dados;
+
+  var corpo = e.postData.contents;
+  var tipo = e.postData.type || '';
+
+  if (tipo.indexOf('multipart/form-data') !== -1) {
+    return lerMultipart_(corpo, tipo);
+  }
+
+  return lerUrlEncoded_(corpo);
+}
+
+function lerUrlEncoded_(corpo) {
+  var dados = {};
+
+  corpo.split('&').forEach(function (par) {
+    if (!par) return;
+    var i = par.indexOf('=');
+    var chave = i === -1 ? par : par.slice(0, i);
+    var valor = i === -1 ? '' : par.slice(i + 1);
+
+    try {
+      dados[decodeURIComponent(chave.replace(/\+/g, ' '))] = decodeURIComponent(valor.replace(/\+/g, ' '));
+    } catch (err) {
+      // Um campo mal codificado não pode derrubar o restante da solicitação
+    }
+  });
+
+  return dados;
+}
+
+function lerMultipart_(corpo, tipo) {
+  var dados = {};
+  var marca = tipo.split('boundary=')[1];
+  if (!marca) return dados;
+
+  corpo.split('--' + marca).forEach(function (parte) {
+    var nome = parte.match(/name="([^"]*)"/);
+    if (!nome) return;
+
+    var corte = parte.indexOf('\r\n\r\n');
+    if (corte === -1) return;
+
+    dados[nome[1]] = parte.slice(corte + 4).replace(/\r\n$/, '');
+  });
+
+  return dados;
 }
 
 /**
@@ -96,6 +195,17 @@ function doGet(e) {
   var callback = params.callback;
 
   try {
+    // Diagnóstico: diz qual versão está publicada e o que o script enxerga.
+    if (params.diagnostico) {
+      return resposta_(diagnosticar_(), callback);
+    }
+
+    // Caminho alternativo de gravação, para quando o POST não chega. Os campos
+    // vêm na própria URL, que o Apps Script sempre entrega em e.parameter.
+    if (params.acao === 'gravar') {
+      return resposta_(gravarSolicitacao_(getSheet_(), params), callback);
+    }
+
     if (params.envioId) {
       return resposta_(localizarEnvio_(params.envioId), callback);
     }
@@ -252,8 +362,10 @@ function anexarArquivo_(sheet, dados) {
 
   var url;
   try {
+    // O formulário manda em base64 web-safe; o decodificador comum também
+    // aceita, mas o web-safe cobre os dois casos.
     var blob = Utilities.newBlob(
-      Utilities.base64Decode(dados.dadosArquivo),
+      Utilities.base64DecodeWebSafe(dados.dadosArquivo),
       dados.tipoArquivo || 'application/octet-stream',
       dados.nomeArquivo || 'anexo'
     );

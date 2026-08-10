@@ -51,9 +51,11 @@ Gravar e confirmar seguem caminhos diferentes, e **nenhum dos dois depende de
 CORS** — foi o CORS que derrubou a primeira tentativa de integração, com um
 `Failed to fetch` no navegador.
 
-1. **Gravação** — `POST` com `mode: 'no-cors'`, levando só os campos do
-   formulário. Fica em torno de 3 KB, então grava rápido. Os arquivos anexados
-   sobem depois, em requisições próprias.
+1. **Gravação** — `POST` com `mode: 'no-cors'`, corpo em
+   `application/x-www-form-urlencoded` (`URLSearchParams`, não `FormData`): é o
+   formato que o Apps Script preenche em `e.parameter` de maneira confiável.
+   Leva só os campos do formulário, em torno de 3 KB. Os arquivos sobem depois,
+   em requisições próprias.
 2. **Confirmação** — o formulário gera um `ID do Envio` único, manda junto com os
    dados, e depois consulta o endpoint por **JSONP** (`?envioId=…&callback=…`)
    procurando esse identificador na planilha. Uma tag `<script>` não passa por
@@ -69,7 +71,22 @@ confirmação quando termina:
 | Encontrou | *Registro confirmado na linha N da planilha.* |
 | Não encontrou | *Enviado, mas não foi possível confirmar o registro automaticamente.* |
 
-São 8 tentativas a cada 2s. Um envio normal confirma na primeira ou na segunda.
+São 4 tentativas a cada 1,5s. Um envio normal confirma na primeira ou na segunda.
+
+### Segundo caminho de gravação
+
+Se em 6 segundos a linha não aparecer, o formulário grava de novo **por JSONP**,
+com os campos na própria URL (`?acao=gravar&…`). Parâmetros de URL sempre chegam
+em `e.parameter`, então esse caminho não depende de como o corpo do POST é
+interpretado — e a resposta é legível, então um erro do lado do Google aparece
+na tela em vez de virar silêncio.
+
+A gravação é **idempotente pelo `ID do Envio`**: se a linha já existe, o script
+devolve a existente em vez de duplicar. É isso que torna seguro tentar os dois
+caminhos.
+
+Limite: URLs acima de 7.000 caracteres são recusadas antes de sair, com aviso.
+Anexos não usam esse caminho — continuam apenas por POST.
 
 O único caso que segura o usuário no formulário é o `fetch` estourar de verdade —
 aí a solicitação não saiu, o erro é mostrado e ela fica guardada no navegador
@@ -91,12 +108,24 @@ recusa o envio com uma mensagem explícita, em vez de fingir sucesso.
 Abra numa **janela anônima**:
 
 ```
-<URL /exec>?envioId=teste
+<URL /exec>?diagnostico=1
 ```
 
-- Devolveu `{"ok":false}` → endpoint público e respondendo. Tudo certo.
-- Caiu numa tela de login → o acesso da implantação está restrito ao domínio.
-  Corrija em **Gerenciar implantações** e salve como nova versão.
+A resposta diz exatamente o que o script enxerga:
+
+```json
+{ "ok": true, "versao": "2026-08-07-c", "aba": "...", "totalColunas": 19,
+  "totalLinhas": 2, "temColunaEnvioId": false, "temColunaAnexos": false }
+```
+
+| O que aparece | O que significa |
+| --- | --- |
+| `versao` igual à do `esteira-design.gs` | implantação atualizada |
+| `versao` diferente ou ausente | **falta republicar** como nova versão |
+| tela de login | acesso da implantação restrito ao domínio |
+| erro de permissão | `Executar como` não está em **Eu** |
+
+O campo `versao` está no topo do `esteira-design.gs`, na constante `VERSAO`.
 
 ## Como o mapeamento funciona
 
