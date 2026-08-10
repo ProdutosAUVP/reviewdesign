@@ -67,9 +67,10 @@ confirmação quando termina:
 
 | Estado | O que aparece na tela de sucesso |
 | --- | --- |
-| Conferindo | *Conferindo o registro na planilha…* |
-| Encontrou | *Registro confirmado na linha N da planilha.* |
-| Não encontrou | *Enviado, mas não foi possível confirmar o registro automaticamente.* |
+| Enviando | *Enviando seus dados… prometemos não deixar cair nada no caminho.* |
+| Com anexos | *Enviando os anexos (1 de 2)…* › *Guardando os anexos…* |
+| Deu certo | *Tudo certo! Seus dados foram salvos.* |
+| Não confirmou | *Não conseguimos confirmar se seus dados foram salvos.* |
 
 São 4 tentativas a cada 1,5s. Um envio normal confirma na primeira ou na segunda.
 
@@ -200,12 +201,16 @@ caso — bem abaixo do que um envio único com todos os arquivos alcançaria.
 A prioridade não é escolhida no escuro: ela é derivada da comparação entre a data
 de entrega pedida e o SLA do tipo de demanda.
 
-| Checagem de SLA | Prioridade | `Priority` na planilha |
-| --- | --- | --- |
-| Dentro do SLA | Normal | `NORMAL` |
-| No limite do SLA | Alta | `HIGH` |
-| Abaixo do SLA | Urgente | `URGENT` |
+A data pedida cai em um de três estados, gravados na coluna `Status do SLA`:
+
+| `Status do SLA` | Quando | Prioridade | `Priority` |
+| --- | --- | --- | --- |
+| Acima do SLA | data além do prazo máximo | Normal | `NORMAL` |
+| Dentro do SLA | data entre o mínimo e o máximo | Alta | `HIGH` |
+| Abaixo do SLA | data aquém do prazo mínimo | Urgente | `URGENT` |
 
 Quem solicita pode sobrescrever a sugestão nos três botões. Nesse caso — e sempre
-que a prioridade for Urgente ou a data furar o SLA — a justificativa de urgência
-passa a ser obrigatória e vai para `Justificativa da prioridade (text)`.
+que a prioridade for Urgente ou a data ficar abaixo do SLA — a justificativa de
+urgência passa a ser obrigatória e vai para `Justificativa da prioridade (text)`.
+
+Todos os campos do formulário são obrigatórios, com exceção dos anexos.
