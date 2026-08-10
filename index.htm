@@ -230,8 +230,8 @@
       </div>
 
       <!-- GIF ANIMADO DE INTRODUÇÃO -->
-      <div class="w-full mb-8 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 relative shadow-sm">
-        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWUwejJmdGc1c2RrMngyM3ppenBmb2t2NmJhemh2NXYxMGM3azhhMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QMHoU66sBXqqLqYvGO/giphy.gif" alt="Briefing de design" class="w-full h-32 md:h-44 object-cover grayscale-[20%] transition-transform duration-700 hover:scale-105" loading="lazy" />
+      <div class="w-full mb-8 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] flex items-center justify-center shadow-sm">
+        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWUwejJmdGc1c2RrMngyM3ppenBmb2t2NmJhemh2NXYxMGM3azhhMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QMHoU66sBXqqLqYvGO/giphy.gif" alt="Briefing de design" class="max-h-[240px] md:max-h-[300px] max-w-full w-auto h-auto object-contain grayscale-[20%]" loading="lazy" />
       </div>
 
       <!-- Aviso de solicitação que não chegou na planilha -->
@@ -272,9 +272,6 @@
           <div class="w-full min-w-0">
             <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Tipo de demanda <span class="text-accent">*</span></label>
             <select id="req-tipo" onchange="setRequestTipo()" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer"></select>
-            <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
-              Define o SLA de execução.
-            </p>
           </div>
         </div>
 
@@ -387,8 +384,8 @@
   <!-- ========================================== -->
   <div id="view-request-success" class="max-w-[600px] mx-auto mt-10 md:mt-16 px-4 md:px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center w-full">
 
-    <div class="w-full max-w-[250px] md:max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 shadow-sm">
-      <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHQzY3RwbXA3aWZ3czU0dTRhYTduOXFybnRleHBvbnVjYzZ4OXE2YiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VXEZKbtw9IVrhXHGas/giphy.gif" alt="Solicitação enviada" class="w-full h-auto object-cover grayscale-[20%]" loading="lazy" />
+    <div class="w-full max-w-[250px] md:max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] flex items-center justify-center shadow-sm">
+      <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHdseDU4MWp6OTRld3p1em9renNmcDc1M2FhOXpyemVpbDdlODJveSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/I3EsiEPZWgpqg/giphy.gif" alt="Solicitação enviada" class="max-w-full w-auto h-auto max-h-[240px] object-contain grayscale-[20%]" loading="lazy" />
     </div>
 
     <h2 class="text-2xl md:text-3xl font-medium text-ink dark:text-white mb-3 px-2">Solicitação registrada.</h2>
