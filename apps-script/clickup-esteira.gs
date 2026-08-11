@@ -86,6 +86,13 @@ function testarClickUp() {
     Logger.log('%s → %s', mapa.coluna, campos[mapa.campo] ? 'ok' : 'CAMPO NÃO ENCONTRADO');
   });
 
+  // Os nomes que a coluna Assignee pode trazer precisam bater com algum destes.
+  var membros = getMembrosClickUp_();
+  var nomesMembros = Object.keys(membros).filter(function (chave) {
+    return chave.indexOf('@') === -1;
+  });
+  Logger.log('Membros da lista (%s): %s', nomesMembros.length, nomesMembros.join(' | '));
+
   var pendentes = contarPendentes_();
   Logger.log('Linhas aguardando sincronização: %s', pendentes);
 }
@@ -126,8 +133,10 @@ function sincronizarComClickUp() {
     // a execução antes do laço e a fila pararia em silêncio — a planilha diria
     // apenas que a linha não foi sincronizada, sem dizer por quê.
     var campos;
+    var membros;
     try {
       campos = getCamposClickUp_();
+      membros = getMembrosClickUp_();
     } catch (err) {
       registrarFalhaGeral_(sheet, cabecalhos, fila, String(err.message || err));
       return;
@@ -138,7 +147,7 @@ function sincronizarComClickUp() {
 
     fila.forEach(function (i) {
       var dados = linhaParaObjeto_(cabecalhos, valores[i]);
-      var resultado = criarTarefa_(dados, campos);
+      var resultado = criarTarefa_(dados, campos, membros);
 
       if (resultado.ok) {
         registrarSucesso_(sheet, cabecalhos, i + 1, resultado);
@@ -231,7 +240,58 @@ function getCamposClickUp_() {
   return indice;
 }
 
-function criarTarefa_(dados, campos) {
+/**
+ * Lê os membros da lista e devolve um índice por nome e por e-mail. Assim como
+ * nos campos personalizados, resolver pelo nome a cada execução evita IDs
+ * numéricos copiados no código, que envelhecem sem avisar quando alguém entra
+ * ou sai do time.
+ */
+function getMembrosClickUp_() {
+  var dados = chamarClickUp_('https://api.clickup.com/api/v2/list/' + CLICKUP_LIST_ID + '/member');
+  var indice = {};
+
+  (dados.members || []).forEach(function (membro) {
+    if (membro.username) indice[chaveNome_(membro.username)] = membro.id;
+    if (membro.email) indice[chaveNome_(membro.email)] = membro.id;
+  });
+
+  return indice;
+}
+
+function chaveNome_(valor) {
+  return String(valor || '').trim().toLowerCase();
+}
+
+/**
+ * A coluna Assignee guarda os nomes como o ClickUp os mostra, separados por
+ * vírgula. As linhas exportadas do próprio ClickUp vêm entre colchetes, e por
+ * isso eles são descartados antes da separação.
+ *
+ * Um nome que não bate com nenhum membro não impede a criação: a tarefa nasce
+ * sem aquele responsável e o log diz qual foi. Barrar a demanda inteira por
+ * causa de um nome trocado custaria mais do que a atribuição que se perdeu.
+ */
+function resolverResponsaveis_(valor, membros) {
+  var indice = membros || {};
+  var ids = [];
+
+  String(valor || '').replace(/^\s*\[/, '').replace(/\]\s*$/, '').split(',').forEach(function (nome) {
+    var chave = chaveNome_(nome);
+    if (!chave) return;
+
+    var id = indice[chave];
+    if (id === undefined) {
+      Logger.log('Responsável não encontrado entre os membros da lista: %s', nome.trim());
+      return;
+    }
+
+    if (ids.indexOf(id) === -1) ids.push(id);
+  });
+
+  return ids;
+}
+
+function criarTarefa_(dados, campos, membros) {
   var corpo = {
     name: dados['Task Name'],
     description: montarDescricao_(dados),
@@ -240,6 +300,9 @@ function criarTarefa_(dados, campos) {
 
   var prioridade = CLICKUP_PRIORIDADES[String(dados['Priority'] || '').toUpperCase()];
   if (prioridade) corpo.priority = prioridade;
+
+  var responsaveis = resolverResponsaveis_(dados['Assignee'], membros);
+  if (responsaveis.length) corpo.assignees = responsaveis;
 
   var entrega = paraTimestamp_(dados['Data de entrega (date)']);
   if (entrega) {
