@@ -317,14 +317,10 @@
             Checklist de qualidade. Veja se a sua ideia cumpre os requisitos de design.
           </span>
         </span>
-        <span class="nav-item">
-          <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" aria-describedby="tip-nav-dashboard" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
-            <span class="hidden sm:inline">Métricas</span><span class="sm:hidden">Painel</span>
-          </button>
-          <span id="tip-nav-dashboard" role="tooltip" class="nav-tip nav-tip--end">
-            Painel de resultados das avaliações e autoavaliações. Restrito ao time.
-          </span>
-        </span>
+        <!-- Métricas fica sem bolha: é a área do próprio time, não a de quem chega -->
+        <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
+          <span class="hidden sm:inline">Métricas</span><span class="sm:hidden">Painel</span>
+        </button>
         <div class="w-[1px] h-3 bg-paper-dark dark:bg-white/10"></div>
         <button onclick="toggleTheme()" class="text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300" aria-label="Alternar Tema">
           <svg id="icon-sun" class="hidden dark:block" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
