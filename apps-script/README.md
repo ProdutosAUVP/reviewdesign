@@ -208,14 +208,28 @@ falar com o ClickUp, então a rodada vazia custa só a leitura da planilha.
 | `Task Name` | Nome |
 | `Status` | Status (nasce em `aguardando`) |
 | `Priority` | Prioridade — `URGENT`→1, `HIGH`→2, `NORMAL`→3, `LOW`→4 |
+| `Assignee` | Responsáveis pela tarefa |
 | `Data de entrega (date)` | Data de entrega, nos campos nativo e personalizado |
 | `0️⃣ Produto`, `Qual a área...`, `O uso será...` | Campos personalizados de seleção |
 | `Qual o objetivo...`, `Justificativa da prioridade` | Campos personalizados de texto |
 | `Task Content` + objetivo + solicitante + SLA + anexos | Descrição |
 
-Os IDs dos campos e das opções **não** ficam no código: são resolvidos pelo nome
-a cada execução, lendo `GET /list/{id}/field`. Incluir um produto novo no
-ClickUp passa a funcionar sozinho, sem mexer no script.
+Os IDs dos campos, das opções e das pessoas **não** ficam no código: são
+resolvidos pelo nome a cada execução, lendo `GET /list/{id}/field` e
+`GET /list/{id}/member`. Incluir um produto novo no ClickUp, ou trocar quem está
+no time, passa a funcionar sozinho, sem mexer no script.
+
+**A coluna `Assignee`** aceita um ou mais nomes separados por vírgula, escritos
+como o ClickUp os mostra (`Éria Cunha de Alencar, Armando Custodio Neto`) — o
+e-mail também serve. É o formulário que a preenche: a demanda nasce atribuída aos
+dois designers, e quem solicita pode direcioná-la a um deles. Colchetes em volta,
+como nas linhas exportadas do próprio ClickUp, são ignorados.
+
+Um nome que não bate com nenhum membro da lista **não impede a criação**: a tarefa
+nasce sem aquele responsável e o log de Execuções diz qual nome ficou de fora.
+Perder a atribuição custa menos do que barrar a demanda inteira. O
+`testarClickUp()` lista os membros que a lista reconhece, para conferir a grafia
+antes de qualquer envio.
 
 ### Pontos de atenção
 

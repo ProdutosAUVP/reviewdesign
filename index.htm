@@ -295,19 +295,40 @@
              e a prioridade é derivada do resultado dessa medição. -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-start">
           <div class="w-full min-w-0">
-            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Data de entrega <span class="text-accent">*</span></label>
+            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Data de entrega <span id="req-due-date-obrigatorio" class="text-accent">*</span></label>
             <input type="date" id="req-due-date" class="w-full border-b border-paper-dark dark:border-white/20 pb-2 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white appearance-none cursor-pointer [color-scheme:light] dark:[color-scheme:dark]">
-            <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
+            <p id="req-due-date-nota" class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
               Conferida contra o SLA do tipo escolhido.
             </p>
           </div>
           <div class="w-full min-w-0">
-            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Prioridade <span class="text-accent">*</span></label>
+            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Prioridade <span id="req-prioridade-obrigatorio" class="text-accent">*</span></label>
             <div id="req-prioridade-container" class="grid grid-cols-3 gap-2 w-full">
               <!-- Botões gerados via JS -->
             </div>
-            <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">Definida automaticamente com base no tipo de demanda e o SLA.</p>
+            <p id="req-prioridade-nota" class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">Definida automaticamente com base no tipo de demanda e o SLA.</p>
           </div>
+        </div>
+
+        <!-- Atribuição: nasce nos dois designers e só abre quando quem solicita
+             quer direcionar a demanda a um deles. -->
+        <div class="w-full">
+          <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Atribuição <span class="text-accent">*</span></label>
+
+          <div class="flex items-center justify-between gap-3 w-full border-b border-paper-dark dark:border-white/20 p-2">
+            <span id="req-designer-atual" class="text-sm text-ink dark:text-white truncate min-w-0"></span>
+            <button type="button" id="btn-designer-opcoes" onclick="toggleDesignerOpcoes()" aria-expanded="false" aria-controls="req-designer-opcoes" class="shrink-0 text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:text-accent dark:hover:text-accent-light transition-colors">
+              Alterar
+            </button>
+          </div>
+
+          <div id="req-designer-opcoes" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-2 w-full mt-3">
+            <!-- Botões gerados via JS -->
+          </div>
+
+          <p class="text-[10px] text-ink-light dark:text-white/40 mt-2 italic break-words">
+            Por padrão a demanda vai para os dois designers. Escolha um nome para direcioná-la.
+          </p>
         </div>
 
         <div id="req-justificativa-container" class="w-full hidden">
@@ -966,8 +987,27 @@
       { id: 'Análise de performance das páginas e ferramentas', prazo: '1 semana', obs: '', minDays: 7, maxDays: 7 },
       { id: 'Manutenção da plataforma de aulas', prazo: '3 dias a 1 semana', obs: '', minDays: 3, maxDays: 7 },
       { id: 'Criação de uma nova versão da logo', prazo: '1 a 2 dias', obs: '', minDays: 1, maxDays: 2 },
-      { id: 'Banners e posts', prazo: '2 a 4 dias', obs: 'Por tela.', minDays: 2, maxDays: 4 }
+      { id: 'Banners e posts', prazo: '2 a 4 dias', obs: 'Por tela.', minDays: 2, maxDays: 4 },
+      // Prazo em aberto: não há SLA a medir, então a data e a prioridade saem de
+      // cena e quem define as duas é o time, ao triar a demanda.
+      {
+        id: 'Outros',
+        prazo: 'A definir pelo time de design',
+        obs: 'Os designers vão definir o tempo e a prioridade necessários para esta demanda.',
+        aDefinir: true
+      }
     ];
+
+    // Assignee — a demanda nasce com os dois designers e só sai disso se quem
+    // solicita quiser direcioná-la a um deles. Os nomes são os do ClickUp: é por
+    // eles que a sincronização acha o responsável na lista da esteira.
+    const ESTEIRA_DESIGNERS = [
+      { id: 'Ambos', rotulo: 'Time de design', detalhe: 'Éria e Armando', usuarios: ['Éria Cunha de Alencar', 'Armando Custodio Neto'] },
+      { id: 'Éria', rotulo: 'Éria', detalhe: 'Éria Cunha de Alencar', usuarios: ['Éria Cunha de Alencar'] },
+      { id: 'Armando', rotulo: 'Armando', detalhe: 'Armando Custodio Neto', usuarios: ['Armando Custodio Neto'] }
+    ];
+
+    const DESIGNER_PADRAO = 'Ambos';
 
     // --- CONFIGURAÇÃO GOOGLE SHEETS ---
     // URL gerada no Google Apps Script para recebimento dos dados
@@ -1016,7 +1056,8 @@
       uso: '',               // O uso será interno ou externo? (drop down)
       dataEntrega: '',       // Data de entrega (date)
       prioridade: '',        // Priority — derivada do SLA, ajustável
-      justificativa: ''      // Justificativa da prioridade (text)
+      justificativa: '',     // Justificativa da prioridade (text)
+      designer: DESIGNER_PADRAO // Assignee — nasce nos dois designers
     });
 
     // Limites de anexo. O base64 infla ~33%, então o total é conservador para
@@ -1063,6 +1104,7 @@
       fillSelect('req-uso', ESTEIRA_USOS, 'Selecione o uso...');
 
       renderRequestButtons();
+      renderDesigner();
     }
 
     // A Prioridade usa botões, no mesmo padrão visual do wizard de satisfação
@@ -1078,6 +1120,56 @@
         const classes = base + (isSelected ? ` ${p.selectedClass} shadow-sm` : idle);
         return `<button type="button" onclick="setRequestPrioridade(${i})" class="${classes}" title="${p.id}">${p.id}</button>`;
       }).join('');
+    }
+
+    // ---------- ATRIBUIÇÃO ----------
+
+    function getDesigner() {
+      return ESTEIRA_DESIGNERS.find(d => d.id === requestData.designer)
+        || ESTEIRA_DESIGNERS.find(d => d.id === DESIGNER_PADRAO);
+    }
+
+    // A linha fechada mostra a escolha atual; as opções só aparecem se pedirem.
+    function renderDesigner() {
+      const atual = document.getElementById('req-designer-atual');
+      const opcoes = document.getElementById('req-designer-opcoes');
+      const escolhido = getDesigner();
+
+      if (atual) atual.innerText = `${escolhido.rotulo} — ${escolhido.detalhe}`;
+      if (!opcoes) return;
+
+      const base = "w-full py-2.5 px-2 text-[9px] md:text-[10px] uppercase tracking-widest font-bold rounded-[2px] border transition-all duration-200 truncate";
+      const idle = " border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 hover:border-accent hover:text-ink dark:hover:text-white";
+      const selected = " bg-accent border-accent text-white shadow-sm";
+
+      opcoes.innerHTML = ESTEIRA_DESIGNERS.map((d, i) => {
+        const classes = base + (d.id === escolhido.id ? selected : idle);
+        return `<button type="button" onclick="setRequestDesigner(${i})" class="${classes}" title="${d.detalhe}">${d.rotulo}</button>`;
+      }).join('');
+    }
+
+    function toggleDesignerOpcoes() {
+      const opcoes = document.getElementById('req-designer-opcoes');
+      const botao = document.getElementById('btn-designer-opcoes');
+      if (!opcoes) return;
+
+      const aberto = !opcoes.classList.toggle('hidden');
+      if (botao) {
+        botao.innerText = aberto ? 'Fechar' : 'Alterar';
+        botao.setAttribute('aria-expanded', String(aberto));
+      }
+    }
+
+    // Escolher fecha a lista: a decisão já está tomada e a linha fechada mostra qual foi.
+    function setRequestDesigner(index) {
+      const designer = ESTEIRA_DESIGNERS[index];
+      if (!designer) return;
+
+      requestData.designer = designer.id;
+      renderDesigner();
+
+      const opcoes = document.getElementById('req-designer-opcoes');
+      if (opcoes && !opcoes.classList.contains('hidden')) toggleDesignerOpcoes();
     }
 
     // ---------- ANEXOS ----------
@@ -1162,22 +1254,54 @@
       renderAnexos();
     }
 
+    // O nome do arquivo vem de fora e entra em atributo e em texto: sem escapar,
+    // uma aspa no nome já quebra a marcação.
+    function escaparHtml(valor) {
+      return String(valor)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function ehImagem(anexo) {
+      return String(anexo.tipo || '').indexOf('image/') === 0;
+    }
+
+    // Só imagem ganha prévia. O base64 já está em memória para o envio, então a
+    // miniatura sai de graça, sem ler o arquivo de novo. PDF e os demais formatos
+    // seguem com o ícone: não há o que mostrar em 40 pixels.
+    function anexoMiniatura(anexo) {
+      const icone = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent shrink-0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+      if (!ehImagem(anexo)) return icone;
+
+      const nome = escaparHtml(anexo.nome);
+      const src = `data:${escaparHtml(anexo.tipo)};base64,${anexo.dados}`;
+
+      return `<img src="${src}" alt="Prévia de ${nome}" class="w-10 h-10 shrink-0 object-cover rounded-[2px] border border-paper-dark dark:border-white/10 bg-paper-dark/30 dark:bg-white/5" loading="lazy">`;
+    }
+
     function renderAnexos() {
       const lista = document.getElementById('req-anexos-lista');
       if (!lista) return;
 
-      lista.innerHTML = requestAnexos.map((a, i) => `
+      lista.innerHTML = requestAnexos.map((a, i) => {
+        const nome = escaparHtml(a.nome);
+
+        return `
         <li class="flex items-center justify-between gap-3 px-3 py-2 border border-paper-dark dark:border-white/10 bg-paper dark:bg-[#121212] rounded-[2px] w-full">
           <div class="flex items-center gap-2 min-w-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent shrink-0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span class="text-xs text-ink dark:text-white truncate" title="${a.nome}">${a.nome}</span>
+            ${anexoMiniatura(a)}
+            <span class="text-xs text-ink dark:text-white truncate" title="${nome}">${nome}</span>
             <span class="text-[10px] text-ink-light dark:text-white/40 shrink-0">${formatBytes(a.tamanho)}</span>
           </div>
-          <button type="button" onclick="removeAnexo(${i})" aria-label="Remover ${a.nome}" class="text-ink-light hover:text-[#D96C53] dark:text-white/40 dark:hover:text-[#E5ACA0] transition-colors shrink-0">
+          <button type="button" onclick="removeAnexo(${i})" aria-label="Remover ${nome}" class="text-ink-light hover:text-[#D96C53] dark:text-white/40 dark:hover:text-[#E5ACA0] transition-colors shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </li>
-      `).join('');
+      `;
+      }).join('');
     }
 
     // ---------- SLA ----------
@@ -1186,11 +1310,29 @@
       return SLA_TIPOS.find(t => t.id === requestData.tipoDemanda) || null;
     }
 
+    // Com o prazo em aberto não há SLA a medir: o tipo dispensa a checagem e a
+    // data e a prioridade deixam de ser exigidas.
+    function slaEmAberto() {
+      const tipo = getSlaTipo();
+      return Boolean(tipo && tipo.aDefinir);
+    }
+
     // Compara a data pedida com o SLA do tipo escolhido.
     // Retorna null quando ainda não dá para avaliar (falta tipo ou data).
     function getSlaStatus() {
       const tipo = getSlaTipo();
-      if (!tipo || !requestData.dataEntrega) return null;
+      if (!tipo) return null;
+
+      if (tipo.aDefinir) {
+        return {
+          id: 'A definir',
+          message: 'Os designers vão definir o tempo e a prioridade necessários para esta demanda.',
+          className: 'text-accent dark:text-[#72A68C]',
+          needsReason: false
+        };
+      }
+
+      if (!requestData.dataEntrega) return null;
 
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
@@ -1249,11 +1391,19 @@
       card.classList.remove('hidden');
       if (prazoEl) prazoEl.innerText = tipo.prazo;
       if (obsEl) obsEl.innerText = tipo.obs;
-      if (rangeEl) rangeEl.innerText = `${tipo.minDays} a ${tipo.maxDays} dias corridos`;
+
+      // Sem prazo não há contagem de dias a exibir — o bloco todo sai de cena.
+      if (rangeEl && rangeEl.parentElement) {
+        rangeEl.parentElement.classList.toggle('hidden', Boolean(tipo.aDefinir));
+        if (!tipo.aDefinir) rangeEl.innerText = `${tipo.minDays} a ${tipo.maxDays} dias corridos`;
+      }
 
       const status = getSlaStatus();
+
+      // Com o prazo em aberto a observação acima já diz que o time define tempo e
+      // prioridade; repetir a frase na linha de status só ocuparia espaço.
       if (statusEl) {
-        if (status) {
+        if (status && !tipo.aDefinir) {
           statusEl.innerText = `${status.id} — ${status.message}`;
           statusEl.className = `text-[11px] font-bold mt-3 pt-3 border-t border-accent/20 break-words ${status.className}`;
         } else {
@@ -1285,6 +1435,17 @@
 
     // Enquanto ninguém mexer nos botões, a prioridade acompanha a checagem de SLA
     function applySlaPriority() {
+      // Prazo em aberto: quem define a prioridade é o time, então o campo é
+      // esvaziado — inclusive uma escolha feita antes de trocar o tipo.
+      if (slaEmAberto()) {
+        prioridadeManual = false;
+        if (requestData.prioridade) {
+          requestData.prioridade = '';
+          renderRequestButtons();
+        }
+        return;
+      }
+
       if (prioridadeManual) return;
 
       const slaStatus = getSlaStatus();
@@ -1293,6 +1454,34 @@
       if (sugerida && requestData.prioridade !== sugerida) {
         requestData.prioridade = sugerida;
         renderRequestButtons();
+      }
+    }
+
+    // Data e prioridade só fazem sentido enquanto existe um SLA para medi-las.
+    // Com o tipo de prazo em aberto, as duas saem de cena e param de ser exigidas.
+    function updateSlaAbertoVisibility() {
+      const aberto = slaEmAberto();
+
+      const prioridadeContainer = document.getElementById('req-prioridade-container');
+      const prioridadeNota = document.getElementById('req-prioridade-nota');
+      const prioridadeObrigatorio = document.getElementById('req-prioridade-obrigatorio');
+      const dataObrigatorio = document.getElementById('req-due-date-obrigatorio');
+      const dataNota = document.getElementById('req-due-date-nota');
+
+      if (prioridadeContainer) prioridadeContainer.classList.toggle('hidden', aberto);
+      if (prioridadeObrigatorio) prioridadeObrigatorio.classList.toggle('hidden', aberto);
+      if (dataObrigatorio) dataObrigatorio.classList.toggle('hidden', aberto);
+
+      if (prioridadeNota) {
+        prioridadeNota.innerText = aberto
+          ? 'Definida pelo time de design, junto com o prazo.'
+          : 'Definida automaticamente com base no tipo de demanda e o SLA.';
+      }
+
+      if (dataNota) {
+        dataNota.innerText = aberto
+          ? 'Opcional neste tipo: informe uma data se houver uma que precise ser respeitada.'
+          : 'Conferida contra o SLA do tipo escolhido.';
       }
     }
 
@@ -1355,8 +1544,10 @@
       if (!requestData.objetivo) missing.push('Objetivo');
       if (!requestData.area) missing.push('Área a que se refere');
       if (!requestData.uso) missing.push('Uso interno ou externo');
-      if (!requestData.dataEntrega) missing.push('Data de entrega');
-      if (!requestData.prioridade) missing.push('Prioridade');
+      if (!slaEmAberto()) {
+        if (!requestData.dataEntrega) missing.push('Data de entrega');
+        if (!requestData.prioridade) missing.push('Prioridade');
+      }
       if (requestNeedsReason() && !requestData.justificativa) missing.push('Justificativa da prioridade');
       return missing;
     }
@@ -1368,13 +1559,14 @@
       // prioridade sugerida — tudo é reavaliado aqui a cada alteração na tela.
       renderSlaCard();
       applySlaPriority();
+      updateSlaAbertoVisibility();
       updateJustificativaVisibility();
 
       const required = [
         requestData.author, requestData.taskName, requestData.tipoDemanda, requestData.produto,
-        requestData.taskContent, requestData.objetivo, requestData.area, requestData.uso,
-        requestData.dataEntrega, requestData.prioridade
+        requestData.taskContent, requestData.objetivo, requestData.area, requestData.uso
       ];
+      if (!slaEmAberto()) required.push(requestData.dataEntrega, requestData.prioridade);
       if (requestNeedsReason()) required.push(requestData.justificativa);
 
       const filled = required.filter(v => v && String(v).trim() !== '').length;
@@ -1396,6 +1588,8 @@
       const tipo = getSlaTipo();
       const slaStatus = getSlaStatus();
 
+      const designer = getDesigner();
+
       const lines = [
         `Nome da demanda: ${requestData.taskName}`,
         ``,
@@ -1404,8 +1598,9 @@
         `Status do SLA: ${slaStatus ? slaStatus.id : '-'}`,
         ``,
         `Produto: ${requestData.produto}`,
-        `Prioridade: ${requestData.prioridade}`,
+        `Prioridade: ${requestData.prioridade || 'a definir pelo time'}`,
         `Data de entrega: ${dataEntregaTxt}`,
+        `Atribuição: ${designer.usuarios.join(', ')}`,
         `Solicitante: ${requestData.author}`
       ];
 
@@ -1480,7 +1675,9 @@
       dataToGoogle.append('ID do Envio', envioId);
       dataToGoogle.append('Task Name', requestData.taskName);
       dataToGoogle.append('Status', 'aguardando');
-      dataToGoogle.append('Assignee', ''); // a alocação é definida pelo time na triagem
+      // Os nomes vão como o ClickUp os mostra: é por eles que a sincronização
+      // resolve o responsável entre os membros da lista.
+      dataToGoogle.append('Assignee', getDesigner().usuarios.join(', '));
       dataToGoogle.append('Priority', (PRIORIDADES.find(p => p.id === requestData.prioridade) || {}).clickup || '');
       dataToGoogle.append('Date Created', new Date().toISOString());
       dataToGoogle.append('Created By', requestData.author);
@@ -1877,6 +2074,11 @@
 
       const justificativaContainer = document.getElementById('req-justificativa-container');
       if (justificativaContainer) justificativaContainer.classList.add('hidden');
+
+      // A atribuição volta ao padrão e a lista de opções, fechada
+      const designerOpcoes = document.getElementById('req-designer-opcoes');
+      if (designerOpcoes && !designerOpcoes.classList.contains('hidden')) toggleDesignerOpcoes();
+      renderDesigner();
 
 
       const errorMsg = document.getElementById('request-error');
