@@ -128,6 +128,106 @@ A resposta diz exatamente o que o script enxerga:
 
 O campo `versao` está no topo do `esteira-design.gs`, na constante `VERSAO`.
 
+## Da planilha para o ClickUp
+
+O arquivo [`clickup-esteira.gs`](./clickup-esteira.gs) é o segundo do mesmo
+projeto do Apps Script. Ele percorre a planilha, cria a tarefa no ClickUp via
+API e escreve o ID e a URL da tarefa de volta na linha.
+
+Uma linha que já tem `ID da Tarefa` nunca é reenviada, então rodar a
+sincronização de novo é seguro: só o que falta é tentado.
+
+### Passo a passo
+
+**1. Pegue o seu token pessoal do ClickUp**
+
+No ClickUp: foto do perfil (canto inferior esquerdo) › **Settings** › **Apps** ›
+em *API Token*, clique em **Generate**. O token começa com `pk_`.
+
+Ele age em seu nome: as tarefas aparecem como criadas por você, e o token
+alcança tudo que a sua conta alcança. Trate como senha.
+
+**2. Cole o script no mesmo projeto**
+
+No editor do Apps Script da planilha, **+ › Script** e nomeie
+`clickup-esteira`. Cole o conteúdo do arquivo e salve.
+
+São dois arquivos no mesmo projeto de propósito — `clickup-esteira.gs`
+reaproveita `getSheet_()` e `getCabecalhos_()` do `esteira-design.gs`.
+
+**3. Guarde o token**
+
+Em `configurarClickUp()`, troque `pk_COLE_SEU_TOKEN_AQUI` pelo seu token, rode a
+função uma vez, **apague o token do código** e salve.
+
+O token vai para as Propriedades do Script. Ele nunca pode ficar no código: este
+repositório é público.
+
+**4. Confira antes de criar qualquer coisa**
+
+Rode **`testarClickUp()`**. Ela não cria nada — só lê. O log em **Execuções**
+mostra:
+
+```
+Conexão com o ClickUp funcionando.
+Campos encontrados na lista (18): 0️⃣ Produto | Qual a área... | ...
+0️⃣ Produto (drop down) → ok
+Qual a área a que se refere? (drop down) → ok
+...
+Linhas aguardando sincronização: 3
+```
+
+Qualquer `CAMPO NÃO ENCONTRADO` aponta um campo renomeado no ClickUp — ajuste o
+nome em `CLICKUP_CAMPOS`.
+
+**5. Rode a primeira sincronização**
+
+Rode **`sincronizarComClickUp()`**. Confira as tarefas criadas na esteira e as
+colunas novas na planilha: `ID da Tarefa`, `URL da Tarefa`, `Sincronizado em` e
+`Erro da Sincronização`.
+
+Sugestão: teste primeiro com uma linha só. Preencha `ID da Tarefa` das demais
+com qualquer texto para elas serem ignoradas, rode, confira o resultado e depois
+limpe o que você preencheu.
+
+**6. Deixe rodando sozinho**
+
+Rode **`criarGatilhoDeSincronizacao()`** uma vez. Ela instala um gatilho de 5 em
+5 minutos e remove o anterior, então rodar de novo não duplica.
+
+### O que vai para cada lugar
+
+| Na planilha | Na tarefa do ClickUp |
+| --- | --- |
+| `Task Name` | Nome |
+| `Status` | Status (nasce em `aguardando`) |
+| `Priority` | Prioridade — `URGENT`→1, `HIGH`→2, `NORMAL`→3, `LOW`→4 |
+| `Data de entrega (date)` | Data de entrega, nos campos nativo e personalizado |
+| `0️⃣ Produto`, `Qual a área...`, `O uso será...` | Campos personalizados de seleção |
+| `Qual o objetivo...`, `Justificativa da prioridade` | Campos personalizados de texto |
+| `Task Content` + objetivo + solicitante + SLA + anexos | Descrição |
+
+Os IDs dos campos e das opções **não** ficam no código: são resolvidos pelo nome
+a cada execução, lendo `GET /list/{id}/field`. Incluir um produto novo no
+ClickUp passa a funcionar sozinho, sem mexer no script.
+
+### Pontos de atenção
+
+**Tipagem da Tarefa** é obrigatória no ClickUp, mas saiu do formulário por ser
+preenchida na triagem. A criação por API não é barrada por isso — a tarefa nasce
+com o campo vazio, para o time preencher.
+
+**Limite da API**: 100 requisições por minuto. Cada execução cria no máximo 25
+tarefas (`CLICKUP_MAX_POR_EXECUCAO`), o que deixa folga com sobra.
+
+**Quando uma linha falha**, o motivo vai para `Erro da Sincronização` e a linha
+continua na fila. Corrigido o problema, a próxima execução tenta de novo — não é
+preciso limpar nada.
+
+**Anexos** entram como links do Drive na descrição, não como arquivos anexados à
+tarefa. Os arquivos já estão no Drive; duplicá-los no ClickUp só ocuparia espaço
+nos dois lugares.
+
 ## Como o mapeamento funciona
 
 O formulário envia cada campo usando como chave o **nome exato da coluna**. O
