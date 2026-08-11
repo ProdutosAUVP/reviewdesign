@@ -35,6 +35,13 @@
             accent: {
               DEFAULT: '#38805A',
               light: '#E2E8E4',
+            },
+            // Usados pelo checklist da autoavaliação (Sim / Não / Não se aplica)
+            danger: {
+              DEFAULT: '#D96C53',
+            },
+            neutral: {
+              DEFAULT: '#6B7280',
             }
           }
         }
@@ -45,6 +52,12 @@
   <!-- CSS Customizado -->
   <style>
     body { font-family: 'Satoshi', sans-serif; }
+
+    /* Keyframes para as animações funcionarem com o Tailwind JIT */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
     /* Background Grid Decorativo */
     .bg-grid {
@@ -181,15 +194,18 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-2.5 md:gap-6 shrink-0">
-        <button id="btn-nav-request" onclick="goToRequest()" class="btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1">
-          Solicitação
+      <div class="flex items-center gap-2 sm:gap-2.5 md:gap-5 shrink-0">
+        <button id="btn-nav-request" onclick="goToRequest()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1">
+          <span class="hidden sm:inline">Solicitação</span><span class="sm:hidden">Solicitar</span>
         </button>
-        <button id="btn-nav-form" onclick="returnToFormOrIntro()" class="btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
-          Formulário
+        <button id="btn-nav-form" onclick="returnToFormOrIntro()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
+          <span class="hidden sm:inline">Avaliação</span><span class="sm:hidden">Avaliar</span>
         </button>
-        <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" class="btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
-          Métricas
+        <button id="btn-nav-qa" onclick="QA.returnToFormOrIntro()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
+          <span class="hidden sm:inline">Autoavaliação</span><span class="sm:hidden">Auto</span>
+        </button>
+        <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
+          <span class="hidden sm:inline">Métricas</span><span class="sm:hidden">Painel</span>
         </button>
         <div class="w-[1px] h-3 bg-paper-dark dark:bg-white/10"></div>
         <button onclick="toggleTheme()" class="text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300" aria-label="Alternar Tema">
@@ -645,6 +661,181 @@
   </div>
 
   <!-- ========================================== -->
+  <!-- VISÃO: AUTOAVALIAÇÃO — IDENTIFICAÇÃO       -->
+  <!-- ========================================== -->
+  <main id="view-qa-intro" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] hidden">
+    <div class="w-full max-w-[600px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-6 md:p-10 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+
+      <div>
+        <div class="relative text-center sm:text-left">
+          <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2">
+            Identificação.
+          </h1>
+          <p class="text-xs text-ink-light dark:text-white/60 font-medium mt-3 font-satoshi">
+            Garanta que a sua iniciativa possui qualidade técnica antes do envio. Preencha seus dados para iniciar a autoavaliação.
+          </p>
+        </div>
+
+        <div class="w-full mt-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 relative shadow-sm bg-paper-dark/10 dark:bg-white/5">
+          <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMnM3Zjc0ODhsdnlxbHVnYmJiYWZpeHNxZXVoajY3ZmRuMXpza3YwMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/37DjyUkbLgNpu/giphy.gif" alt="Design Review" class="w-full h-auto object-contain grayscale-[20%] transition-transform duration-700 hover:scale-105" loading="lazy" />
+        </div>
+
+        <div class="border-b border-paper-dark dark:border-white/10 mb-6 mt-6"></div>
+      </div>
+
+      <div class="flex flex-col gap-6 w-full">
+        <div class="w-full">
+          <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Seu Nome / Equipe</label>
+          <input type="text" id="qa-user-name" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: João (Marketing)">
+        </div>
+
+        <div class="w-full">
+          <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Qual iniciativa será avaliada?</label>
+          <input type="text" id="qa-project-title" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="Ex: Nova tela de checkout, Chatbot IA...">
+        </div>
+
+        <div class="w-full">
+          <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Link da Iniciativa (Figma, URL, Drive)</label>
+          <input type="text" id="qa-project-link" class="w-full border-b border-paper-dark dark:border-white/20 p-2 text-sm focus:outline-none focus:border-accent bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30" placeholder="https://...">
+        </div>
+
+        <p id="qa-intro-error" class="text-[9px] text-[#E5ACA0] hidden font-bold uppercase tracking-widest w-full">Preencha todos os campos obrigatórios.</p>
+
+        <div class="mt-2 w-full">
+          <button onclick="QA.startForm()" class="w-full justify-center px-8 py-3 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity flex items-center gap-2">
+            Iniciar Autoavaliação →
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- VISÃO: AUTOAVALIAÇÃO — CHECKLIST           -->
+  <!-- ========================================== -->
+  <main id="view-qa-form" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
+    <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-5 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-paper-dark dark:border-white/10 pb-4 mb-6 gap-4 md:gap-6">
+        <div class="relative w-full md:w-auto text-center md:text-left">
+          <h1 class="text-3xl md:text-4xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2 md:mt-0">
+            Checklist de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Qualidade.</span>
+          </h1>
+          <p class="text-xs text-ink-light dark:text-white/60 font-medium mt-2 font-satoshi max-w-sm mx-auto md:mx-0">
+            Responda cada ponto. Utilize a área de texto para pedir ajuda ou tirar dúvidas.
+          </p>
+        </div>
+
+        <div class="w-full md:w-1/3 flex flex-col justify-end block mt-4 md:mt-0">
+          <div class="flex justify-between items-end mb-2">
+            <span class="text-[9px] uppercase font-bold tracking-widest text-ink-light dark:text-white/50">Progresso</span>
+            <span id="qa-step-counter" class="text-xs font-bold text-ink dark:text-white">01/06</span>
+          </div>
+          <div class="w-full h-[2px] bg-paper-dark dark:bg-white/10 relative overflow-hidden">
+            <div id="qa-progress-bar" class="absolute top-0 left-0 h-[2px] bg-accent transition-all duration-500 ease-out" style="width: 16.66%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-6 md:gap-8 w-full">
+
+        <!-- Header da Pergunta (GIF ao lado do texto e responsivo) -->
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 w-full text-center md:text-left">
+          <div class="w-full max-w-[260px] sm:max-w-[320px] md:max-w-none md:w-72 lg:w-96 shrink-0 aspect-square md:aspect-video bg-paper dark:bg-[#121212] border border-paper-dark dark:border-white/10 p-1.5 shadow-sm relative group overflow-hidden rounded-[6px] mx-auto md:mx-0">
+            <img id="qa-question-gif" src="" alt="Animação da etapa" class="w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105" loading="lazy"/>
+          </div>
+
+          <div class="flex flex-col justify-center min-w-0 flex-1 pt-2 md:pt-0 w-full items-center md:items-start">
+            <span id="qa-question-badge" class="inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-2 md:mb-3">
+              PASSO_01
+            </span>
+            <h2 id="qa-question-title" class="text-xl md:text-2xl font-medium mb-2 text-ink dark:text-white leading-tight"></h2>
+            <p id="qa-question-intro" class="text-sm text-ink-light dark:text-white/70 leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- Conteúdo / Inputs -->
+        <div class="flex flex-col w-full min-w-0">
+          <div id="qa-checklist-container" class="flex flex-col gap-4 w-full mb-6">
+            <!-- Botões injetados via JS -->
+          </div>
+
+          <div id="qa-step-comment-container" class="mt-auto block transition-all duration-300 w-full">
+            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Plano de Ação ou Dúvidas</label>
+            <textarea id="qa-step-comment" rows="2" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-xs focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Tem alguma dúvida ou precisa de ajuda dos designers? Descreva aqui (nós leremos no painel)..."></textarea>
+          </div>
+
+          <div id="qa-text-container" class="mt-auto hidden w-full">
+            <label class="block text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-2">Mensagem Final</label>
+            <textarea id="qa-feedback-text" rows="5" class="w-full border border-paper-dark dark:border-white/20 p-3 rounded-[2px] text-sm focus:outline-none focus:border-accent resize-none transition-all bg-transparent text-ink dark:text-white placeholder-ink-light/50 dark:placeholder-white/30 custom-scrollbar" placeholder="Resumo geral, bloqueios encontrados ou pedidos de ajuda para o time de design..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full flex flex-col-reverse md:flex-row justify-between items-center mt-6 pt-4 border-t border-paper-dark dark:border-white/10 gap-4 md:gap-0">
+        <button id="qa-btn-prev" onclick="QA.handlePrev()" class="w-full md:w-auto justify-center md:justify-start text-[10px] uppercase tracking-widest font-bold text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-colors disabled:opacity-0 flex items-center gap-1.5 py-3 md:py-0">
+          ← Anterior
+        </button>
+
+        <div class="flex flex-col md:flex-row items-center gap-3 md:gap-4 text-center md:text-right w-full md:w-auto">
+          <button id="qa-btn-next" onclick="QA.handleNext()" class="w-full md:w-auto justify-center px-6 py-3 md:py-2.5 bg-ink text-paper dark:bg-white dark:text-[#121212] text-[10px] uppercase tracking-widest font-bold hover:opacity-80 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2">
+            Confirmar e Avançar →
+          </button>
+
+          <button id="qa-btn-submit" onclick="QA.handleSubmit()" class="w-full md:w-auto justify-center hidden px-6 py-3 md:py-2.5 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed items-center gap-2">
+            Finalizar Avaliação
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- VISÃO: AUTOAVALIAÇÃO — RESULTADO           -->
+  <!-- ========================================== -->
+  <div id="view-qa-success" class="max-w-[700px] mx-auto mt-10 md:mt-16 px-4 md:px-6 animate-[fadeIn_0.5s_ease-in-out] hidden text-center w-full pb-10">
+
+    <div class="w-full max-w-[250px] md:max-w-[300px] mx-auto mb-6 rounded-[4px] overflow-hidden border border-paper-dark dark:border-white/10 shadow-sm">
+      <img id="qa-result-gif" src="https://media.giphy.com/media/26FLgGTPUDH6UGAbm/giphy.gif" alt="Resultado" class="w-full h-auto object-cover grayscale-[20%]" loading="lazy" />
+    </div>
+
+    <h2 id="qa-result-title" class="text-2xl md:text-3xl font-medium text-ink dark:text-white mb-3 px-2">Autoavaliação Concluída.</h2>
+    <p id="qa-result-desc" class="text-sm text-ink-light dark:text-white/70 px-4 max-w-lg mx-auto">
+      Calculando seu resultado...
+    </p>
+
+    <!-- RESUMO PARA AUDITORIA -->
+    <div class="w-full bg-paper dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/10 rounded-[4px] p-5 md:p-6 text-left relative mt-8 mb-8 shadow-sm">
+      <h3 class="text-xs md:text-sm font-bold uppercase tracking-widest text-ink dark:text-white mb-2 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        Resumo da Avaliação
+      </h3>
+      <p class="text-xs text-ink-light dark:text-white/70 mb-4 leading-relaxed">
+        Ao solicitar a auditoria abaixo, este resumo já vai preenchido na descrição da demanda. Se preferir registrar por outro caminho, copie o texto e mantenha o título no formato: <br>
+        <span class="inline-block mt-2 font-mono bg-paper-dark/50 dark:bg-white/10 text-ink dark:text-white px-2 py-1 rounded-[2px] border border-paper-dark dark:border-white/20 select-all">[AUDITORIA] <span id="qa-summary-demand-name">Nome da demanda</span></span>
+      </p>
+
+      <div class="relative group">
+        <textarea id="qa-summary-output" readonly class="w-full h-64 bg-paper-dark/30 dark:bg-[#121212] border border-paper-dark dark:border-white/10 rounded-[2px] p-3 text-xs text-ink-light dark:text-white/70 font-mono resize-none focus:outline-none custom-scrollbar focus:border-accent dark:focus:border-accent transition-colors"></textarea>
+        <button onclick="QA.copySummary()" class="absolute top-2 right-2 bg-white dark:bg-[#2A2A2A] border border-paper-dark dark:border-white/20 p-2 rounded-[2px] hover:bg-paper-dark dark:hover:bg-white/10 transition-colors flex items-center justify-center group/btn" aria-label="Copiar Resumo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-ink-light dark:text-white/60 group-hover/btn:text-accent"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="qa-copy-tooltip" class="absolute -top-8 right-0 bg-ink text-paper dark:bg-white dark:text-ink text-[9px] uppercase font-bold px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap">Copiar</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full px-4">
+      <button onclick="QA.resetForm()" class="w-full sm:w-auto justify-center px-6 py-3 border border-paper-dark dark:border-white/20 text-ink dark:text-white text-[10px] uppercase tracking-widest font-bold hover:border-ink dark:hover:border-white transition-colors">
+        Voltar ao início
+      </button>
+
+      <button onclick="QA.solicitarAuditoria()" class="w-full sm:w-auto justify-center px-6 py-3 bg-accent text-white text-[10px] uppercase tracking-widest font-bold hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+        Solicitar Auditoria de Design →
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
   <!-- VISÃO: AUTENTICAÇÃO DO PAINEL              -->
   <!-- ========================================== -->
   <main id="view-auth" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-center min-h-[calc(100vh-60px)] hidden">
@@ -672,7 +863,7 @@
           Painel de <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-[#72A68C] italic font-light tracking-tight">Métricas.</span>
         </h1>
       </div>
-      <div class="text-left md:text-right shrink-0">
+      <div id="dash-header-media" class="text-left md:text-right shrink-0">
         <p class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 mb-1">Média Global</p>
         <div class="flex items-baseline justify-start md:justify-end gap-1">
           <h2 id="kpi-media" class="text-3xl md:text-4xl text-accent leading-none font-medium">0.00</h2>
@@ -680,6 +871,19 @@
         </div>
       </div>
     </div>
+
+    <!-- Alternância entre os dois conjuntos de resultados do time -->
+    <div class="flex flex-col sm:flex-row p-1 bg-paper-dark/50 dark:bg-white/5 rounded-[4px] mb-8 md:mb-10 w-full">
+      <button id="dash-tab-btn-satisfacao" onclick="setDashboardTab('satisfacao')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-accent shadow-sm rounded-[2px] text-white transition-all">
+        Satisfação
+      </button>
+      <button id="dash-tab-btn-autoavaliacao" onclick="setDashboardTab('autoavaliacao')" class="flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:text-ink dark:hover:text-white transition-all">
+        Autoavaliações
+      </button>
+    </div>
+
+    <!-- ABA: MÉTRICAS DE SATISFAÇÃO -->
+    <div id="dash-tab-satisfacao" class="w-full">
 
     <!-- Filtros do Painel -->
     <div class="flex flex-col sm:flex-row gap-4 md:gap-6 mb-8 md:mb-10 p-4 md:p-5 border border-paper-dark dark:border-white/10 bg-white dark:bg-[#1A1A1A] w-full">
@@ -785,7 +989,52 @@
         </div>
       </div>
     </div>
+
+    </div>
+    <!-- FIM DA ABA: MÉTRICAS DE SATISFAÇÃO -->
+
+    <!-- ABA: RESULTADOS DAS AUTOAVALIAÇÕES -->
+    <div id="dash-tab-autoavaliacao" class="w-full hidden">
+      <div class="bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 p-5 md:p-8 w-full">
+        <div class="border-b border-paper-dark dark:border-white/10 pb-4 mb-6">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-ink dark:text-white">Autoavaliações registradas</h3>
+          <p class="text-xs text-ink-light dark:text-white/60 font-medium mt-2 font-satoshi">
+            Checklists de qualidade preenchidos pelos times antes de pedir a auditoria de design.
+          </p>
+        </div>
+
+        <div id="qa-dashboard-content" class="flex flex-col gap-4 w-full">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+      </div>
+    </div>
+    <!-- FIM DA ABA: RESULTADOS DAS AUTOAVALIAÇÕES -->
   </div>
+
+  <!-- ========================================== -->
+  <!-- VISÃO: DETALHE DE UMA AUTOAVALIAÇÃO        -->
+  <!-- ========================================== -->
+  <main id="view-qa-details" class="w-full px-4 py-6 md:py-10 flex flex-col items-center justify-start min-h-[calc(100vh-60px)] hidden">
+    <div class="w-full max-w-[850px] bg-white dark:bg-[#1A1A1A] border border-paper-dark dark:border-white/5 shadow-sm p-4 md:p-8 flex flex-col animate-[fadeIn_0.4s_ease-in-out]">
+      <div class="border-b border-paper-dark dark:border-white/10 pb-4 mb-6 flex justify-between items-start md:items-end flex-col md:flex-row gap-4 w-full">
+        <div class="w-full min-w-0">
+          <h1 class="text-2xl md:text-3xl font-black tracking-tighter uppercase text-ink dark:text-white leading-[0.85] font-satoshi mt-2">
+            Respostas.
+          </h1>
+          <p id="qa-details-subtitle" class="text-xs text-ink-light dark:text-white/60 font-medium mt-2 font-satoshi truncate w-full">
+            Nome • Projeto
+          </p>
+        </div>
+        <button onclick="QA.backToDashboard()" class="text-[10px] uppercase tracking-widest font-bold text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-colors flex items-center gap-1.5 shrink-0">
+          ← Voltar ao Painel
+        </button>
+      </div>
+
+      <div id="qa-details-content" class="flex flex-col gap-6 w-full">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </div>
+  </main>
 
   <!-- ========================================== -->
   <!-- MODAL DE VISÃO DETALHADA                   -->
@@ -822,20 +1071,27 @@
         </a>
       </div>
 
+      <!-- Os três formulários agora vivem nesta mesma página: os atalhos trocam de tela -->
       <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
         <div class="flex flex-col gap-1.5">
-          <a href="https://forms.clickup.com/36903956/f/13670m-92951/4D930BQ9H63ASARNP3" target="_blank" class="text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group">
+          <button type="button" onclick="irPara('solicitacao')" class="text-left text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group w-full">
             <div class="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
               Abra uma solicitação
             </div>
-          </a>
-          <a href="https://produtosauvp.github.io/q-a-design/" target="_blank" class="text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group">
+          </button>
+          <button type="button" onclick="irPara('avaliacao')" class="text-left text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group w-full">
             <div class="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              Solicite uma revisão de design
+              Avalie uma entrega
             </div>
-          </a>
+          </button>
+          <button type="button" onclick="irPara('autoavaliacao')" class="text-left text-sm font-medium text-gray-900 dark:text-white hover:text-[#38805A] transition-colors py-1 flex items-center justify-between group w-full">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-70"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Faça a autoavaliação de design
+            </div>
+          </button>
         </div>
       </div>
 
@@ -2151,7 +2407,7 @@
     function attemptDashboardAccess() {
       if (isAuthenticated) {
         switchView('dashboard');
-        loadDashboardData();
+        loadAllDashboardData();
       } else {
         switchView('auth');
       }
@@ -2160,16 +2416,89 @@
     function checkPassword() {
       const passInput = document.getElementById('admin-password');
       const errorMsg = document.getElementById('auth-error');
-      
+
       if (passInput && passInput.value === 'cordaniel') {
         isAuthenticated = true;
         if (errorMsg) errorMsg.classList.add('hidden');
         passInput.value = '';
         switchView('dashboard');
-        loadDashboardData();
+        loadAllDashboardData();
       } else {
         if (errorMsg) errorMsg.classList.remove('hidden');
       }
+    }
+
+    // A mesma senha abre os dois conjuntos de resultados, então as duas planilhas
+    // são buscadas juntas. Cada uma cuida do próprio erro e da própria tela.
+    function loadAllDashboardData() {
+      loadDashboardData();
+      if (window.QA) QA.loadDashboardData();
+    }
+
+    // ==========================================
+    // ABAS DO PAINEL: SATISFAÇÃO E AUTOAVALIAÇÕES
+    // ==========================================
+    let dashboardTab = 'satisfacao';
+
+    function setDashboardTab(tab) {
+      dashboardTab = (tab === 'autoavaliacao') ? 'autoavaliacao' : 'satisfacao';
+
+      const activeClass = "flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold bg-accent shadow-sm rounded-[2px] text-white transition-all";
+      const inactiveClass = "flex-1 py-2.5 text-[10px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 hover:text-ink dark:hover:text-white transition-all";
+
+      const painelSatisfacao = document.getElementById('dash-tab-satisfacao');
+      const painelAuto = document.getElementById('dash-tab-autoavaliacao');
+      const btnSatisfacao = document.getElementById('dash-tab-btn-satisfacao');
+      const btnAuto = document.getElementById('dash-tab-btn-autoavaliacao');
+
+      // A média global do cabeçalho é da satisfação: fora dela, não faz sentido
+      const headerMedia = document.getElementById('dash-header-media');
+
+      const emAuto = dashboardTab === 'autoavaliacao';
+
+      if (painelSatisfacao) painelSatisfacao.classList.toggle('hidden', emAuto);
+      if (painelAuto) painelAuto.classList.toggle('hidden', !emAuto);
+      if (headerMedia) headerMedia.classList.toggle('hidden', emAuto);
+
+      if (btnSatisfacao) btnSatisfacao.className = emAuto ? inactiveClass : activeClass;
+      if (btnAuto) btnAuto.className = emAuto ? activeClass : inactiveClass;
+    }
+
+    // Abre a seção pedida pelo endereço. O painel continua atrás da senha: o
+    // endereço leva à porta, não para dentro.
+    function abrirPeloHash(hash) {
+      const alvo = (hash || '').replace('#', '');
+
+      if (alvo === 'metricas') {
+        attemptDashboardAccess();
+        return;
+      }
+
+      switchView(VIEW_POR_HASH[alvo] || 'request');
+    }
+
+    // Trocar o endereço na barra (ou usar voltar/avançar) troca de tela.
+    // switchView usa replaceState, que não dispara este evento — sem laço.
+    window.addEventListener('hashchange', () => abrirPeloHash(window.location.hash));
+
+    // ==========================================
+    // ATALHOS DO WIDGET FLUTUANTE
+    // ==========================================
+    function fecharMenuRapido() {
+      const menu = document.getElementById('quick-access-menu');
+      if (!menu) return;
+      menu.classList.remove('is-open', 'opacity-100', 'scale-100');
+      menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+    }
+
+    // Os formulários moram todos aqui: o atalho troca de tela em vez de abrir aba
+    function irPara(destino) {
+      fecharMenuRapido();
+
+      if (destino === 'solicitacao') goToRequest();
+      else if (destino === 'avaliacao') returnToFormOrIntro();
+      else if (destino === 'autoavaliacao') QA.returnToFormOrIntro();
+      else if (destino === 'metricas') attemptDashboardAccess();
     }
 
     async function loadDashboardData() {
@@ -2219,13 +2548,41 @@
 
     // Identidade do cabeçalho por seção da aplicação
     const navBrands = {
-      request:   { long: 'Solicitação de',     short: 'Solicitação', accent: 'Design.',   title: 'Solicitação de Design - Time de Design' },
-      form:      { long: 'Satisfação Time de', short: 'Satisfação',  accent: 'Design.',   title: 'Satisfação Time de Design - Avaliação' },
-      dashboard: { long: 'Painel de',          short: 'Painel',      accent: 'Métricas.', title: 'Painel de Métricas - Time de Design' }
+      request:   { long: 'Solicitação de',     short: 'Solicitação',   accent: 'Design.',   title: 'Solicitação de Design - Time de Design' },
+      form:      { long: 'Satisfação Time de', short: 'Satisfação',    accent: 'Design.',   title: 'Satisfação Time de Design - Avaliação' },
+      qa:        { long: 'Autoavaliação de',   short: 'Autoavaliação', accent: 'Design.',   title: 'Autoavaliação de Design - Time de Design' },
+      dashboard: { long: 'Painel de',          short: 'Painel',        accent: 'Métricas.', title: 'Painel de Métricas - Time de Design' }
+    };
+
+    // Cada seção da aplicação tem um endereço próprio, para que um link continue
+    // caindo na tela certa mesmo com tudo morando na mesma página.
+    const VIEW_POR_HASH = {
+      'solicitacao': 'request',
+      'avaliacao': 'intro',
+      'autoavaliacao': 'qa-intro',
+      'metricas': 'dashboard'
+    };
+
+    const HASH_POR_VIEW = {
+      'request': 'solicitacao',
+      'request-success': 'solicitacao',
+      'intro': 'avaliacao',
+      'form': 'avaliacao',
+      'success': 'avaliacao',
+      'qa-intro': 'autoavaliacao',
+      'qa-form': 'autoavaliacao',
+      'qa-success': 'autoavaliacao',
+      'qa-details': 'metricas',
+      'auth': 'metricas',
+      'dashboard': 'metricas'
     };
 
     function switchView(view) {
-      const views = ['view-request', 'view-request-success', 'view-intro', 'view-form', 'view-success', 'view-dashboard', 'view-auth'];
+      const views = [
+        'view-request', 'view-request-success', 'view-intro', 'view-form', 'view-success',
+        'view-qa-intro', 'view-qa-form', 'view-qa-success', 'view-qa-details',
+        'view-dashboard', 'view-auth'
+      ];
 
       // Esconde todas as telas de forma segura
       views.forEach(v => {
@@ -2233,12 +2590,8 @@
         if (el) el.classList.add('hidden');
       });
 
-      const btnRequest = document.getElementById('btn-nav-request');
-      const btnForm = document.getElementById('btn-nav-form');
-      const btnDash = document.getElementById('btn-nav-dashboard');
-
-      const activeClass = "btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1";
-      const inactiveClass = "btn-nav text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1";
+      const activeClass = "btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1";
+      const inactiveClass = "btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1";
 
       // Exibe a tela alvo
       const targetView = document.getElementById(`view-${view}`);
@@ -2246,23 +2599,33 @@
 
       // Manipula botões da navegação
       let brandKey = 'request';
+      let botaoAtivo = 'btn-nav-request';
 
       if (view === 'request' || view === 'request-success') {
         brandKey = 'request';
-        if (btnRequest) btnRequest.className = activeClass;
-        if (btnForm) btnForm.className = inactiveClass;
-        if (btnDash) btnDash.className = inactiveClass;
+        botaoAtivo = 'btn-nav-request';
       } else if (view === 'form' || view === 'intro' || view === 'success') {
         brandKey = 'form';
-        if (btnForm) btnForm.className = activeClass;
-        if (btnRequest) btnRequest.className = inactiveClass;
-        if (btnDash) btnDash.className = inactiveClass;
-      } else if (view === 'dashboard' || view === 'auth') {
+        botaoAtivo = 'btn-nav-form';
+      } else if (view === 'qa-intro' || view === 'qa-form' || view === 'qa-success') {
+        brandKey = 'qa';
+        botaoAtivo = 'btn-nav-qa';
+      } else if (view === 'dashboard' || view === 'auth' || view === 'qa-details') {
         brandKey = 'dashboard';
-        if (btnDash) btnDash.className = activeClass;
-        if (btnRequest) btnRequest.className = inactiveClass;
-        if (btnForm) btnForm.className = inactiveClass;
+        botaoAtivo = 'btn-nav-dashboard';
         if (view === 'dashboard') renderDashboard();
+      }
+
+      // Só o botão da seção atual fica marcado; os demais voltam ao estado neutro
+      ['btn-nav-request', 'btn-nav-form', 'btn-nav-qa', 'btn-nav-dashboard'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.className = (id === botaoAtivo) ? activeClass : inactiveClass;
+      });
+
+      // Mantém o endereço em dia sem empilhar histórico a cada troca de tela
+      const hash = HASH_POR_VIEW[view];
+      if (hash && window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', `#${hash}`);
       }
 
       // Atualiza a assinatura editorial do cabeçalho
@@ -2894,6 +3257,654 @@
       }
     }
 
+    // ==========================================================================
+    // AUTOAVALIAÇÃO DE DESIGN (antigo repositório q-a-design)
+    // --------------------------------------------------------------------------
+    // Todo o fluxo vive dentro deste módulo: o estado, as perguntas e a planilha
+    // são próprios e não encostam nos do formulário de satisfação. Os elementos
+    // da tela usam o prefixo "qa-" pelo mesmo motivo. O que o HTML precisa
+    // chamar sai no objeto devolvido no fim (QA.startForm, QA.handleNext, ...).
+    // ==========================================================================
+    window.QA = (function () {
+
+      // URL do Apps Script da planilha de autoavaliações
+      const QA_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxvUsHPYMkEMNV6hmjQvB3Wqw72Tsn6orfxCVwoRgKWbsz3HH_T0WyFUoVdrL-gPA2OXQ/exec';
+
+      const qaQuestions = [
+        {
+          key: 'q1',
+          shortTitle: "ESTRATÉGIA",
+          title: "1. Propósito e Alinhamento",
+          intro: "A intenção é clara e resolve um problema real do usuário?",
+          checklist: [
+            "A dor do usuário que estamos resolvendo é real (não é apenas uma ideia gerada por IA).",
+            "A solução parece fazer parte do ecossistema do nosso produto principal.",
+            "Definimos uma métrica de sucesso clara para saber se essa funcionalidade deu certo."
+          ],
+          gifUrl: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHd0ZjB1OGRoeHhhcTB1eHN3Znl6enZwb2VqNXY2YXh1Zmhiem4yMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/JSWu7FReUWYvVbOfEs/giphy.gif"
+        },
+        {
+          key: 'q2',
+          shortTitle: "JORNADA E UX",
+          title: "2. Jornada e Usabilidade",
+          intro: "Foco em como o usuário navega e entende o sistema.",
+          checklist: [
+            "O fluxo tem começo, meio e fim claros (o usuário sabe onde está).",
+            "As informações estão bem distribuídas em cada passo, mantendo a carga cognitiva baixa.",
+            "Em caso de erros, existem mensagens claras ajudando o usuário a se recuperar.",
+            "A linguagem da interface soa humana e segue o tom de voz da marca."
+          ],
+          gifUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjhxN3RzMGttNHJrYWw0aXMycDlqbWkwbTR2ZGp6OXhoamtycGlxbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/EFXGvbDPhLoWs/giphy.gif"
+        },
+        {
+          key: 'q3',
+          shortTitle: "UI E VISUAL",
+          title: "3. Consistência Visual",
+          intro: "Garantir que a iniciativa tenha a nossa 'cara'.",
+          checklist: [
+            "Estou utilizando os botões, ícones e fontes oficiais do nosso <a href='https://produtosauvp.github.io/central/design-system' target='_blank' class='text-accent underline font-bold'>Design System</a>.",
+            "A hierarquia faz sentido: o elemento mais importante da tela é o que chama mais atenção.",
+            "Os espaçamentos estão consistentes e a tela 'respira' (não está amontoada)."
+          ],
+          gifUrl: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd3pvZGl2NWY5MWY1dWd5YTF0MHIzazc5YmV6d2hkc2J3eTk2cnFnOSZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/Op7aGAs8TO0ogyV0nJ/giphy.gif"
+        },
+        {
+          key: 'q4',
+          shortTitle: "ACESSIBILIDADE",
+          title: "4. Acessibilidade e Inclusão",
+          intro: "O produto precisa funcionar e estar alinhado para todos.",
+          checklist: [
+            "O que foi feito está de acordo com as cores do nosso <a href='https://produtosauvp.github.io/central/design-system' target='_blank' class='text-accent underline font-bold'>Design System</a>.",
+            "Os botões são grandes e fáceis de clicar na versão mobile (celular), assim como o tamanho da fonte também está legível.",
+            "É possível navegar pelos fluxos principais usando o teclado (Tab/Enter)."
+          ],
+          gifUrl: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmsxeXJkdW1ldXdmaXZhdTNpdGc5ZmU2M2tnNXE1ZTVtZnlxYXgzayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/hFsWlFJwY84jm/giphy.gif"
+        },
+        {
+          key: 'q5',
+          shortTitle: "IA E DESIGN",
+          title: "5. IA e Design",
+          intro: "Se o produto utiliza IA gerativa, garanta o alinhamento de componentes.",
+          checklist: [
+            "Os elementos gerados por IA possuem marcação visual indicando o uso de inteligência artificial.",
+            "A interface de controle (ex: refazer, curtir resposta) utiliza os botões e padrões do nosso <a href='https://produtosauvp.github.io/central/design-system' target='_blank' class='text-accent underline font-bold'>Design System</a>.",
+            "Disclaimers sobre alucinação e limites da IA estão legíveis e bem posicionados."
+          ],
+          gifUrl: "https://media.giphy.com/media/IZY2SE2JmPgFG/giphy.gif"
+        },
+        {
+          key: 'q6',
+          shortTitle: "CONCLUSÃO",
+          title: "6. Parecer Final",
+          intro: "Descreva de forma geral o que achou da implementação. Aproveite para documentar necessidades de melhoria ou chamar a atenção dos designers.",
+          isText: true,
+          gifUrl: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3RjNzNzYWJoaGNkOHN6MWtwZHEyaDkweHE1N3hvbmJnMDRnd3gxYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GusNfQJKBKfqpoI1QP/giphy.gif",
+          imgClass: 'object-top'
+        }
+      ];
+
+      // Baixa os GIFs em segundo plano para a troca entre etapas ser instantânea
+      const qaPreloadedGifs = [];
+      qaQuestions.forEach(q => {
+        if (q.gifUrl) {
+          const img = new Image();
+          img.src = q.gifUrl;
+          qaPreloadedGifs.push(img);
+        }
+      });
+
+      let currentStep = 0;
+      let formData = { userName: '', projectTitle: '', projectLink: '' };
+      let skippedSteps = {};
+      let checkedState = {};
+      let qaSubmissions = [];
+      let ultimoResumo = '';
+
+      function resetCheckedState() {
+        checkedState = {};
+        qaQuestions.forEach((q, i) => {
+          if (q.checklist) checkedState[i] = new Array(q.checklist.length).fill(null);
+        });
+      }
+      resetCheckedState();
+
+      // ---------- NAVEGAÇÃO ----------
+
+      function startForm() {
+        const nameVal = (document.getElementById('qa-user-name') || {}).value || '';
+        const projVal = (document.getElementById('qa-project-title') || {}).value || '';
+        const linkVal = (document.getElementById('qa-project-link') || {}).value || '';
+        const errorMsg = document.getElementById('qa-intro-error');
+
+        if (!nameVal.trim() || !projVal.trim() || !linkVal.trim()) {
+          if (errorMsg) errorMsg.classList.remove('hidden');
+          return;
+        }
+        if (errorMsg) errorMsg.classList.add('hidden');
+
+        formData.userName = nameVal.trim();
+        formData.projectTitle = projVal.trim();
+        formData.projectLink = linkVal.trim();
+
+        currentStep = 0;
+        switchView('qa-form');
+        renderStep();
+      }
+
+      // Volta para onde o preenchimento parou; depois de enviar, recomeça do zero
+      function returnToFormOrIntro() {
+        const viewSuccess = document.getElementById('view-qa-success');
+        if (viewSuccess && !viewSuccess.classList.contains('hidden')) {
+          resetForm();
+          return;
+        }
+        if (formData && formData.userName !== '') {
+          switchView('qa-form');
+          renderStep();
+        } else {
+          switchView('qa-intro');
+        }
+      }
+
+      function backToDashboard() {
+        switchView('dashboard');
+        setDashboardTab('autoavaliacao');
+      }
+
+      // ---------- PREENCHIMENTO ----------
+
+      function renderStep() {
+        const q = qaQuestions[currentStep];
+        if (!q) return;
+
+        const stepNum = String(currentStep + 1).padStart(2, '0');
+        const totalSteps = String(qaQuestions.length).padStart(2, '0');
+
+        const counter = document.getElementById('qa-step-counter');
+        const bar = document.getElementById('qa-progress-bar');
+        if (counter) counter.innerText = `${stepNum}/${totalSteps}`;
+        if (bar) bar.style.width = `${((currentStep + 1) / qaQuestions.length) * 100}%`;
+
+        const badge = document.getElementById('qa-question-badge');
+        if (badge) {
+          badge.innerText = `PASSO_${stepNum} • ${q.shortTitle}`;
+          badge.className = "inline-block py-0.5 px-2 border border-accent/20 text-[9px] font-bold tracking-widest bg-accent/10 text-accent dark:bg-white/5 dark:text-white/70 uppercase w-max mb-2 md:mb-3";
+        }
+
+        const title = document.getElementById('qa-question-title');
+        const intro = document.getElementById('qa-question-intro');
+        if (title) title.innerText = q.title;
+        if (intro) intro.innerHTML = q.intro;
+
+        const qGif = document.getElementById('qa-question-gif');
+        if (qGif) {
+          if (qGif.getAttribute('src') !== q.gifUrl) qGif.setAttribute('src', q.gifUrl);
+          qGif.className = `w-full h-full object-cover grayscale-[20%] transition-transform duration-700 group-hover:scale-105 ${q.imgClass || 'object-center'}`;
+        }
+
+        const checklistContainer = document.getElementById('qa-checklist-container');
+        const textContainer = document.getElementById('qa-text-container');
+        const stepCommentContainer = document.getElementById('qa-step-comment-container');
+        const feedbackText = document.getElementById('qa-feedback-text');
+        const stepComment = document.getElementById('qa-step-comment');
+
+        if (q.isText) {
+          if (checklistContainer) checklistContainer.classList.add('hidden');
+          if (stepCommentContainer) stepCommentContainer.classList.add('hidden');
+          if (textContainer) textContainer.classList.remove('hidden');
+          if (feedbackText) feedbackText.value = formData[q.key] || '';
+        } else {
+          if (textContainer) textContainer.classList.add('hidden');
+          if (checklistContainer) checklistContainer.classList.remove('hidden');
+          if (stepCommentContainer) stepCommentContainer.classList.remove('hidden');
+          if (stepComment) stepComment.value = formData[`${q.key}_comment`] || '';
+
+          let html = '';
+          q.checklist.forEach((item, index) => {
+            const val = checkedState[currentStep][index];
+
+            const btnSimClass = val === 'sim' ? 'bg-[#38805A] text-white border-[#38805A]' : 'border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 hover:border-[#38805A] hover:text-[#38805A]';
+            const btnNaoClass = val === 'nao' ? 'bg-danger text-white border-danger' : 'border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 hover:border-danger hover:text-danger';
+            const btnNaClass = val === 'na' ? 'bg-ink text-paper dark:bg-white dark:text-ink border-ink dark:border-white' : 'border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50 hover:border-ink dark:hover:border-white hover:text-ink dark:hover:text-white';
+
+            const containerClass = val !== null ? 'bg-paper-dark/20 dark:bg-white/[0.02]' : '';
+
+            html += `
+            <div class="flex flex-col gap-3 p-4 border border-paper-dark dark:border-white/20 rounded-[4px] transition-colors w-full ${containerClass}">
+                <span class="text-content text-sm text-ink dark:text-white/90 leading-tight">${item}</span>
+                <div class="flex gap-1.5 sm:gap-2 mt-1">
+                    <button onclick="QA.setCheck(${index}, 'sim')" class="flex-[1] py-2.5 sm:py-2 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold rounded-[2px] border transition-all truncate px-1 ${btnSimClass}">Sim</button>
+                    <button onclick="QA.setCheck(${index}, 'nao')" class="flex-[1] py-2.5 sm:py-2 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold rounded-[2px] border transition-all truncate px-1 ${btnNaoClass}">Não</button>
+                    <button onclick="QA.setCheck(${index}, 'na')" class="flex-[1.5] py-2.5 sm:py-2 text-[9px] sm:text-[10px] uppercase tracking-widest font-bold rounded-[2px] border transition-all flex items-center justify-center px-1 ${btnNaClass}">
+                        <span class="sm:hidden">N/A</span>
+                        <span class="hidden sm:inline">Não se Aplica</span>
+                    </button>
+                </div>
+            </div>
+            `;
+          });
+          if (checklistContainer) checklistContainer.innerHTML = html;
+        }
+
+        updateNavButtons();
+      }
+
+      function setCheck(index, value) {
+        checkedState[currentStep][index] = value;
+        renderStep();
+      }
+
+      function updateNavButtons() {
+        const q = qaQuestions[currentStep];
+        if (!q) return;
+
+        const btnPrev = document.getElementById('qa-btn-prev');
+        const btnNext = document.getElementById('qa-btn-next');
+        const btnSubmit = document.getElementById('qa-btn-submit');
+
+        let isValid = true;
+        if (!q.isText) isValid = checkedState[currentStep].every(val => val !== null);
+
+        if (btnPrev) btnPrev.disabled = currentStep === 0;
+
+        if (currentStep < qaQuestions.length - 1) {
+          if (btnNext) {
+            btnNext.classList.remove('hidden');
+            btnNext.classList.add('flex');
+            btnNext.disabled = !isValid;
+          }
+          if (btnSubmit) {
+            btnSubmit.classList.add('hidden');
+            btnSubmit.classList.remove('flex');
+          }
+        } else {
+          if (btnNext) {
+            btnNext.classList.add('hidden');
+            btnNext.classList.remove('flex');
+          }
+          if (btnSubmit) {
+            btnSubmit.classList.remove('hidden');
+            btnSubmit.classList.add('flex');
+            btnSubmit.disabled = false;
+          }
+        }
+      }
+
+      function handleNext() {
+        if (currentStep < qaQuestions.length - 1) {
+          currentStep++;
+          renderStep();
+        }
+      }
+
+      function handlePrev() {
+        if (currentStep > 0) {
+          currentStep--;
+          renderStep();
+        }
+      }
+
+      // ---------- ENVIO E RESULTADO ----------
+
+      function handleSubmit() {
+        const btnSubmit = document.getElementById('qa-btn-submit');
+        if (btnSubmit) {
+          btnSubmit.innerHTML = 'Concluindo...';
+          btnSubmit.disabled = true;
+        }
+
+        let totalQuestions = 0;
+        let totalYes = 0;
+        let totalNA = 0;
+        let totalItems = 0;
+
+        qaQuestions.forEach((q, i) => {
+          if (q.checklist && !skippedSteps[i]) {
+            checkedState[i].forEach(val => {
+              totalItems++;
+              if (val === 'sim') {
+                totalYes++;
+                totalQuestions++;
+              } else if (val === 'nao' || val === null) {
+                totalQuestions++;
+              } else if (val === 'na') {
+                totalNA++;
+              }
+            });
+          }
+        });
+
+        const percentage = totalQuestions === 0 ? 100 : Math.round((totalYes / totalQuestions) * 100);
+        const naPercentage = totalItems === 0 ? 0 : (totalNA / totalItems);
+        const isApproved = percentage >= 80;
+
+        let finalResultStr = '';
+
+        const resultGif = document.getElementById('qa-result-gif');
+        const resultTitle = document.getElementById('qa-result-title');
+        const resultDesc = document.getElementById('qa-result-desc');
+
+        if (naPercentage >= 0.5) {
+          finalResultStr = 'Pendências';
+          if (resultGif) resultGif.src = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWN0cHJsbjc3Z3d6anV2eGZwYzQzZmQ5c2k3cXU2d3RmZzl4ZWI2dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YRPBhd3vscg5Fxx1DQ/giphy.gif";
+          if (resultTitle) {
+            resultTitle.innerText = "Recomendação de Revisão.";
+            resultTitle.className = "text-2xl md:text-3xl font-medium text-[#B45309] mb-3 px-2";
+          }
+          if (resultDesc) resultDesc.innerHTML = `Detectamos que grande parte da avaliação não se aplica à sua iniciativa. Recomendamos que você revise o projeto ou solicite uma auditoria de escopo com o time de design abaixo.`;
+        } else if (isApproved) {
+          finalResultStr = 'Aprovado';
+          if (resultGif) resultGif.src = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmpvODk1a2h5YWQwNzMwOXFheTluamw5am5uMmttOW5qeGc3MzNvOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Ql6WCH22Grmpi/giphy.gif";
+          if (resultTitle) {
+            resultTitle.innerText = "Alinhamento Excelente!";
+            resultTitle.className = "text-2xl md:text-3xl font-medium text-[#38805A] mb-3 px-2";
+          }
+          if (resultDesc) resultDesc.innerHTML = `Parabéns! A sua iniciativa demonstra um alto nível de qualidade técnica. Caso ainda possua alguma dúvida residual, você pode solicitar a auditoria de design abaixo.`;
+        } else {
+          finalResultStr = 'Reprovado';
+          if (resultGif) resultGif.src = "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWN0cHJsbjc3Z3d6anV2eGZwYzQzZmQ5c2k3cXU2d3RmZzl4ZWI2dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YRPBhd3vscg5Fxx1DQ/giphy.gif";
+          if (resultTitle) {
+            resultTitle.innerText = "Recomendação de Revisão.";
+            resultTitle.className = "text-2xl md:text-3xl font-medium text-[#D96C53] mb-3 px-2";
+          }
+          if (resultDesc) resultDesc.innerHTML = `A sua iniciativa possui pontos críticos que não atendem aos nossos requisitos. Recomendamos que revise o projeto, mas a opção de enviar para a auditoria de design continua disponível abaixo.`;
+        }
+
+        // ---------- RESUMO PARA A AUDITORIA ----------
+        const summaryDemandName = document.getElementById('qa-summary-demand-name');
+        if (summaryDemandName) summaryDemandName.innerText = formData.projectTitle;
+
+        let summaryText = `[AUTOAVALIAÇÃO DE DESIGN]\n`;
+        summaryText += `Avaliador(a): ${formData.userName}\n`;
+        summaryText += `Iniciativa: ${formData.projectTitle}\n`;
+        summaryText += `Link: ${formData.projectLink || 'Não informado'}\n`;
+        summaryText += `Status Prévio: ${finalResultStr}\n\n`;
+        summaryText += `[DETALHAMENTO DA AVALIAÇÃO]\n`;
+
+        qaQuestions.forEach((q, i) => {
+          summaryText += `\n# ${q.shortTitle} - ${q.title}\n`;
+
+          if (q.checklist) {
+            q.checklist.forEach((item, idx) => {
+              const ans = checkedState[i][idx];
+              const ansText = ans === 'sim' ? 'SIM' : ans === 'nao' ? 'NÃO' : ans === 'na' ? 'N/A' : 'N/R';
+              // Sem as tags HTML o texto puro do resumo não quebra a formatação
+              const cleanItemText = item.replace(/<[^>]*>?/gm, '');
+              summaryText += `[${ansText}] ${cleanItemText}\n`;
+            });
+          }
+
+          const comment = q.isText ? formData[q.key] : formData[`${q.key}_comment`];
+          if (comment && comment.trim() !== '') {
+            summaryText += `>> Comentário/Plano de Ação:\n   "${comment.trim()}"\n`;
+          }
+        });
+
+        ultimoResumo = summaryText;
+        const summaryOutput = document.getElementById('qa-summary-output');
+        if (summaryOutput) summaryOutput.value = summaryText;
+
+        const newSubmission = {
+          id: Date.now(),
+          date: new Date().toISOString(),
+          userName: formData.userName,
+          projectTitle: formData.projectTitle,
+          projectLink: formData.projectLink,
+          result: finalResultStr,
+          percentage: percentage,
+          checks: {},
+          comments: {}
+        };
+
+        qaQuestions.forEach((q, i) => {
+          if (q.checklist) newSubmission.checks[q.key] = [...checkedState[i]];
+          newSubmission.comments[q.key] = (q.isText ? formData[q.key] : formData[`${q.key}_comment`]) || '';
+        });
+
+        qaSubmissions.unshift(newSubmission);
+
+        if (QA_SHEET_URL !== 'COLE_AQUI_A_URL_DO_WEB_APP') {
+          fetch(QA_SHEET_URL, {
+            method: 'POST',
+            body: JSON.stringify(newSubmission),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          })
+            .then(() => console.log('Autoavaliação salva no Google Sheets com sucesso!'))
+            .catch(err => console.error('Erro ao salvar a autoavaliação na planilha:', err));
+        }
+
+        setTimeout(() => {
+          switchView('qa-success');
+          if (btnSubmit) {
+            btnSubmit.innerHTML = 'Finalizar Avaliação';
+            btnSubmit.disabled = false;
+          }
+        }, 800);
+      }
+
+      function resetForm() {
+        currentStep = 0;
+        formData = { userName: '', projectTitle: '', projectLink: '' };
+        skippedSteps = {};
+        resetCheckedState();
+
+        ['qa-user-name', 'qa-project-title', 'qa-project-link'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+
+        switchView('qa-intro');
+      }
+
+      function copySummary() {
+        const textarea = document.getElementById('qa-summary-output');
+        if (!textarea) return;
+
+        textarea.select();
+        document.execCommand('copy');
+
+        const tooltip = document.getElementById('qa-copy-tooltip');
+        if (tooltip) {
+          tooltip.innerText = "Copiado!";
+          tooltip.classList.remove('opacity-0');
+          setTimeout(() => {
+            tooltip.classList.add('opacity-0');
+            setTimeout(() => tooltip.innerText = "Copiar", 300);
+          }, 2000);
+        }
+      }
+
+      // A auditoria agora é aberta pelo próprio formulário de solicitação desta
+      // página: o resumo da autoavaliação já entra na descrição da demanda.
+      function solicitarAuditoria() {
+        goToRequest();
+
+        const nome = document.getElementById('req-title');
+        const autor = document.getElementById('req-name');
+        const descricao = document.getElementById('req-description');
+
+        if (nome && !nome.value.trim()) nome.value = `[AUDITORIA] ${formData.projectTitle}`;
+        if (autor && !autor.value.trim()) autor.value = formData.userName;
+        if (descricao && !descricao.value.trim()) descricao.value = ultimoResumo;
+
+        updateRequestProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // ---------- PAINEL ----------
+
+      async function loadDashboardData() {
+        const container = document.getElementById('qa-dashboard-content');
+        if (container) {
+          container.innerHTML = '<p class="text-sm text-ink-light dark:text-white/50 animate-pulse w-full text-center py-8">Sincronizando com a base de dados...</p>';
+        }
+
+        if (QA_SHEET_URL !== 'COLE_AQUI_A_URL_DO_WEB_APP') {
+          try {
+            const response = await fetch(QA_SHEET_URL);
+            const data = await response.json();
+            if (Array.isArray(data)) qaSubmissions = data.reverse(); // Os mais recentes primeiro
+          } catch (err) {
+            console.error("Erro ao puxar as autoavaliações da planilha:", err);
+          }
+        }
+
+        renderDashboard();
+      }
+
+      function renderDashboard() {
+        const container = document.getElementById('qa-dashboard-content');
+        if (!container) return;
+
+        if (qaSubmissions.length === 0) {
+          container.innerHTML = '<p class="text-sm text-ink-light dark:text-white/50 py-4 w-full text-center">Nenhuma autoavaliação encontrada.</p>';
+          return;
+        }
+
+        let html = '';
+        qaSubmissions.forEach((sub, index) => {
+          let badgeColor = "bg-ink border-ink text-paper dark:bg-white dark:border-white dark:text-ink";
+          if (sub.result === 'Aprovado') badgeColor = "bg-[#38805A]/10 border-[#38805A]/30 text-[#38805A] dark:text-[#50B27E]";
+          if (sub.result === 'Pendências') badgeColor = "bg-[#Eab308]/10 border-[#Eab308]/30 text-[#B45309] dark:text-[#FDE047]";
+          if (sub.result === 'Reprovado') badgeColor = "bg-[#D96C53]/10 border-[#D96C53]/30 text-[#D96C53] dark:text-[#E5ACA0]";
+
+          const dataTxt = sub.date ? new Date(sub.date).toLocaleDateString('pt-BR') : 'Data indisponível';
+
+          html += `
+          <div class="p-4 md:p-5 border border-paper-dark dark:border-white/10 rounded-[4px] bg-paper-dark/30 dark:bg-white/5 flex flex-col md:flex-row justify-between md:items-center gap-4 transition-colors hover:border-paper-dark/80 dark:hover:border-white/20 w-full">
+            <div class="min-w-0 w-full">
+              <div class="flex flex-wrap items-center gap-2 mb-1 w-full">
+                <span class="text-sm font-bold text-ink dark:text-white">${sub.userName || 'Anônimo'}</span>
+                <span class="text-[9px] uppercase font-bold tracking-widest text-ink-light dark:text-white/50 bg-paper dark:bg-[#121212] px-2 py-0.5 border border-paper-dark dark:border-white/10 rounded-sm shrink-0">${dataTxt}</span>
+                <span class="text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 border rounded-sm ${badgeColor} shrink-0">${sub.result || '-'}</span>
+              </div>
+              <p class="text-xs text-ink-light dark:text-white/70 truncate w-full">${sub.projectTitle || 'Sem título'}</p>
+            </div>
+            <button onclick="QA.showDetails(${index})" class="text-[9px] uppercase tracking-widest font-bold text-accent dark:text-accent-light border border-accent/20 px-4 py-2 hover:bg-accent/10 transition-colors w-full md:w-max shrink-0">Ver Detalhes</button>
+          </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // O índice vem da lista já renderizada: não depende de a planilha devolver um id
+      function showDetails(index) {
+        const sub = qaSubmissions[index];
+        if (!sub) return;
+
+        const subtitle = document.getElementById('qa-details-subtitle');
+        if (subtitle) subtitle.innerText = `Enviado por ${sub.userName || 'Anônimo'} • ${sub.projectTitle || 'Sem título'}`;
+
+        const container = document.getElementById('qa-details-content');
+        if (!container) return;
+
+        const data = sub.date ? new Date(sub.date) : null;
+        const dataTxt = data ? `${data.toLocaleDateString('pt-BR')} às ${data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Não informada';
+
+        let html = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-2 bg-paper-dark/30 dark:bg-white/5 p-4 rounded-[4px] w-full">
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1 truncate">Nome / Equipe</span>
+              <span class="text-xs md:text-sm font-medium text-ink dark:text-white truncate block">${sub.userName || 'Anônimo'}</span>
+            </div>
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1 truncate">Data e Hora</span>
+              <span class="text-xs md:text-sm font-medium text-ink dark:text-white truncate block">${dataTxt}</span>
+            </div>
+            <div class="min-w-0">
+              <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/40 block mb-1 truncate">Link</span>
+              ${sub.projectLink ? `<a href="${sub.projectLink}" target="_blank" rel="noopener noreferrer" class="text-xs md:text-sm font-medium text-accent hover:underline truncate block">Acessar Iniciativa</a>` : '<span class="text-xs md:text-sm font-medium text-ink-light dark:text-white/40 truncate block">Não informado</span>'}
+            </div>
+          </div>
+        `;
+
+        // A planilha pode devolver os blocos vazios: os acessos ficam protegidos
+        const checksDaLinha = sub.checks || {};
+        const comentariosDaLinha = sub.comments || {};
+
+        qaQuestions.forEach(q => {
+          html += `<div class="border border-paper-dark dark:border-white/10 rounded-[4px] p-4 md:p-5 bg-paper dark:bg-[#121212]">`;
+          html += `<h3 class="text-xs font-bold text-ink dark:text-white uppercase tracking-widest mb-4">${q.shortTitle} - ${q.title}</h3>`;
+
+          if (q.checklist) {
+            const checks = checksDaLinha[q.key] || [];
+            html += `<div class="flex flex-col gap-1.5 mb-5">`;
+            q.checklist.forEach((item, idx) => {
+              const val = checks[idx];
+              let badge = '<span class="text-[9px] px-2 py-0.5 font-bold tracking-wider rounded-sm border border-paper-dark dark:border-white/20 text-ink-light dark:text-white/50">N/R</span>';
+              if (val === 'sim') badge = '<span class="text-[9px] px-2 py-0.5 font-bold tracking-wider rounded-sm bg-[#38805A]/10 text-[#38805A] border border-[#38805A]/20">SIM</span>';
+              if (val === 'nao') badge = '<span class="text-[9px] px-2 py-0.5 font-bold tracking-wider rounded-sm bg-danger/10 text-danger border border-danger/20">NÃO</span>';
+              if (val === 'na') badge = '<span class="text-[9px] px-2 py-0.5 font-bold tracking-wider rounded-sm bg-ink/10 text-ink dark:bg-white/10 dark:text-white border border-ink/20 dark:border-white/20">N/A</span>';
+
+              html += `
+              <div class="flex items-start gap-3 py-1">
+                <div class="flex items-center justify-center shrink-0 min-w-[42px] h-5 mt-0.5">
+                  ${badge}
+                </div>
+                <span class="text-xs text-ink-light dark:text-white/80 leading-5">${item}</span>
+              </div>`;
+            });
+            html += `</div>`;
+          }
+
+          const comment = comentariosDaLinha[q.key];
+          if (comment) {
+            html += `<div class="border-t border-paper-dark dark:border-white/10 pt-4">
+                       <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 block mb-2">${q.isText ? 'Parecer Final' : 'Comentário / Dúvida'}</span>
+                       <p class="text-sm text-ink dark:text-white/90 whitespace-pre-wrap">${comment}</p>
+                     </div>`;
+          } else if (q.isText) {
+            html += `<div class="border-t border-paper-dark dark:border-white/10 pt-4">
+                       <span class="text-[9px] uppercase tracking-widest font-bold text-ink-light dark:text-white/50 block mb-2">Parecer Final</span>
+                       <p class="text-sm text-ink-light/50 dark:text-white/30 italic">Nenhum comentário adicionado.</p>
+                     </div>`;
+          }
+
+          html += `</div>`;
+        });
+
+        container.innerHTML = html;
+        switchView('qa-details');
+      }
+
+      // Guarda o que o usuário escreve nas duas áreas de texto do checklist
+      function init() {
+        const feedbackText = document.getElementById('qa-feedback-text');
+        if (feedbackText) {
+          feedbackText.addEventListener('input', (e) => {
+            const q = qaQuestions[currentStep];
+            if (q) formData[q.key] = e.target.value;
+          });
+        }
+
+        const stepComment = document.getElementById('qa-step-comment');
+        if (stepComment) {
+          stepComment.addEventListener('input', (e) => {
+            const q = qaQuestions[currentStep];
+            if (q && !q.isText) formData[`${q.key}_comment`] = e.target.value;
+          });
+        }
+      }
+
+      return {
+        init,
+        startForm,
+        returnToFormOrIntro,
+        backToDashboard,
+        setCheck,
+        handleNext,
+        handlePrev,
+        handleSubmit,
+        resetForm,
+        copySummary,
+        solicitarAuditoria,
+        loadDashboardData,
+        renderDashboard,
+        showDetails
+      };
+    })();
+
     // -- ASSINANDO EVENTOS DE FORMA SEGURA --
     window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
@@ -2968,8 +3979,13 @@
         updateRequestProgress();
         renderPendente();
 
-        // Inicializa na tela principal (Solicitação de Demandas)
-        switchView('request');
+        // Liga as áreas de texto da autoavaliação e abre o painel na aba padrão
+        if (window.QA) QA.init();
+        setDashboardTab('satisfacao');
+
+        // Um link com #autoavaliacao (ou #avaliacao, #metricas) cai direto na tela
+        // certa. Sem endereço, a solicitação de demandas continua sendo a porta.
+        abrirPeloHash(window.location.hash);
     });
 
   </script>

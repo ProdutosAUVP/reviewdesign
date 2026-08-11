@@ -7,6 +7,23 @@ Produto no ClickUp.
 - Planilha: https://docs.google.com/spreadsheets/d/1dBvXUrNmi11ZwYKdUWtBfgTsfNcvVpTuHLNeesArvAs/edit
 - Lista no ClickUp: `Área de Produto` › `🧑‍🎨 Design |  Esteira` (`list_id 901112432875`)
 
+## Os três formulários da página
+
+O `index.htm` reúne os formulários do time de design. Cada um escreve na sua
+própria planilha, por um Apps Script próprio — mexer em um não afeta os outros.
+Os scripts deste diretório são **apenas os da solicitação de demandas**.
+
+| Seção | Endereço | Constante no `index.htm` | Coberto por este diretório |
+| --- | --- | --- | --- |
+| Solicitação de demandas | `#solicitacao` | `GOOGLE_SHEET_REQUEST_URL` | Sim |
+| Avaliação de entregas (satisfação) | `#avaliacao` | `GOOGLE_SHEET_URL` | Não |
+| Autoavaliação de design (checklist) | `#autoavaliacao` | `QA_SHEET_URL`, dentro do módulo `QA` | Não |
+
+Os resultados dos dois últimos aparecem em `#metricas`, atrás da mesma senha, em
+abas separadas: **Satisfação** (médias, gráficos e histórico) e **Autoavaliações**
+(checklists enviados). A autoavaliação vivia no repositório `q-a-design`, que hoje
+só redireciona para cá.
+
 ## Como publicar o Apps Script
 
 1. Abra a planilha e vá em **Extensões › Apps Script**.
