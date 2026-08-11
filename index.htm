@@ -92,6 +92,104 @@
       border-color: #38805A;
     }
 
+    /* ------------------------------------------------------------------
+       TOOLTIPS DA NAVEGAÇÃO
+       Explicam para que serve cada seção. No mobile os rótulos aparecem
+       abreviados ("Auto", "Painel"), então a explicação conta ainda mais.
+       Em CSS puro, e não em utilitários, para a posição não depender do
+       Tailwind ter carregado do CDN.
+       ------------------------------------------------------------------ */
+    .nav-item {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .nav-tip {
+      position: absolute;
+      top: calc(100% + 14px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 250px;
+      background: #1C1C1C;
+      color: #F9F8F6;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 4px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      pointer-events: none;
+      /* Só a opacidade é animada: sem deslize, não há o que desligar para
+         quem pediu menos movimento nem transform a recalcular por posição. */
+      transition: opacity .18s ease;
+      z-index: 60;
+    }
+
+    /* Bico apontando para o botão */
+    .nav-tip::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-bottom-color: #1C1C1C;
+    }
+
+    /* Perto da borda direita a bolha se alinha pela direita e cresce para a
+       esquerda: centralizada, ela vazaria para fora da tela. */
+    .nav-tip--end {
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+
+    .nav-tip--end::after {
+      left: auto;
+      right: 12px;
+      transform: none;
+    }
+
+    .nav-item:hover .nav-tip,
+    .nav-item:focus-within .nav-tip {
+      opacity: 1;
+    }
+
+    html.dark .nav-tip {
+      background: #FFFFFF;
+      color: #1C1C1C;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    }
+
+    html.dark .nav-tip::after { border-bottom-color: #FFFFFF; }
+
+    /* No celular não sobra largura para ancorar a bolha em cada botão: com os
+       rótulos abreviados, os das pontas vazariam da tela. Aqui ela vira uma
+       faixa sob a barra inteira — o texto já diz de que seção está falando.
+       `position: static` no item faz a bolha se medir pela <nav>, que é
+       sticky e portanto já serve de referência. */
+    @media (max-width: 639px) {
+      .nav-item { position: static; }
+
+      .nav-tip,
+      .nav-tip--end {
+        top: calc(100% + 10px);
+        left: 16px;
+        right: 16px;
+        width: auto;
+        max-width: none;
+        transform: none;
+      }
+
+      .nav-tip::after { display: none; }
+    }
+
     /* Variáveis do WIDGET DE ACESSO RÁPIDO */
     :root {
       --float-bottom-pos: 40px; 
@@ -195,15 +293,31 @@
       </div>
 
       <div class="flex items-center gap-2 sm:gap-2.5 md:gap-5 shrink-0">
-        <button id="btn-nav-request" onclick="goToRequest()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1">
-          <span class="hidden sm:inline">Solicitação</span><span class="sm:hidden">Solicitar</span>
-        </button>
-        <button id="btn-nav-form" onclick="returnToFormOrIntro()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
-          <span class="hidden sm:inline">Avaliação</span><span class="sm:hidden">Avaliar</span>
-        </button>
-        <button id="btn-nav-qa" onclick="QA.returnToFormOrIntro()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
-          <span class="hidden sm:inline">Autoavaliação</span><span class="sm:hidden">Auto</span>
-        </button>
+        <span class="nav-item">
+          <button id="btn-nav-request" onclick="goToRequest()" aria-describedby="tip-nav-request" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-bold border-b-2 border-accent text-ink dark:text-white transition-all duration-300 py-1">
+            <span class="hidden sm:inline">Solicitação</span><span class="sm:hidden">Solicitar</span>
+          </button>
+          <span id="tip-nav-request" role="tooltip" class="nav-tip">
+            Formulário de demandas. Abra um pedido de design direto na esteira do time.
+          </span>
+        </span>
+        <span class="nav-item">
+          <button id="btn-nav-form" onclick="returnToFormOrIntro()" aria-describedby="tip-nav-form" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
+            <span class="hidden sm:inline">Avaliação</span><span class="sm:hidden">Avaliar</span>
+          </button>
+          <span id="tip-nav-form" role="tooltip" class="nav-tip">
+            Pesquisa de satisfação. Avalie uma entrega concluída ou o trabalho de um designer.
+          </span>
+        </span>
+        <span class="nav-item">
+          <button id="btn-nav-qa" onclick="QA.returnToFormOrIntro()" aria-describedby="tip-nav-qa" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
+            <span class="hidden sm:inline">Autoavaliação</span><span class="sm:hidden">Auto</span>
+          </button>
+          <span id="tip-nav-qa" role="tooltip" class="nav-tip nav-tip--end">
+            Checklist de qualidade. Veja se a sua ideia cumpre os requisitos de design.
+          </span>
+        </span>
+        <!-- Métricas fica sem bolha: é a área do próprio time, não a de quem chega -->
         <button id="btn-nav-dashboard" onclick="attemptDashboardAccess()" class="btn-nav text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-medium border-b-2 border-transparent text-ink-light hover:text-ink dark:text-white/50 dark:hover:text-white transition-all duration-300 py-1">
           <span class="hidden sm:inline">Métricas</span><span class="sm:hidden">Painel</span>
         </button>
