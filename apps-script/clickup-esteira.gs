@@ -26,7 +26,8 @@ var CLICKUP_LIST_ID = '901112432875';
 var CLICKUP_STATUS_INICIAL = 'aguardando';
 
 // Quantas tarefas criar por execução. A API do ClickUp aceita 100 requisições
-// por minuto; este teto deixa folga com sobra.
+// por minuto e o gatilho roda de minuto em minuto, então o pior caso de uma
+// rodada são 26 requisições — este teto mais a leitura dos campos.
 var CLICKUP_MAX_POR_EXECUCAO = 25;
 
 // Colunas de controle da sincronização, criadas na planilha se não existirem.
@@ -111,18 +112,32 @@ function sincronizarComClickUp() {
     var idxTarefa = cabecalhos.indexOf(COLUNA_TAREFA_ID);
     var idxNome = cabecalhos.indexOf('Task Name');
 
-    var campos = getCamposClickUp_();
+    var fila = [];
+    for (var i = 1; i < valores.length && fila.length < CLICKUP_MAX_POR_EXECUCAO; i++) {
+      if (linhaPendente_(valores[i], idxTarefa, idxNome)) fila.push(i);
+    }
+
+    // Sem fila, nada de API. A maioria das rodadas de um gatilho de 1 minuto não
+    // tem o que fazer, e sair aqui faz cada uma delas custar quase nada.
+    if (fila.length === 0) return;
+
+    // Ler os campos é a primeira chamada à API e a que mais falha: token
+    // expirado, limite de requisições, ClickUp fora do ar. Solta, ela derrubaria
+    // a execução antes do laço e a fila pararia em silêncio — a planilha diria
+    // apenas que a linha não foi sincronizada, sem dizer por quê.
+    var campos;
+    try {
+      campos = getCamposClickUp_();
+    } catch (err) {
+      registrarFalhaGeral_(sheet, cabecalhos, fila, String(err.message || err));
+      return;
+    }
+
     var criadas = 0;
     var falhas = 0;
 
-    for (var i = 1; i < valores.length && criadas + falhas < CLICKUP_MAX_POR_EXECUCAO; i++) {
-      var linha = valores[i];
-
-      // Já sincronizada, ou linha sem título: não há o que fazer
-      if (String(linha[idxTarefa] || '').trim()) continue;
-      if (!String(linha[idxNome] || '').trim()) continue;
-
-      var dados = linhaParaObjeto_(cabecalhos, linha);
+    fila.forEach(function (i) {
+      var dados = linhaParaObjeto_(cabecalhos, valores[i]);
       var resultado = criarTarefa_(dados, campos);
 
       if (resultado.ok) {
@@ -134,7 +149,7 @@ function sincronizarComClickUp() {
         falhas++;
         Logger.log('Linha %s falhou: %s', i + 1, resultado.error);
       }
-    }
+    });
 
     SpreadsheetApp.flush();
     Logger.log('Sincronização concluída. Criadas: %s. Falhas: %s.', criadas, falhas);
@@ -144,7 +159,7 @@ function sincronizarComClickUp() {
 }
 
 /**
- * Instala o gatilho que sincroniza sozinho a cada 5 minutos.
+ * Instala o gatilho que sincroniza sozinho a cada minuto.
  * Rodar de novo não duplica: o gatilho antigo é removido antes.
  */
 function criarGatilhoDeSincronizacao() {
@@ -154,8 +169,8 @@ function criarGatilhoDeSincronizacao() {
     }
   });
 
-  ScriptApp.newTrigger('sincronizarComClickUp').timeBased().everyMinutes(5).create();
-  Logger.log('Gatilho criado: sincronizarComClickUp a cada 5 minutos.');
+  ScriptApp.newTrigger('sincronizarComClickUp').timeBased().everyMinutes(1).create();
+  Logger.log('Gatilho criado: sincronizarComClickUp a cada 1 minuto.');
 }
 
 // ==========================================================================
@@ -342,11 +357,41 @@ function registrarErro_(sheet, cabecalhos, numeroLinha, erro) {
   escreverCelula_(sheet, cabecalhos, numeroLinha, COLUNA_ERRO_SYNC, erro);
 }
 
+/**
+ * Carimba o mesmo motivo em todas as linhas que esta execução tentaria criar.
+ * É o que dá rosto a uma falha que não é de nenhuma linha em particular — token,
+ * limite de requisições, ClickUp fora do ar —, para que ela apareça na planilha
+ * em vez de ficar só no log de Execuções.
+ *
+ * As linhas continuam na fila: assim que o problema passar, a próxima rodada
+ * cria as tarefas e limpa a coluna.
+ */
+function registrarFalhaGeral_(sheet, cabecalhos, fila, erro) {
+  fila.forEach(function (i) {
+    registrarErro_(sheet, cabecalhos, i + 1, erro);
+  });
+
+  SpreadsheetApp.flush();
+  Logger.log('Sincronização interrompida: %s. Linhas marcadas: %s.', erro, fila.length);
+}
+
 function escreverCelula_(sheet, cabecalhos, numeroLinha, coluna, valor) {
   var i = cabecalhos.indexOf(coluna);
   if (i === -1) return;
 
   sheet.getRange(numeroLinha, i + 1).setValue(valor);
+}
+
+/**
+ * Uma linha entra na fila quando tem título e ainda não tem tarefa. Linha sem
+ * título nunca entra: é rascunho ou sobra de edição na planilha, e virar tarefa
+ * sem nome só sujaria a esteira.
+ */
+function linhaPendente_(linha, idxTarefa, idxNome) {
+  if (idxNome === -1) return false;
+  if (!String(linha[idxNome] || '').trim()) return false;
+
+  return idxTarefa === -1 || !String(linha[idxTarefa] || '').trim();
 }
 
 function contarPendentes_() {
@@ -356,12 +401,9 @@ function contarPendentes_() {
 
   var idxTarefa = valores[0].indexOf(COLUNA_TAREFA_ID);
   var idxNome = valores[0].indexOf('Task Name');
-  if (idxNome === -1) return 0;
 
   return valores.slice(1).filter(function (linha) {
-    var temNome = String(linha[idxNome] || '').trim() !== '';
-    var jaFoi = idxTarefa !== -1 && String(linha[idxTarefa] || '').trim() !== '';
-    return temNome && !jaFoi;
+    return linhaPendente_(linha, idxTarefa, idxNome);
   }).length;
 }
 

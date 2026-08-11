@@ -192,8 +192,14 @@ limpe o que você preencheu.
 
 **6. Deixe rodando sozinho**
 
-Rode **`criarGatilhoDeSincronizacao()`** uma vez. Ela instala um gatilho de 5 em
-5 minutos e remove o anterior, então rodar de novo não duplica.
+Rode **`criarGatilhoDeSincronizacao()`** uma vez. Ela instala um gatilho de
+minuto em minuto e remove o anterior, então rodar de novo não duplica.
+
+Quem já instalou o gatilho antigo, de 5 em 5 minutos, precisa **rodar a função de
+novo** para passar a 1 minuto — mudar o código não mexe em gatilho já criado.
+
+Rodar a cada minuto não pesa: quando não há nada na fila, a execução sai antes de
+falar com o ClickUp, então a rodada vazia custa só a leitura da planilha.
 
 ### O que vai para cada lugar
 
@@ -217,12 +223,20 @@ ClickUp passa a funcionar sozinho, sem mexer no script.
 preenchida na triagem. A criação por API não é barrada por isso — a tarefa nasce
 com o campo vazio, para o time preencher.
 
-**Limite da API**: 100 requisições por minuto. Cada execução cria no máximo 25
-tarefas (`CLICKUP_MAX_POR_EXECUCAO`), o que deixa folga com sobra.
+**Limite da API**: 100 requisições por minuto. O gatilho roda de minuto em minuto
+e cada execução cria no máximo 25 tarefas (`CLICKUP_MAX_POR_EXECUCAO`), então o
+pior caso de uma rodada são 26 requisições — a leitura dos campos mais as
+criações.
 
 **Quando uma linha falha**, o motivo vai para `Erro da Sincronização` e a linha
 continua na fila. Corrigido o problema, a próxima execução tenta de novo — não é
 preciso limpar nada.
+
+**Quando a execução inteira falha** — token expirado, limite de requisições
+estourado, ClickUp fora do ar —, o motivo é carimbado em `Erro da Sincronização`
+de todas as linhas da fila, e não só no log de Execuções. Sem isso a fila pararia
+em silêncio: a planilha mostraria linhas sem tarefa, sem dizer por quê. As linhas
+seguem na fila e a coluna é limpa sozinha quando a tarefa for criada.
 
 **Anexos** entram como links do Drive na descrição, não como arquivos anexados à
 tarefa. Os arquivos já estão no Drive; duplicá-los no ClickUp só ocuparia espaço
