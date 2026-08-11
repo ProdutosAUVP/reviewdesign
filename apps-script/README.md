@@ -155,13 +155,24 @@ No editor do Apps Script da planilha, **+ › Script** e nomeie
 São dois arquivos no mesmo projeto de propósito — `clickup-esteira.gs`
 reaproveita `getSheet_()` e `getCabecalhos_()` do `esteira-design.gs`.
 
-**3. Guarde o token**
+**3. Guarde o token sem tocar no código**
 
-Em `configurarClickUp()`, troque `pk_COLE_SEU_TOKEN_AQUI` pelo seu token, rode a
-função uma vez, **apague o token do código** e salve.
+No editor: **Configurações do projeto** (engrenagem, na barra lateral) ›
+**Propriedades do script** › **Adicionar propriedade**.
 
-O token vai para as Propriedades do Script. Ele nunca pode ficar no código: este
-repositório é público.
+| Campo | Valor |
+| --- | --- |
+| Nome | `CLICKUP_TOKEN` |
+| Valor | o token que começa com `pk_` |
+
+Salve. Rode **`verificarToken()`** para confirmar — o log mostra o token
+mascarado, nunca inteiro.
+
+> O token não passa pelo código de propósito. Editar uma linha para colá-lo
+> convida a dois acidentes: colar fora das aspas, que vira
+> `ReferenceError: pk_… is not defined`, e deixá-lo salvo no arquivo, onde
+> aparece em qualquer captura de tela. Pelas Propriedades do Script nenhum dos
+> dois acontece.
 
 **4. Confira antes de criar qualquer coisa**
 

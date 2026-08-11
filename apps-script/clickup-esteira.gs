@@ -16,7 +16,12 @@
  * O token da API fica nas Propriedades do Script, nunca no código — este
  * arquivo vive num repositório público.
  *
- * Antes do primeiro uso, rode `configurarClickUp()` uma vez com o seu token.
+ * Para guardar o token, use o próprio editor, sem mexer em código:
+ *   Configurações do projeto › Propriedades do script › Adicionar propriedade
+ *   Nome: CLICKUP_TOKEN
+ *   Valor: o token que começa com pk_
+ *
+ * Depois rode `verificarToken()` para confirmar que ficou salvo.
  */
 
 // Lista de destino: Área de Produto › 🧑‍🎨 Design |  Esteira
@@ -57,24 +62,40 @@ var CLICKUP_CAMPOS = [
 // ==========================================================================
 
 /**
- * Rode uma vez, com o seu token no lugar do texto de exemplo. Depois apague o
- * token daqui e salve — ele fica guardado nas Propriedades do Script.
+ * Confirma que o token foi guardado, sem expor o valor no log.
+ *
+ * O token é cadastrado pelo editor, em Configurações do projeto › Propriedades
+ * do script, com o nome CLICKUP_TOKEN. Não passa por aqui e não entra no código:
+ * assim não há como colá-lo fora das aspas, e ele não vaza em captura de tela.
  */
-function configurarClickUp() {
-  var token = 'pk_COLE_SEU_TOKEN_AQUI';
+function verificarToken() {
+  var token = PropertiesService.getScriptProperties().getProperty('CLICKUP_TOKEN');
 
-  if (token.indexOf('pk_') !== 0 || token.indexOf('COLE') !== -1) {
-    throw new Error('Troque o texto de exemplo pelo seu token pessoal do ClickUp (começa com pk_).');
+  if (!token) {
+    Logger.log('Token não encontrado.');
+    Logger.log('Cadastre em: Configurações do projeto › Propriedades do script › Adicionar propriedade.');
+    Logger.log('Nome: CLICKUP_TOKEN | Valor: o token que começa com pk_');
+    return;
   }
 
-  PropertiesService.getScriptProperties().setProperty('CLICKUP_TOKEN', token);
-  Logger.log('Token guardado. Pode apagar o token do código e salvar.');
+  if (token.indexOf('pk_') !== 0) {
+    Logger.log('Há um valor em CLICKUP_TOKEN, mas ele não começa com "pk_". Confira se colou o token certo.');
+    return;
+  }
+
+  Logger.log('Token guardado: %s...%s (%s caracteres). Pode rodar testarClickUp().',
+    token.slice(0, 7), token.slice(-4), token.length);
 }
 
 /**
  * Confere se o token funciona e se a lista está acessível, sem criar nada.
  */
 function testarClickUp() {
+  if (!PropertiesService.getScriptProperties().getProperty('CLICKUP_TOKEN')) {
+    Logger.log('Token não configurado. Rode verificarToken() para ver como cadastrar.');
+    return;
+  }
+
   var campos = getCamposClickUp_();
   var nomes = Object.keys(campos);
 
@@ -166,7 +187,7 @@ function getTokenClickUp_() {
   var token = PropertiesService.getScriptProperties().getProperty('CLICKUP_TOKEN');
 
   if (!token) {
-    throw new Error('Token do ClickUp não configurado. Rode configurarClickUp() primeiro.');
+    throw new Error('Token do ClickUp não configurado. Cadastre CLICKUP_TOKEN em Configurações do projeto › Propriedades do script.');
   }
 
   return token;
