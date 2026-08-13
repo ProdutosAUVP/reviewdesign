@@ -1855,19 +1855,22 @@
       }
     }
 
-    // A justificativa é exigida quando a demanda é urgente, quando a prioridade
-    // escolhida diverge do que o SLA aponta ou quando a data fura o SLA.
+    // A justificativa é sobre furar a fila, então só é exigida de quem fura:
+    // quando a data pedida é mais curta que o SLA do tipo, ou quando quem
+    // solicita marca a demanda como Urgente.
+    //
+    // Antes ela também aparecia quando a prioridade escolhida divergia da que
+    // o SLA sugere — e isso valia nas duas direções. Escolher uma prioridade
+    // MENOR que a sugerida (Normal onde o SLA aponta Alta) passava a exigir
+    // justificativa de urgência de uma demanda menos urgente, o oposto do que
+    // a pergunta quer saber. A divergência deixou de pesar aqui; a sugestão
+    // automática continua em applySlaPriority.
     function requestNeedsReason() {
       const prioridade = PRIORIDADES.find(p => p.id === requestData.prioridade);
       if (prioridade && prioridade.requiresReason) return true;
 
       const slaStatus = getSlaStatus();
-      if (!slaStatus) return false;
-
-      if (slaStatus.needsReason) return true;
-
-      const sugerida = SLA_PARA_PRIORIDADE[slaStatus.id];
-      return Boolean(requestData.prioridade && sugerida && requestData.prioridade !== sugerida);
+      return Boolean(slaStatus && slaStatus.needsReason);
     }
 
     function updateJustificativaVisibility() {
